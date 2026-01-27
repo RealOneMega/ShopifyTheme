@@ -32,9 +32,12 @@
             {% endif %}
             <div class="stack" style="grid-auto-flow:column;justify-content:flex-start;">
               {% for i in (1..3) %}
-                {% assign label = block.settings['button_label_' | append: i] %}
-                {% assign link = block.settings['button_link_' | append: i] %}
-                {% assign style = block.settings['button_style_' | append: i] %}
+                {% assign label_key = 'button_label_' | append: i %}
+                {% assign link_key = 'button_link_' | append: i %}
+                {% assign style_key = 'button_style_' | append: i %}
+                {% assign label = block.settings[label_key] %}
+                {% assign link = block.settings[link_key] %}
+                {% assign style = block.settings[style_key] %}
                 {% if label != blank %}
                   <a class="button button--{{ style }}" href="{{ link }}">{{ label }}</a>
                 {% endif %}
