@@ -1,0 +1,15 @@
+{
+  "type": "header-group",
+  "name": "Header Group",
+  "sections": {
+    "promo-bar": {
+      "type": "promo-bar",
+      "settings": {}
+    },
+    "header": {
+      "type": "header",
+      "settings": {}
+    }
+  },
+  "order": ["promo-bar", "header"]
+}
