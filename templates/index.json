@@ -1,0 +1,9 @@
+{
+  "sections": {
+    "hero": {"type": "hero-slideshow"},
+    "featured_collection": {"type": "featured-collection"},
+    "usp": {"type": "usp-row"},
+    "rich_text": {"type": "rich-text"}
+  },
+  "order": ["hero", "featured_collection", "usp", "rich_text"]
+}

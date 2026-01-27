@@ -1,0 +1,35 @@
+<section class="section">
+  <div class="container">
+    <h1 class="heading">Your cart</h1>
+    {% if cart.item_count == 0 %}
+      <p>Your cart is empty.</p>
+      <a class="button button--primary" href="{{ routes.all_products_collection_url }}">Continue shopping</a>
+    {% else %}
+      <form action="{{ routes.cart_url }}" method="post">
+        <div class="stack">
+          {% for item in cart.items %}
+            <div class="product-card" style="padding:1rem;display:grid;grid-template-columns:80px 1fr auto;gap:1rem;align-items:center;">
+              {{ item.image | image_url: width: 120 | image_tag: loading: 'lazy' }}
+              <div>
+                <strong>{{ item.product.title }}</strong>
+                <div>{{ item.price | money }}</div>
+              </div>
+              <input type="number" name="updates[]" value="{{ item.quantity }}" min="0">
+            </div>
+          {% endfor %}
+        </div>
+        <div style="margin-top:2rem;display:flex;justify-content:space-between;align-items:center;">
+          <strong>Total: {{ cart.total_price | money }}</strong>
+          <button class="button button--primary" type="submit" name="checkout">Checkout</button>
+        </div>
+      </form>
+    {% endif %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Main cart",
+  "settings": []
+}
+{% endschema %}
