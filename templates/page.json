@@ -1,6 +1,6 @@
 {
   "sections": {
-    "main": {"type": "rich-text"}
+    "main": {"type": "main-page"}
   },
   "order": ["main"]
 }

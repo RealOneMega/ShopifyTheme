@@ -1,6 +1,6 @@
 {
   "sections": {
-    "main": {"type": "rich-text", "settings": {"heading": "Page not found", "text": "<p>Sorry, we couldn't find that page.</p>"}}
+    "main": {"type": "main-404"}
   },
   "order": ["main"]
 }
