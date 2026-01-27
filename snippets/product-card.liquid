@@ -1,0 +1,52 @@
+{% assign card_style = style | default: 'below' %}
+<article class="product-card" style="--product-card-ratio: {{ settings.product_card_ratio }};">
+  <div class="product-card__media">
+    <a href="{{ product.url }}">
+      {% if product.featured_media %}
+        {{ product.featured_media | image_url: width: 600 | image_tag: loading: 'lazy', alt: product.title }}
+      {% else %}
+        <div style="aspect-ratio:1/1;background:#f2f2f2;"></div>
+      {% endif %}
+    </a>
+    {% if settings.show_second_image and product.media.size > 1 %}
+      <a class="product-card__secondary" href="{{ product.url }}">
+        {{ product.media[1] | image_url: width: 600 | image_tag: loading: 'lazy', alt: product.title }}
+      </a>
+    {% endif %}
+    <div class="product-card__badges">
+      {% if product.available == false %}
+        <span class="badge">Sold out</span>
+      {% elsif product.compare_at_price > product.price %}
+        <span class="badge">Sale</span>
+      {% endif %}
+    </div>
+    {% if card_style == 'overlay' %}
+      <div class="product-card__overlay-info">
+        <strong>{{ product.title }}</strong>
+        {% render 'price', product: product %}
+      </div>
+    {% endif %}
+  </div>
+
+  {% if card_style == 'below' %}
+    <div class="product-card__info">
+      {% if settings.show_vendor %}<small>{{ product.vendor }}</small>{% endif %}
+      <strong>{{ product.title }}</strong>
+      {% render 'price', product: product %}
+      {% if settings.show_rating_placeholder %}
+        <small aria-hidden="true">★★★★★ (placeholder)</small>
+      {% endif %}
+      {% if settings.enable_quick_add %}
+        {% if product.variants.size == 1 %}
+          <form method="post" action="/cart/add">
+            <input type="hidden" name="id" value="{{ product.variants.first.id }}">
+            <button class="button button--secondary" type="submit">Quick add</button>
+          </form>
+        {% else %}
+          <a class="button button--secondary" href="{{ product.url }}">Choose options</a>
+        {% endif %}
+      {% endif %}
+      <button class="button button--tertiary" data-wishlist-toggle="{{ product.handle }}" aria-pressed="false">Wishlist</button>
+    </div>
+  {% endif %}
+</article>
