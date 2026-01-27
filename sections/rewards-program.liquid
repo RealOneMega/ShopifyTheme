@@ -3,13 +3,13 @@
     <div class="stack">
       <h2 class="heading">{{ section.settings.heading }}</h2>
       <p>{{ section.settings.subheading }}</p>
-      <div class="product-card" style="padding:1.5rem;">
+      <div class="product-card" style="padding:1.5rem;" data-rewards-ledger>
         <strong>Your points</strong>
         {% if customer and customer.metafields.rewards.points != blank %}
           <p data-rewards-balance>{{ customer.metafields.rewards.points }}</p>
         {% else %}
           <p data-rewards-balance>0</p>
-          <small>Connect your rewards app or set customer metafields.</small>
+          <small>Connect your in-house rewards service or set customer metafields for now.</small>
         {% endif %}
       </div>
       <div class="product-grid">
@@ -30,7 +30,10 @@
       </div>
       <div data-rewards-actions>
         <button class="button button--secondary" data-reward-redeem>Redeem points</button>
-        <p class="visually-hidden" data-rewards-integration>Integrate with a rewards app or Shopify Functions to generate discount codes.</p>
+        <p data-rewards-integration>
+          This section is ready for an in-house rewards system. When available, connect a secure backend
+          (Shopify app + Functions) to validate balances and generate discount codes.
+        </p>
       </div>
     </div>
   </div>

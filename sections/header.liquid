@@ -13,7 +13,7 @@
         {% endif %}
         {% if section.settings.show_localization %}
           {% form 'localization' %}
-            <select name="country_code" aria-label="{{ 'localization.country_label' | t }}">
+            <select class="field field--select" name="country_code" aria-label="{{ 'localization.country_label' | t }}">
               {% for country in localization.available_countries %}
                 <option value="{{ country.iso_code }}" {% if country.iso_code == localization.country.iso_code %}selected{% endif %}>
                   {{ country.name }} ({{ country.currency.iso_code }})

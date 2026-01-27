@@ -22,8 +22,10 @@
     </div>
     {% if card_style == 'overlay' %}
       <div class="product-card__overlay-info">
-        <strong>{{ product.title }}</strong>
-        {% render 'price', product: product %}
+        <div class="stack">
+          <strong>{{ product.title }}</strong>
+          {% render 'price', product: product %}
+        </div>
       </div>
     {% endif %}
   </div>
@@ -36,17 +38,19 @@
       {% if settings.show_rating_placeholder %}
         <small aria-hidden="true">★★★★★ (placeholder)</small>
       {% endif %}
-      {% if settings.enable_quick_add %}
-        {% if product.variants.size == 1 %}
-          <form method="post" action="/cart/add">
-            <input type="hidden" name="id" value="{{ product.variants.first.id }}">
-            <button class="button button--secondary" type="submit">Quick add</button>
-          </form>
-        {% else %}
-          <a class="button button--secondary" href="{{ product.url }}">Choose options</a>
+      <div class="product-card__actions">
+        {% if settings.enable_quick_add %}
+          {% if product.variants.size == 1 %}
+            <form method="post" action="/cart/add">
+              <input type="hidden" name="id" value="{{ product.variants.first.id }}">
+              <button class="button button--secondary" type="submit">Quick add</button>
+            </form>
+          {% else %}
+            <a class="button button--secondary" href="{{ product.url }}">Choose options</a>
+          {% endif %}
         {% endif %}
-      {% endif %}
-      <button class="button button--tertiary" data-wishlist-toggle="{{ product.handle }}" aria-pressed="false">Wishlist</button>
+        <button class="button button--tertiary" data-wishlist-toggle="{{ product.handle }}" aria-pressed="false">Wishlist</button>
+      </div>
     </div>
   {% endif %}
 </article>

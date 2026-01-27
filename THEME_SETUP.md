@@ -21,8 +21,8 @@
 ## Rewards integration
 - The **Rewards program** section reads `customer.metafields.rewards.points` when present.
 - Redemption options are configured in Theme Editor.
-- Connect an app or Shopify Functions for discount generation.
-- Use the data attributes for integration hooks: `data-reward-option`, `data-reward-redeem`.
+- For a secure in-house rewards system, plan a private Shopify app + Functions to validate balances and issue codes.
+- Use the data attributes for integration hooks: `data-reward-option`, `data-reward-redeem`, `data-rewards-ledger`.
 
 ## Reviews integration
 - Reviews display only on the product page (inside **Main product** section).

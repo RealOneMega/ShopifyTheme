@@ -1,6 +1,7 @@
-<section class="section">
-  <div class="container">
-    <div class="hero" data-slideshow data-autoplay="{{ section.settings.autoplay }}" data-autoplay-speed="{{ section.settings.autoplay_speed }}">
+{% assign is_full_width = section.settings.layout == 'full' %}
+<section class="section{% if is_full_width %} section--flush{% endif %}">
+  {% if is_full_width %}<div>{% else %}<div class="container">{% endif %}
+    <div class="hero{% if is_full_width %} hero--full{% endif %}" data-slideshow data-autoplay="{{ section.settings.autoplay }}" data-autoplay-speed="{{ section.settings.autoplay_speed }}">
       {% for block in section.blocks %}
         <div class="hero__slide{% if forloop.index0 > 0 %} hidden{% endif %}" data-slide>
           {% assign desktop_image = block.settings.image %}
@@ -61,6 +62,16 @@
 {
   "name": "Hero slideshow",
   "settings": [
+    {
+      "type": "select",
+      "id": "layout",
+      "label": "Hero layout",
+      "default": "contained",
+      "options": [
+        {"value": "contained", "label": "Contained with rounded corners"},
+        {"value": "full", "label": "Full width"}
+      ]
+    },
     {"type": "checkbox", "id": "autoplay", "label": "Autoplay", "default": true},
     {"type": "range", "id": "autoplay_speed", "label": "Autoplay speed (ms)", "min": 3000, "max": 9000, "step": 500, "default": 6000}
   ],

@@ -29,7 +29,7 @@
       {% endfor %}
       <div>
         <strong>{{ section.settings.newsletter_heading }}</strong>
-        <div style="margin-top:0.75rem;">
+        <div class="footer__newsletter" style="margin-top:0.75rem;">
           {% form 'customer', id: 'ContactFooter' %}
             {% if form.posted_successfully? %}
               <p>Thanks for subscribing!</p>
@@ -37,7 +37,7 @@
               <p role="alert">{{ form.errors | default_errors }}</p>
             {% endif %}
             <input type="hidden" name="contact[tags]" value="newsletter">
-            <input type="email" name="contact[email]" placeholder="Email address" aria-label="Email address" required>
+            <input class="field" type="email" name="contact[email]" placeholder="Email address" aria-label="Email address" required>
             <button class="button button--primary" type="submit">Subscribe</button>
           {% endform %}
         </div>
