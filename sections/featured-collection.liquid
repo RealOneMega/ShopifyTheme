@@ -1,0 +1,42 @@
+<section class="section">
+  <div class="container">
+    <div class="stack">
+      {% if section.settings.title != blank %}
+        <h2 class="heading">{{ section.settings.title }}</h2>
+      {% endif %}
+      {% if section.settings.collection != blank %}
+        <div class="product-grid">
+          {% for product in collections[section.settings.collection].products limit: section.settings.limit %}
+            {% render 'product-card', product: product, style: section.settings.card_style %}
+          {% endfor %}
+        </div>
+      {% else %}
+        <p>Select a collection to display products.</p>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Featured collection",
+  "settings": [
+    {"type": "text", "id": "title", "label": "Heading", "default": "Top picks"},
+    {"type": "collection", "id": "collection", "label": "Collection"},
+    {"type": "range", "id": "limit", "label": "Products to show", "min": 4, "max": 12, "step": 1, "default": 8},
+    {
+      "type": "select",
+      "id": "card_style",
+      "label": "Card style",
+      "default": "below",
+      "options": [
+        {"value": "below", "label": "Info below image"},
+        {"value": "overlay", "label": "Overlay info"}
+      ]
+    }
+  ],
+  "presets": [
+    {"name": "Featured collection", "category": "Collection"}
+  ]
+}
+{% endschema %}
