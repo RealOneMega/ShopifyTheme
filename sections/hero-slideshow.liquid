@@ -1,4 +1,7 @@
-{% assign is_full_width = section.settings.layout == 'full' %}
+{% assign is_full_width = false %}
+{% if section.settings.layout == 'full' %}
+  {% assign is_full_width = true %}
+{% endif %}
 <section class="section{% if is_full_width %} section--flush{% endif %}">
   {% if is_full_width %}<div>{% else %}<div class="container">{% endif %}
     <div class="hero{% if is_full_width %} hero--full{% endif %}" data-slideshow data-autoplay="{{ section.settings.autoplay }}" data-autoplay-speed="{{ section.settings.autoplay_speed }}">
