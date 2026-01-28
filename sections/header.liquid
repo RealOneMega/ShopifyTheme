@@ -1,33 +1,56 @@
 <section class="header {% if section.settings.sticky %}header--sticky{% endif %}">
   {% if section.settings.show_utility_row %}
+    {% assign utility_alignment = section.settings.utility_alignment | default: 'center' %}
     <div class="header__utility">
-      <div class="container" style="display:flex;justify-content:space-between;gap:1rem;padding:0.5rem 1.5rem;">
-        {% if section.settings.utility_menu != blank %}
-          <nav aria-label="Utility">
-            <div style="display:flex;gap:1rem;flex-wrap:wrap;">
+      <div class="container header__utility-bar header__utility-bar--{{ utility_alignment }}">
+        <div class="header__utility-slot header__utility-slot--left">
+          {% if section.settings.utility_menu != blank and utility_alignment == 'left' %}
+            <nav aria-label="Utility" class="header__utility-links">
               {% for link in linklists[section.settings.utility_menu].links %}
                 <a href="{{ link.url }}">{{ link.title }}</a>
               {% endfor %}
-            </div>
-          </nav>
-        {% endif %}
-        {% if section.settings.show_localization %}
-          {% form 'localization' %}
-            <select class="field field--select" name="country_code" aria-label="{{ 'localization.country_label' | t }}">
-              {% for country in localization.available_countries %}
-                <option value="{{ country.iso_code }}" {% if country.iso_code == localization.country.iso_code %}selected{% endif %}>
-                  {{ country.name }} ({{ country.currency.iso_code }})
-                </option>
+            </nav>
+          {% endif %}
+        </div>
+        <div class="header__utility-slot header__utility-slot--center">
+          {% if section.settings.utility_menu != blank and utility_alignment == 'center' %}
+            <nav aria-label="Utility" class="header__utility-links">
+              {% for link in linklists[section.settings.utility_menu].links %}
+                <a href="{{ link.url }}">{{ link.title }}</a>
               {% endfor %}
-            </select>
-          {% endform %}
-        {% endif %}
+            </nav>
+          {% endif %}
+        </div>
+        <div class="header__utility-slot header__utility-slot--right">
+          {% if section.settings.utility_menu != blank and utility_alignment == 'right' %}
+            <nav aria-label="Utility" class="header__utility-links">
+              {% for link in linklists[section.settings.utility_menu].links %}
+                <a href="{{ link.url }}">{{ link.title }}</a>
+              {% endfor %}
+            </nav>
+          {% endif %}
+          {% if section.settings.show_localization %}
+            {% form 'localization' %}
+              <select class="field field--select" name="country_code" aria-label="{{ 'localization.country_label' | t }}">
+                {% for country in localization.available_countries %}
+                  <option value="{{ country.iso_code }}" {% if country.iso_code == localization.country.iso_code %}selected{% endif %}>
+                    {{ country.name }} ({{ country.currency.iso_code }})
+                  </option>
+                {% endfor %}
+              </select>
+            {% endform %}
+          {% endif %}
+        </div>
       </div>
     </div>
   {% endif %}
 
+  {% assign nav_class = 'nav' %}
+  {% if section.settings.layout == 'logo_center' %}
+    {% assign nav_class = 'nav nav--center' %}
+  {% endif %}
   {% capture nav_markup %}
-    <nav class="nav" aria-label="Primary">
+    <nav class="{{ nav_class }}" aria-label="Primary">
       {% for link in linklists[section.settings.main_menu].links %}
         <div class="nav__item">
           {% if link.links != blank %}
@@ -72,7 +95,7 @@
     <div class="header__logo" style="justify-self:{{ logo_alignment }};">
       <a href="{{ routes.root_url }}" aria-label="{{ shop.name }}">
         {% if settings.logo != blank %}
-          {{ settings.logo | image_url: width: 320 | image_tag: loading: 'lazy' }}
+          {{ settings.logo | image_url: width: 320 | image_tag: loading: 'lazy', alt: shop.name, class: 'header__logo-image' }}
         {% else %}
           <strong>{{ shop.name }}</strong>
         {% endif %}
@@ -235,6 +258,17 @@
       "type": "link_list",
       "id": "utility_menu",
       "label": "Utility menu"
+    },
+    {
+      "type": "select",
+      "id": "utility_alignment",
+      "label": "Utility menu alignment",
+      "default": "center",
+      "options": [
+        {"value": "left", "label": "Left"},
+        {"value": "center", "label": "Center"},
+        {"value": "right", "label": "Right (next to selector)"}
+      ]
     },
     {
       "type": "checkbox",
