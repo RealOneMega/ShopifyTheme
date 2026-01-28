@@ -1,0 +1,41 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "current": {
+    "logo": "shopify://shop_images/RiskyLimitsCommericalFont_Black.png",
+    "sections": {
+      "footer": {
+        "type": "footer",
+        "settings": {
+          "text": "",
+          "newsletter_heading": "Stay in the loop",
+          "copyright": "All rights reserved.",
+          "show_payments": true,
+          "show_back_to_top": true
+        }
+      },
+      "newsletter-popup": {
+        "type": "newsletter-popup",
+        "settings": {
+          "enable": false,
+          "trigger": "delay",
+          "delay": 6,
+          "scroll": 40,
+          "heading": "Join the club",
+          "subheading": "Get first access to new drops.",
+          "gdpr_text": "By signing up you agree to receive emails.",
+          "button_label": "Subscribe",
+          "button_style": "primary"
+        }
+      }
+    },
+    "content_for_index": []
+  }
+}
