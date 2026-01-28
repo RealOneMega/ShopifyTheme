@@ -1,0 +1,7 @@
+{% if product.compare_at_price > product.price %}
+  <span><s>{{ product.compare_at_price | money }}</s></span>
+{% endif %}
+<span>{{ product.price | money }}</span>
+{% if product.unit_price_measurement %}
+  <small>{{ product.unit_price | money }} / {{ product.unit_price_measurement.reference_value }}{{ product.unit_price_measurement.reference_unit }}</small>
+{% endif %}
