@@ -62,7 +62,7 @@
         "slide_pTC3Pw"
       ],
       "settings": {
-        "layout": "contained",
+        "layout": "full",
         "autoplay": true,
         "autoplay_speed": 3500
       }
