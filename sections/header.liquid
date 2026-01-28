@@ -2,7 +2,7 @@
   {% if section.settings.show_utility_row %}
     {% assign utility_alignment = section.settings.utility_alignment | default: 'center' %}
     <div class="header__utility">
-      <div class="container header__utility-bar header__utility-bar--{{ utility_alignment }}">
+      <div class="header__utility-bar header__utility-bar--{{ utility_alignment }}">
         <div class="header__utility-slot header__utility-slot--left">
           {% if section.settings.utility_menu != blank and utility_alignment == 'left' %}
             <nav aria-label="Utility" class="header__utility-links">
@@ -54,7 +54,7 @@
       {% for link in linklists[section.settings.main_menu].links %}
         <div class="nav__item">
           {% if link.links != blank %}
-            <a href="{{ link.url }}" data-mega-trigger aria-haspopup="true" aria-expanded="false">{{ link.title }}</a>
+            <a class="nav__link" href="{{ link.url }}" data-mega-trigger aria-haspopup="true" aria-expanded="false">{{ link.title }}</a>
             <div class="nav__dropdown" aria-hidden="true">
               {% for child in link.links %}
                 <div>
@@ -76,7 +76,7 @@
               {% endfor %}
             </div>
           {% else %}
-            <a href="{{ link.url }}">{{ link.title }}</a>
+          <a class="nav__link" href="{{ link.url }}">{{ link.title }}</a>
           {% endif %}
         </div>
       {% endfor %}
@@ -92,7 +92,7 @@
     {% if section.settings.layout == 'logo_center' %}
       {% assign logo_alignment = 'center' %}
     {% endif %}
-    <div class="header__logo" style="justify-self:{{ logo_alignment }};">
+    <div class="header__logo" style="justify-self:{{ logo_alignment }};max-width:{{ section.settings.logo_width }}px;">
       <a href="{{ routes.root_url }}" aria-label="{{ shop.name }}">
         {% if settings.logo != blank %}
           {{ settings.logo | image_url: width: 320 | image_tag: loading: 'lazy', alt: shop.name, class: 'header__logo-image' }}
@@ -253,6 +253,16 @@
       "id": "show_utility_row",
       "label": "Show utility row",
       "default": false
+    },
+    {
+      "type": "range",
+      "id": "logo_width",
+      "label": "Logo width",
+      "min": 80,
+      "max": 280,
+      "step": 10,
+      "default": 180,
+      "unit": "px"
     },
     {
       "type": "link_list",
