@@ -76,23 +76,6 @@
         "card_style": "below"
       }
     },
-    "usp": {
-      "type": "usp-row",
-      "blocks": {
-        "usp_feiMKc": {
-          "type": "usp",
-          "settings": {
-            "icon": "star",
-            "heading": "Free shipping",
-            "text": "On all orders over $75."
-          }
-        }
-      },
-      "block_order": [
-        "usp_feiMKc"
-      ],
-      "settings": {}
-    },
     "rich_text": {
       "type": "rich-text",
       "settings": {
@@ -116,7 +99,6 @@
   "order": [
     "hero",
     "featured_collection",
-    "usp",
     "rich_text",
     "rewards_program_QmKzNR"
   ]

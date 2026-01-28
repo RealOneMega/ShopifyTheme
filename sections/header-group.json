@@ -13,6 +13,46 @@
   "sections": {
     "promo-bar": {
       "type": "promo-bar",
+      "blocks": {
+        "promo_TiTkNN": {
+          "type": "promo",
+          "settings": {
+            "text": "Free shipping on orders $75+",
+            "background": "#111111",
+            "text_color": "#ffffff",
+            "icon": "none",
+            "link": "",
+            "dismissible": false
+          }
+        },
+        "promo_itW8EL": {
+          "type": "promo",
+          "settings": {
+            "text": "Free shipping on orders $75+",
+            "background": "#111111",
+            "text_color": "#ffffff",
+            "icon": "none",
+            "link": "",
+            "dismissible": false
+          }
+        },
+        "promo_QWWqgz": {
+          "type": "promo",
+          "settings": {
+            "text": "Free shipping on orders $75+",
+            "background": "#111111",
+            "text_color": "#ffffff",
+            "icon": "none",
+            "link": "",
+            "dismissible": false
+          }
+        }
+      },
+      "block_order": [
+        "promo_TiTkNN",
+        "promo_itW8EL",
+        "promo_QWWqgz"
+      ],
       "settings": {
         "autoplay": true,
         "autoplay_speed": 5000
