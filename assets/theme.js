@@ -88,6 +88,8 @@ const Theme = (() => {
       const slides = Array.from(slideshow.querySelectorAll('[data-slide]'));
       if (slides.length < 2) return;
       const dots = slideshow.querySelectorAll('[data-slide-dot]');
+      const prev = slideshow.querySelector('[data-slide-prev]');
+      const next = slideshow.querySelector('[data-slide-next]');
       let index = 0;
       let timer;
       const interval = Number(slideshow.dataset.autoplaySpeed || 6000);
@@ -107,9 +109,16 @@ const Theme = (() => {
         showSlide((index + 1) % slides.length);
       };
 
+      const prevSlide = () => {
+        showSlide((index - 1 + slides.length) % slides.length);
+      };
+
       dots.forEach((dot, i) => {
         dot.addEventListener('click', () => showSlide(i));
       });
+
+      prev?.addEventListener('click', prevSlide);
+      next?.addEventListener('click', nextSlide);
 
       if (autoplay) {
         timer = setInterval(nextSlide, interval);

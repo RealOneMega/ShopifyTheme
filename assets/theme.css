@@ -340,6 +340,10 @@ p {
   padding-right: 0;
 }
 
+.section--flush-top {
+  padding-top: 0;
+}
+
 .hero--full {
   border-radius: 0;
 }
@@ -381,6 +385,28 @@ p {
   bottom: 1rem;
   left: 50%;
   transform: translateX(-50%);
+}
+
+.hero__arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  border: none;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.45);
+  color: #fff;
+  display: grid;
+  place-items: center;
+}
+
+.hero__arrow--prev {
+  left: 1rem;
+}
+
+.hero__arrow--next {
+  right: 1rem;
 }
 
 .hero__dot {

@@ -2,7 +2,7 @@
 {% if section.settings.layout == 'full' %}
   {% assign is_full_width = true %}
 {% endif %}
-<section class="section{% if is_full_width %} section--flush{% endif %}">
+<section class="section{% if is_full_width %} section--flush section--flush-top{% endif %}">
   {% if is_full_width %}<div>{% else %}<div class="container">{% endif %}
     <div class="hero{% if is_full_width %} hero--full{% endif %}" data-slideshow data-autoplay="{{ section.settings.autoplay }}" data-autoplay-speed="{{ section.settings.autoplay_speed }}">
       {% for block in section.blocks %}
@@ -51,6 +51,8 @@
         </div>
       {% endfor %}
       {% if section.blocks.size > 1 %}
+        <button class="hero__arrow hero__arrow--prev" type="button" data-slide-prev aria-label="Previous slide">‹</button>
+        <button class="hero__arrow hero__arrow--next" type="button" data-slide-next aria-label="Next slide">›</button>
         <div class="hero__controls" aria-label="Hero controls">
           {% for block in section.blocks %}
             <button class="hero__dot {% if forloop.first %}is-active{% endif %}" data-slide-dot aria-label="Go to slide {{ forloop.index }}"></button>
