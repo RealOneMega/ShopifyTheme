@@ -14,17 +14,18 @@
         {% endif %}
 
         <form method="post" action="/cart/add">
-          {% if product.has_only_default_variant == false %}
-            {% for option in product.options_with_values %}
-              <label>{{ option.name }}</label>
-              <select name="options[{{ option.name }}]">
-                {% for value in option.values %}
-                  <option value="{{ value }}">{{ value }}</option>
-                {% endfor %}
-              </select>
-            {% endfor %}
+          {% if product.has_only_default_variant %}
+            <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+          {% else %}
+            <label for="VariantSelect">Variant</label>
+            <select id="VariantSelect" class="field field--select" name="id">
+              {% for variant in product.variants %}
+                <option value="{{ variant.id }}" {% if variant == product.selected_or_first_available_variant %}selected{% endif %}>
+                  {{ variant.title }} - {{ variant.price | money }}
+                </option>
+              {% endfor %}
+            </select>
           {% endif %}
-          <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
           <button class="button button--primary" type="submit">Add to cart</button>
         </form>
 

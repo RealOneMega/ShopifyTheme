@@ -92,7 +92,7 @@
     {% if section.settings.layout == 'logo_center' %}
       {% assign logo_alignment = 'center' %}
     {% endif %}
-    <div class="header__logo" style="justify-self:{{ logo_alignment }};max-width:{{ section.settings.logo_width }}px;">
+    <div class="header__logo {% if section.settings.layout == 'logo_center' %}header__logo--center{% else %}header__logo--left{% endif %}" style="max-width:{{ section.settings.logo_width }}px;">
       <a href="{{ routes.root_url }}" aria-label="{{ shop.name }}">
         {% if settings.logo != blank %}
           {{ settings.logo | image_url: width: 320 | image_tag: loading: 'lazy', alt: shop.name, class: 'header__logo-image' }}

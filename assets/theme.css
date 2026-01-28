@@ -227,10 +227,6 @@ p {
   grid-template-columns: 1fr auto 1fr;
 }
 
-.header__main--center .header__logo {
-  justify-self: center;
-}
-
 .header__main--center .header__menu-toggle {
   justify-self: start;
 }
@@ -241,6 +237,14 @@ p {
 
 .header__logo {
   max-width: 180px;
+}
+
+.header__logo--left {
+  justify-self: start;
+}
+
+.header__logo--center {
+  justify-self: center;
 }
 
 .header__logo-image {
@@ -282,6 +286,11 @@ p {
   border-color: var(--color-border);
   color: var(--color-accent);
   transform: translateY(-1px);
+}
+
+.header__icon-button[aria-pressed="true"] {
+  color: var(--color-accent);
+  border-color: var(--color-accent);
 }
 
 .header__badge {
