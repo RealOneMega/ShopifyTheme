@@ -10,13 +10,16 @@
 {
   "current": {
     "logo": "shopify://shop_images/RiskyLimitsCommericalFont_Black.png",
+    "social_facebook": "",
+    "social_twitter": "",
     "sections": {
       "footer": {
         "type": "footer",
         "settings": {
+          "logo": "shopify://shop_images/RiskyLimitsCommericalFont_White.png",
           "text": "",
           "newsletter_heading": "Stay in the loop",
-          "copyright": "All rights reserved.",
+          "copyright": "Risky Limits. All Rights Reserved.",
           "show_payments": true,
           "show_back_to_top": true
         }
