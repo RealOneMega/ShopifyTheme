@@ -224,15 +224,17 @@ p {
 }
 
 .header__main--center {
-  grid-template-columns: 1fr auto 1fr;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
 }
 
 .header__main--center .header__menu-toggle {
   justify-self: start;
+  grid-column: 1;
 }
 
 .header__main--center .header__icons {
   justify-self: end;
+  grid-column: 3;
 }
 
 .header__logo {
@@ -245,6 +247,8 @@ p {
 
 .header__logo--center {
   justify-self: center;
+  grid-column: 2;
+  margin: 0 auto;
 }
 
 .header__logo-image {
