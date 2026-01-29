@@ -1,0 +1,37 @@
+[
+  {
+    "name": "Theme settings",
+    "settings": [
+      {"type": "image_picker", "id": "logo", "label": "Logo"},
+      {"type": "font_picker", "id": "font_body", "label": "Body font", "default": "archivo_n4"},
+      {"type": "font_picker", "id": "font_heading", "label": "Heading font", "default": "archivo_n6"},
+      {"type": "range", "id": "font_scale", "label": "Font scale", "min": 0.9, "max": 1.2, "step": 0.1, "default": 1.0},
+      {"type": "range", "id": "letter_spacing_heading", "label": "Heading letter spacing", "min": 0, "max": 0.2, "step": 0.1, "default": 0.0, "unit": "em"},
+      {"type": "color", "id": "color_background", "label": "Background", "default": "#ffffff"},
+      {"type": "color", "id": "color_text", "label": "Text", "default": "#101010"},
+      {"type": "color", "id": "color_accent", "label": "Accent", "default": "#0d6efd"},
+      {"type": "color", "id": "color_promo_bg", "label": "Promo background", "default": "#101010"},
+      {"type": "color", "id": "color_promo_text", "label": "Promo text", "default": "#ffffff"},
+      {"type": "color", "id": "color_header_bg", "label": "Header background", "default": "#ffffff"},
+      {"type": "color", "id": "color_card_overlay", "label": "Card overlay", "default": "#000000"},
+      {"type": "color", "id": "color_button_primary_bg", "label": "Primary button background", "default": "#101010"},
+      {"type": "color", "id": "color_button_primary_text", "label": "Primary button text", "default": "#ffffff"},
+      {"type": "color", "id": "color_button_secondary_bg", "label": "Secondary button background", "default": "#ffffff"},
+      {"type": "color", "id": "color_button_secondary_text", "label": "Secondary button text", "default": "#101010"},
+      {"type": "color", "id": "color_button_tertiary_text", "label": "Tertiary button text", "default": "#101010"},
+      {"type": "range", "id": "section_padding", "label": "Section padding", "min": 2, "max": 6, "step": 0.5, "default": 4, "unit": "rem"},
+      {"type": "range", "id": "section_padding_mobile", "label": "Section padding mobile", "min": 1.5, "max": 4, "step": 0.5, "default": 2.5, "unit": "rem"},
+      {"type": "range", "id": "radius_global", "label": "Global border radius", "min": 0, "max": 40, "step": 2, "default": 16, "unit": "px"},
+      {"type": "checkbox", "id": "shadow_cards", "label": "Enable card shadow", "default": false},
+      {"type": "checkbox", "id": "show_vendor", "label": "Show vendor", "default": true},
+      {"type": "checkbox", "id": "show_second_image", "label": "Show second image on hover", "default": true},
+      {"type": "checkbox", "id": "enable_quick_add", "label": "Enable quick add", "default": true},
+      {"type": "checkbox", "id": "show_rating_placeholder", "label": "Show rating placeholder", "default": false},
+      {"type": "text", "id": "product_card_ratio", "label": "Product card aspect ratio", "default": "1 / 1"},
+      {"type": "text", "id": "social_facebook", "label": "Facebook URL"},
+      {"type": "text", "id": "social_instagram", "label": "Instagram URL"},
+      {"type": "text", "id": "social_tiktok", "label": "TikTok URL"},
+      {"type": "text", "id": "social_twitter", "label": "Twitter URL"}
+    ]
+  }
+]
