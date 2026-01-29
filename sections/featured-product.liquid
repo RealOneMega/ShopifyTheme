@@ -1,0 +1,31 @@
+<section class="section">
+  <div class="container">
+    {% if section.settings.product != blank %}
+      {% render 'product-card', product: all_products[section.settings.product], style: section.settings.card_style %}
+    {% else %}
+      <p>Select a product.</p>
+    {% endif %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Featured product",
+  "settings": [
+    {"type": "product", "id": "product", "label": "Product"},
+    {
+      "type": "select",
+      "id": "card_style",
+      "label": "Card style",
+      "default": "below",
+      "options": [
+        {"value": "below", "label": "Info below image"},
+        {"value": "overlay", "label": "Overlay info"}
+      ]
+    }
+  ],
+  "presets": [
+    {"name": "Featured product", "category": "Product"}
+  ]
+}
+{% endschema %}
