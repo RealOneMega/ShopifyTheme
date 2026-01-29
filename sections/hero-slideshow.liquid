@@ -24,7 +24,13 @@
           {% if block.settings.text_color == 'dark' %}
             {% assign text_class = text_class | append: ' hero__content--light' %}
           {% endif %}
-          <div class="{{ text_class }}" style="{{ block.settings.text_position }}">
+          {% assign text_alignment = 'left' %}
+          {% if block.settings.text_position contains '50%' %}
+            {% assign text_alignment = 'center' %}
+          {% elsif block.settings.text_position contains 'right' %}
+            {% assign text_alignment = 'right' %}
+          {% endif %}
+          <div class="{{ text_class }}" style="{{ block.settings.text_position }}text-align:{{ text_alignment }};">
             {% if block.settings.subtitle != blank %}
               <p class="badge">{{ block.settings.subtitle }}</p>
             {% endif %}
@@ -34,7 +40,13 @@
             {% if block.settings.text != blank %}
               <p>{{ block.settings.text }}</p>
             {% endif %}
-            <div class="stack" style="grid-auto-flow:column;justify-content:flex-start;">
+            {% assign button_alignment = 'flex-start' %}
+            {% if text_alignment == 'center' %}
+              {% assign button_alignment = 'center' %}
+            {% elsif text_alignment == 'right' %}
+              {% assign button_alignment = 'flex-end' %}
+            {% endif %}
+            <div class="stack" style="grid-auto-flow:column;justify-content:{{ button_alignment }};">
               {% for i in (1..3) %}
                 {% assign label_key = 'button_label_' | append: i %}
                 {% assign link_key = 'button_link_' | append: i %}
