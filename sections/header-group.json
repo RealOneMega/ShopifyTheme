@@ -22,7 +22,7 @@
             "text_color": "#ffffff",
             "icon": "none",
             "link": "",
-            "dismissible": false
+            "dismissible": true
           }
         }
       },
