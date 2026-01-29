@@ -322,6 +322,10 @@ p {
   padding-bottom: 0.75rem;
 }
 
+.header__main--center + .nav {
+  padding-top: 0.75rem;
+}
+
 .nav__list {
   display: flex;
   gap: 1.5rem;

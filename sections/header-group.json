@@ -1,40 +1,15 @@
-/*
- * ------------------------------------------------------------
- * IMPORTANT: The contents of this file are auto-generated.
- *
- * This file may be updated by the Shopify admin theme editor
- * or related systems. Please exercise caution as any changes
- * made to this file may be overwritten.
- * ------------------------------------------------------------
- */
 {
   "type": "header",
   "name": "Header Group",
   "sections": {
     "promo-bar": {
       "type": "promo-bar",
-      "settings": {
-        "autoplay": true,
-        "autoplay_speed": 5000
-      }
+      "settings": {}
     },
     "header": {
       "type": "header",
-      "settings": {
-        "layout": "logo_center",
-        "menu_position": "center",
-        "main_menu": "menu",
-        "sticky": true,
-        "show_utility_row": true,
-        "logo_width": 220,
-        "utility_menu": "menu",
-        "utility_alignment": "left",
-        "show_localization": true
-      }
+      "settings": {}
     }
   },
-  "order": [
-    "promo-bar",
-    "header"
-  ]
+  "order": ["promo-bar", "header"]
 }
