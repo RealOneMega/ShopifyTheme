@@ -1,0 +1,38 @@
+<section class="section">
+  <div class="container">
+    <div class="stack text-center">
+      <h2 class="heading">{{ section.settings.heading }}</h2>
+      <div class="product-grid">
+        {% for block in section.blocks %}
+          <div class="product-card" style="padding:1.5rem;">
+            <p>“{{ block.settings.quote }}”</p>
+            <strong>{{ block.settings.author }}</strong>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Testimonials",
+  "settings": [
+    {"type": "text", "id": "heading", "label": "Heading", "default": "Loved by customers"}
+  ],
+  "blocks": [
+    {
+      "type": "testimonial",
+      "name": "Testimonial",
+      "settings": [
+        {"type": "textarea", "id": "quote", "label": "Quote", "default": "Best purchase I've made this year."},
+        {"type": "text", "id": "author", "label": "Author", "default": "Jordan P."}
+      ]
+    }
+  ],
+  "max_blocks": 6,
+  "presets": [
+    {"name": "Testimonials", "category": "Text"}
+  ]
+}
+{% endschema %}
