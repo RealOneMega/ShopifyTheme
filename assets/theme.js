@@ -147,9 +147,38 @@ const Theme = (() => {
   };
 
   const initWishlist = () => {
+    const storageKey = 'wishlist-items';
+    const getItems = () => JSON.parse(localStorage.getItem(storageKey) || '[]');
+    const setItems = (items) => localStorage.setItem(storageKey, JSON.stringify(items));
+    const renderWishlist = () => {
+      const container = document.querySelector('[data-wishlist-items]');
+      if (!container) return;
+      const items = getItems();
+      if (!items.length) {
+        container.innerHTML = '<p>Your wishlist is empty.</p>';
+        return;
+      }
+      container.innerHTML = `
+        <ul class="stack">
+          ${items.map((handle) => `<li><a href="/products/${handle}">${handle.replace(/-/g, ' ')}</a></li>`).join('')}
+        </ul>
+      `;
+    };
+
     document.querySelectorAll('[data-wishlist-toggle]').forEach((button) => {
       const handle = button.dataset.wishlistToggle;
       const key = `wishlist:${handle}`;
+      const updateList = () => {
+        const items = getItems();
+        if (localStorage.getItem(key) === 'true') {
+          if (!items.includes(handle)) items.push(handle);
+        } else {
+          const index = items.indexOf(handle);
+          if (index >= 0) items.splice(index, 1);
+        }
+        setItems(items);
+        renderWishlist();
+      };
       const update = () => {
         const active = localStorage.getItem(key) === 'true';
         button.setAttribute('aria-pressed', active);
@@ -159,9 +188,11 @@ const Theme = (() => {
         const next = localStorage.getItem(key) !== 'true';
         localStorage.setItem(key, next);
         update();
+        updateList();
       });
       update();
     });
+    renderWishlist();
   };
 
   const initPopup = () => {

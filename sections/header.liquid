@@ -121,7 +121,7 @@
       <a class="header__icon-button" href="{{ routes.account_url }}" aria-label="Account">
         {% render 'icon-account' %}
       </a>
-      <button class="header__icon-button" type="button" data-wishlist-toggle="global" aria-label="Wishlist">
+      <button class="header__icon-button" type="button" data-drawer-open="#wishlist-drawer" aria-label="Wishlist">
         {% render 'icon-heart' %}
       </button>
       <button class="header__icon-button" type="button" data-drawer-open="#cart-drawer" aria-label="Cart">
@@ -176,9 +176,21 @@
   <div class="drawer__content">
     <form action="{{ routes.search_url }}" method="get" role="search" data-predictive-search>
       <label class="visually-hidden" for="SearchInput">Search</label>
-      <input id="SearchInput" type="search" name="q" placeholder="Search products" autocomplete="off">
+      <input class="field" id="SearchInput" type="search" name="q" placeholder="Search products" autocomplete="off">
       <div data-predictive-results></div>
     </form>
+  </div>
+</div>
+
+<div id="wishlist-drawer" class="drawer" role="dialog" aria-modal="true" aria-label="Wishlist">
+  <div class="drawer__header">
+    <strong>Wishlist</strong>
+    <button class="header__icon-button" type="button" data-drawer-close aria-label="Close wishlist">{% render 'icon-close' %}</button>
+  </div>
+  <div class="drawer__content">
+    <div data-wishlist-items>
+      <p>Your wishlist is empty.</p>
+    </div>
   </div>
 </div>
 
