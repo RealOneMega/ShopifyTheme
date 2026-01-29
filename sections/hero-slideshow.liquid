@@ -1,0 +1,193 @@
+{% assign is_full_width = false %}
+{% if section.settings.layout == 'full' %}
+  {% assign is_full_width = true %}
+{% endif %}
+<section class="section{% if is_full_width %} section--flush section--flush-top{% endif %}">
+  {% if is_full_width %}<div>{% else %}<div class="container">{% endif %}
+    <div class="hero{% if is_full_width %} hero--full{% endif %}" data-slideshow data-autoplay="{{ section.settings.autoplay }}" data-autoplay-speed="{{ section.settings.autoplay_speed }}">
+      {% for block in section.blocks %}
+        <div class="hero__slide{% if forloop.index0 > 0 %} hidden{% endif %}" data-slide>
+          {% assign desktop_image = block.settings.image %}
+          {% assign mobile_image = block.settings.mobile_image | default: block.settings.image %}
+          <picture>
+            {% if mobile_image != blank %}
+              <source media="(max-width: 749px)" srcset="{{ mobile_image | image_url: width: 800 }}">
+            {% endif %}
+            {% if desktop_image != blank %}
+              {{ desktop_image | image_url: width: 1600 | image_tag: class: 'hero__image', loading: 'lazy', style: block.settings.focal_point }}
+            {% else %}
+              <div style="min-height:320px;background:#f2f2f2;"></div>
+            {% endif %}
+          </picture>
+          <div class="hero__overlay" style="--overlay-opacity: {{ block.settings.overlay_opacity | times: 0.01 }};"></div>
+          {% assign text_class = 'hero__content' %}
+          {% if block.settings.text_color == 'dark' %}
+            {% assign text_class = text_class | append: ' hero__content--light' %}
+          {% endif %}
+          <div class="{{ text_class }}" style="{{ block.settings.text_position }}">
+            {% if block.settings.subtitle != blank %}
+              <p class="badge">{{ block.settings.subtitle }}</p>
+            {% endif %}
+            {% if block.settings.title != blank %}
+              <h2 class="heading" style="font-size:clamp(2rem, 4vw, 3.5rem);">{{ block.settings.title }}</h2>
+            {% endif %}
+            {% if block.settings.text != blank %}
+              <p>{{ block.settings.text }}</p>
+            {% endif %}
+            <div class="stack" style="grid-auto-flow:column;justify-content:flex-start;">
+              {% for i in (1..3) %}
+                {% assign label_key = 'button_label_' | append: i %}
+                {% assign link_key = 'button_link_' | append: i %}
+                {% assign style_key = 'button_style_' | append: i %}
+                {% assign label = block.settings[label_key] %}
+                {% assign link = block.settings[link_key] %}
+                {% assign style = block.settings[style_key] %}
+                {% if label != blank %}
+                  <a class="button button--{{ style }}" href="{{ link }}">{{ label }}</a>
+                {% endif %}
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+      {% if section.blocks.size > 1 %}
+        <button class="hero__arrow hero__arrow--prev" type="button" data-slide-prev aria-label="Previous slide">‹</button>
+        <button class="hero__arrow hero__arrow--next" type="button" data-slide-next aria-label="Next slide">›</button>
+        <div class="hero__controls" aria-label="Hero controls">
+          {% for block in section.blocks %}
+            <button class="hero__dot {% if forloop.first %}is-active{% endif %}" data-slide-dot aria-label="Go to slide {{ forloop.index }}"></button>
+          {% endfor %}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Hero slideshow",
+  "settings": [
+    {
+      "type": "select",
+      "id": "layout",
+      "label": "Hero layout",
+      "default": "contained",
+      "options": [
+        {"value": "contained", "label": "Contained with rounded corners"},
+        {"value": "full", "label": "Full width"}
+      ]
+    },
+    {"type": "checkbox", "id": "autoplay", "label": "Autoplay", "default": true},
+    {"type": "range", "id": "autoplay_speed", "label": "Autoplay speed (ms)", "min": 3000, "max": 9000, "step": 500, "default": 6000}
+  ],
+  "blocks": [
+    {
+      "type": "slide",
+      "name": "Slide",
+      "settings": [
+        {"type": "image_picker", "id": "image", "label": "Desktop image"},
+        {"type": "image_picker", "id": "mobile_image", "label": "Mobile image"},
+        {"type": "text", "id": "subtitle", "label": "Subtitle"},
+        {"type": "text", "id": "title", "label": "Title"},
+        {"type": "textarea", "id": "text", "label": "Description"},
+        {
+          "type": "select",
+          "id": "text_color",
+          "label": "Text color",
+          "default": "light",
+          "options": [
+            {"value": "light", "label": "Light"},
+            {"value": "dark", "label": "Dark"}
+          ]
+        },
+        {
+          "type": "select",
+          "id": "text_position",
+          "label": "Text position",
+          "default": "top:10%;left:10%;",
+          "options": [
+            {"value": "top:10%;left:10%;", "label": "Top left"},
+            {"value": "top:10%;left:50%;transform:translateX(-50%);", "label": "Top center"},
+            {"value": "top:10%;right:10%;", "label": "Top right"},
+            {"value": "top:40%;left:10%;", "label": "Middle left"},
+            {"value": "top:40%;left:50%;transform:translateX(-50%);", "label": "Middle center"},
+            {"value": "top:40%;right:10%;", "label": "Middle right"},
+            {"value": "bottom:10%;left:10%;", "label": "Bottom left"},
+            {"value": "bottom:10%;left:50%;transform:translateX(-50%);", "label": "Bottom center"},
+            {"value": "bottom:10%;right:10%;", "label": "Bottom right"}
+          ]
+        },
+        {
+          "type": "select",
+          "id": "focal_point",
+          "label": "Image focal point",
+          "default": "object-position: center;",
+          "options": [
+            {"value": "object-position: left top;", "label": "Top left"},
+            {"value": "object-position: center top;", "label": "Top center"},
+            {"value": "object-position: right top;", "label": "Top right"},
+            {"value": "object-position: left center;", "label": "Middle left"},
+            {"value": "object-position: center;", "label": "Middle center"},
+            {"value": "object-position: right center;", "label": "Middle right"},
+            {"value": "object-position: left bottom;", "label": "Bottom left"},
+            {"value": "object-position: center bottom;", "label": "Bottom center"},
+            {"value": "object-position: right bottom;", "label": "Bottom right"}
+          ]
+        },
+        {
+          "type": "range",
+          "id": "overlay_opacity",
+          "label": "Overlay opacity",
+          "min": 0,
+          "max": 60,
+          "step": 5,
+          "default": 20
+        },
+        {"type": "text", "id": "button_label_1", "label": "Button 1 label"},
+        {"type": "url", "id": "button_link_1", "label": "Button 1 link"},
+        {
+          "type": "select",
+          "id": "button_style_1",
+          "label": "Button 1 style",
+          "default": "primary",
+          "options": [
+            {"value": "primary", "label": "Primary"},
+            {"value": "secondary", "label": "Secondary"},
+            {"value": "tertiary", "label": "Tertiary"}
+          ]
+        },
+        {"type": "text", "id": "button_label_2", "label": "Button 2 label"},
+        {"type": "url", "id": "button_link_2", "label": "Button 2 link"},
+        {
+          "type": "select",
+          "id": "button_style_2",
+          "label": "Button 2 style",
+          "default": "secondary",
+          "options": [
+            {"value": "primary", "label": "Primary"},
+            {"value": "secondary", "label": "Secondary"},
+            {"value": "tertiary", "label": "Tertiary"}
+          ]
+        },
+        {"type": "text", "id": "button_label_3", "label": "Button 3 label"},
+        {"type": "url", "id": "button_link_3", "label": "Button 3 link"},
+        {
+          "type": "select",
+          "id": "button_style_3",
+          "label": "Button 3 style",
+          "default": "tertiary",
+          "options": [
+            {"value": "primary", "label": "Primary"},
+            {"value": "secondary", "label": "Secondary"},
+            {"value": "tertiary", "label": "Tertiary"}
+          ]
+        }
+      ]
+    }
+  ],
+  "max_blocks": 5,
+  "presets": [
+    {"name": "Hero slideshow", "category": "Hero"}
+  ]
+}
+{% endschema %}
