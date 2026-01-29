@@ -8,28 +8,8 @@
         {% if section.settings.text != blank %}
           <p>{{ section.settings.text }}</p>
         {% endif %}
-        <div style="display:flex;gap:0.5rem;">
-          {% if settings.social_facebook != blank %}<a href="{{ settings.social_facebook }}" aria-label="Facebook">{% render 'icon-facebook' %}</a>{% endif %}
-          {% if settings.social_instagram != blank %}<a href="{{ settings.social_instagram }}" aria-label="Instagram">{% render 'icon-instagram' %}</a>{% endif %}
-          {% if settings.social_tiktok != blank %}<a href="{{ settings.social_tiktok }}" aria-label="TikTok">{% render 'icon-tiktok' %}</a>{% endif %}
-          {% if settings.social_twitter != blank %}<a href="{{ settings.social_twitter }}" aria-label="Twitter">{% render 'icon-twitter' %}</a>{% endif %}
-        </div>
-      </div>
-      {% for block in section.blocks %}
-        {% if block.type == 'menu' %}
-          <div>
-            <strong>{{ block.settings.heading }}</strong>
-            <div class="stack" style="margin-top:0.75rem;">
-              {% for link in linklists[block.settings.menu].links %}
-                <a href="{{ link.url }}">{{ link.title }}</a>
-              {% endfor %}
-            </div>
-          </div>
-        {% endif %}
-      {% endfor %}
-      <div>
-        <strong>{{ section.settings.newsletter_heading }}</strong>
-        <div class="footer__newsletter" style="margin-top:0.75rem;">
+        <div class="footer__newsletter">
+          <strong>{{ section.settings.newsletter_heading }}</strong>
           {% form 'customer', id: 'ContactFooter' %}
             {% if form.posted_successfully? %}
               <p>Thanks for subscribing!</p>
@@ -37,10 +17,32 @@
               <p role="alert">{{ form.errors | default_errors }}</p>
             {% endif %}
             <input type="hidden" name="contact[tags]" value="newsletter">
-            <input class="field" type="email" name="contact[email]" placeholder="Email address" aria-label="Email address" required>
-            <button class="button button--primary" type="submit">Subscribe</button>
+            <div class="footer__newsletter-form">
+              <input class="field" type="email" name="contact[email]" placeholder="Email address" aria-label="Email address" required>
+              <button class="button button--primary" type="submit">Subscribe</button>
+            </div>
           {% endform %}
         </div>
+        <div style="display:flex;gap:0.5rem;">
+          {% if settings.social_facebook != blank %}<a href="{{ settings.social_facebook }}" aria-label="Facebook">{% render 'icon-facebook' %}</a>{% endif %}
+          {% if settings.social_instagram != blank %}<a href="{{ settings.social_instagram }}" aria-label="Instagram">{% render 'icon-instagram' %}</a>{% endif %}
+          {% if settings.social_tiktok != blank %}<a href="{{ settings.social_tiktok }}" aria-label="TikTok">{% render 'icon-tiktok' %}</a>{% endif %}
+          {% if settings.social_twitter != blank %}<a href="{{ settings.social_twitter }}" aria-label="Twitter">{% render 'icon-twitter' %}</a>{% endif %}
+        </div>
+      </div>
+      <div class="footer__menus">
+        {% for block in section.blocks %}
+          {% if block.type == 'menu' %}
+            <div>
+              <strong>{{ block.settings.heading }}</strong>
+              <div class="stack" style="margin-top:0.75rem;">
+                {% for link in linklists[block.settings.menu].links %}
+                  <a href="{{ link.url }}">{{ link.title }}</a>
+                {% endfor %}
+              </div>
+            </div>
+          {% endif %}
+        {% endfor %}
       </div>
     </div>
     <div class="footer__bottom">
@@ -78,6 +80,6 @@
       ]
     }
   ],
-  "max_blocks": 4
+  "max_blocks": 3
 }
 {% endschema %}
