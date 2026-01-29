@@ -11,11 +11,20 @@
   "sections": {
     "hero": {
       "type": "hero-slideshow",
-      "settings": {}
+      "settings": {
+        "layout": "contained",
+        "autoplay": true,
+        "autoplay_speed": 6000
+      }
     },
     "featured_collection": {
       "type": "featured-collection",
-      "settings": {}
+      "settings": {
+        "title": "Top picks",
+        "collection": "",
+        "limit": 8,
+        "card_style": "below"
+      }
     },
     "usp": {
       "type": "usp-row",
@@ -23,13 +32,66 @@
     },
     "rich_text": {
       "type": "rich-text",
-      "settings": {}
+      "settings": {
+        "heading": "Tell your story",
+        "text": "<p>Share brand values and product benefits.</p>",
+        "button_label": "",
+        "button_link": "",
+        "button_style": "primary"
+      }
+    },
+    "rewards_program_bBTnx9": {
+      "type": "rewards-program",
+      "name": "Rewards program",
+      "settings": {
+        "heading": "Rewards",
+        "subheading": "Earn points every time you shop.",
+        "earn_text": "$1 spent = 1 point"
+      }
+    },
+    "animated_headline_6KCAEW": {
+      "type": "animated-headline",
+      "name": "Animated headline",
+      "settings": {
+        "prefix": "Shop",
+        "suffix": "today"
+      }
+    },
+    "faq_64Qd7R": {
+      "type": "faq",
+      "blocks": {
+        "faq_DaXCYa": {
+          "type": "faq",
+          "settings": {
+            "question": "What is your return policy?",
+            "answer": "<p>We accept returns within 30 days.</p>"
+          }
+        },
+        "faq_kiFfCi": {
+          "type": "faq",
+          "settings": {
+            "question": "What is your return policy?",
+            "answer": "<p>We accept returns within 30 days.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "faq_DaXCYa",
+        "faq_kiFfCi"
+      ],
+      "name": "FAQ",
+      "settings": {
+        "heading": "FAQ"
+      }
     }
   },
   "order": [
     "hero",
     "featured_collection",
     "usp",
-    "rich_text"
+    "rich_text",
+    "rewards_program_bBTnx9",
+    "animated_headline_6KCAEW",
+    "faq_64Qd7R"
   ]
 }
