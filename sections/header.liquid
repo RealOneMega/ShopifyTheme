@@ -51,8 +51,9 @@
   {% endif %}
   {% capture nav_markup %}
     <nav class="{{ nav_class }}" aria-label="Primary">
-      {% for link in linklists[section.settings.main_menu].links %}
-        <div class="nav__item">
+      <div class="nav__list">
+        {% for link in linklists[section.settings.main_menu].links %}
+          <div class="nav__item">
           {% if link.links != blank %}
             <a class="nav__link" href="{{ link.url }}" data-mega-trigger aria-haspopup="true" aria-expanded="false">{{ link.title }}</a>
             <div class="nav__dropdown" aria-hidden="true">
@@ -80,6 +81,7 @@
           {% endif %}
         </div>
       {% endfor %}
+      </div>
     </nav>
   {% endcapture %}
 

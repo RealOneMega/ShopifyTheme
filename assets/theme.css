@@ -322,6 +322,12 @@ p {
   padding-bottom: 0.75rem;
 }
 
+.nav__list {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+}
+
 @media (min-width: 768px) {
   .nav {
     display: flex;
@@ -358,6 +364,7 @@ p {
   gap: 0.25rem;
   font-family: var(--font-heading);
   font-weight: 600;
+  font-size: 1.05rem;
   transition: color 0.2s ease, font-weight 0.2s ease;
 }
 
@@ -365,6 +372,15 @@ p {
 .nav__item:focus-within .nav__link {
   color: var(--color-accent);
   font-weight: 700;
+}
+
+.nav--center .nav__item {
+  padding-bottom: 1.1rem;
+}
+
+.nav--center .nav__item::after {
+  height: 3px;
+  bottom: 0;
 }
 
 .nav__dropdown {
