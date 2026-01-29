@@ -1,0 +1,39 @@
+<section class="section">
+  <div class="container">
+    <div class="product-grid">
+      {% for block in section.blocks %}
+        <article class="product-card" style="padding:1.5rem;background:{{ block.settings.background }};color:{{ block.settings.text_color }};">
+          <h3 class="heading">{{ block.settings.heading }}</h3>
+          <p>{{ block.settings.text }}</p>
+          {% if block.settings.link_label != blank %}
+            <a class="button button--tertiary" href="{{ block.settings.link_url }}">{{ block.settings.link_label }}</a>
+          {% endif %}
+        </article>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Announcement tiles",
+  "blocks": [
+    {
+      "type": "tile",
+      "name": "Tile",
+      "settings": [
+        {"type": "text", "id": "heading", "label": "Heading", "default": "Limited drop"},
+        {"type": "textarea", "id": "text", "label": "Text", "default": "Shop the seasonal release before it sells out."},
+        {"type": "color", "id": "background", "label": "Background", "default": "#f7f7f7"},
+        {"type": "color", "id": "text_color", "label": "Text color", "default": "#101010"},
+        {"type": "text", "id": "link_label", "label": "Link label"},
+        {"type": "url", "id": "link_url", "label": "Link"}
+      ]
+    }
+  ],
+  "max_blocks": 4,
+  "presets": [
+    {"name": "Announcement tiles", "category": "Text"}
+  ]
+}
+{% endschema %}
