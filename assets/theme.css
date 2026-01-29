@@ -356,13 +356,15 @@ p {
   display: inline-flex;
   align-items: center;
   gap: 0.25rem;
+  font-family: var(--font-heading);
+  font-weight: 600;
   transition: color 0.2s ease, font-weight 0.2s ease;
 }
 
 .nav__item:hover .nav__link,
 .nav__item:focus-within .nav__link {
   color: var(--color-accent);
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .nav__dropdown {

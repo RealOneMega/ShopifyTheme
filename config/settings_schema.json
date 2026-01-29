@@ -3,8 +3,8 @@
     "name": "Theme settings",
     "settings": [
       {"type": "image_picker", "id": "logo", "label": "Logo"},
-      {"type": "font_picker", "id": "font_body", "label": "Body font", "default": "helvetica_n4"},
-      {"type": "font_picker", "id": "font_heading", "label": "Heading font", "default": "helvetica_n7"},
+      {"type": "font_picker", "id": "font_body", "label": "Body font", "default": "archivo_n4"},
+      {"type": "font_picker", "id": "font_heading", "label": "Heading font", "default": "archivo_n6"},
       {"type": "range", "id": "font_scale", "label": "Font scale", "min": 0.9, "max": 1.2, "step": 0.1, "default": 1.0},
       {"type": "range", "id": "letter_spacing_heading", "label": "Heading letter spacing", "min": 0, "max": 0.2, "step": 0.1, "default": 0.0, "unit": "em"},
       {"type": "color", "id": "color_background", "label": "Background", "default": "#ffffff"},
