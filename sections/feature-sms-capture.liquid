@@ -1,0 +1,45 @@
+<section class="section feature feature--sms-capture" data-feature="sms-capture">
+  <div class="container">
+    <header class="section__header">
+      {% if section.settings.heading != blank %}
+        <h2 class="section__heading">{{ section.settings.heading }}</h2>
+      {% endif %}
+      {% if section.settings.description != blank %}
+        <p class="section__description">{{ section.settings.description }}</p>
+      {% endif %}
+    </header>
+    <div class="feature__body" data-feature-body>
+      {% if section.settings.body != blank %}
+        <div class="feature__richtext">{{ section.settings.body }}</div>
+      {% endif %}
+      <div class="feature__preview" data-feature-preview>
+        <form class="feature__form" data-feature-form>
+          <label class="feature__label">Phone</label>
+          <input class="feature__input" type="tel" placeholder="(555) 555-5555" required>
+          <button class="button" type="submit">Opt in</button>
+        </form>
+      </div>
+      {% if section.settings.button_label != blank %}
+        <a class="button" href="{{ section.settings.button_link | default: '#' }}" data-feature-action>
+          {{ section.settings.button_label }}
+        </a>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Feature: SMS capture",
+  "settings": [
+    {"type": "text", "id": "heading", "label": "Heading", "default": "SMS capture"},
+    {"type": "textarea", "id": "description", "label": "Description", "default": "Collect SMS opt-ins."},
+    {"type": "richtext", "id": "body", "label": "Body"},
+    {"type": "text", "id": "button_label", "label": "Button label"},
+    {"type": "url", "id": "button_link", "label": "Button link"}
+  ],
+  "presets": [
+    {"name": "Feature: SMS capture", "category": "Features"}
+  ]
+}
+{% endschema %}

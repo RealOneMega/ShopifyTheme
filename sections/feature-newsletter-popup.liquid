@@ -1,0 +1,47 @@
+<section class="section feature feature--newsletter-popup" data-feature="newsletter-popup">
+  <div class="container">
+    <header class="section__header">
+      {% if section.settings.heading != blank %}
+        <h2 class="section__heading">{{ section.settings.heading }}</h2>
+      {% endif %}
+      {% if section.settings.description != blank %}
+        <p class="section__description">{{ section.settings.description }}</p>
+      {% endif %}
+    </header>
+    <div class="feature__body" data-feature-body>
+      {% if section.settings.body != blank %}
+        <div class="feature__richtext">{{ section.settings.body }}</div>
+      {% endif %}
+      <div class="feature__preview" data-feature-preview>
+        <div class="feature__popup" data-newsletter-popup>
+          <p>Newsletter signup</p>
+          <form class="feature__form">
+            <input class="feature__input" type="email" placeholder="you@example.com">
+            <button class="button" type="submit">Subscribe</button>
+          </form>
+        </div>
+      </div>
+      {% if section.settings.button_label != blank %}
+        <a class="button" href="{{ section.settings.button_link | default: '#' }}" data-feature-action>
+          {{ section.settings.button_label }}
+        </a>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Feature: Newsletter popup",
+  "settings": [
+    {"type": "text", "id": "heading", "label": "Heading", "default": "Newsletter popup"},
+    {"type": "textarea", "id": "description", "label": "Description", "default": "Timed/exit-intent newsletter capture."},
+    {"type": "richtext", "id": "body", "label": "Body"},
+    {"type": "text", "id": "button_label", "label": "Button label"},
+    {"type": "url", "id": "button_link", "label": "Button link"}
+  ],
+  "presets": [
+    {"name": "Feature: Newsletter popup", "category": "Features"}
+  ]
+}
+{% endschema %}
