@@ -1,41 +1,47 @@
 <section class="section feature feature--logo-list" data-feature="logo-list">
   <div class="container">
+  {% if section.settings.heading != blank %}
     <header class="section__header">
-      {% if section.settings.heading != blank %}
-        <h2 class="section__heading">{{ section.settings.heading }}</h2>
-      {% endif %}
-      {% if section.settings.description != blank %}
-        <p class="section__description">{{ section.settings.description }}</p>
+      <h2 class="section__heading">{{ section.settings.heading }}</h2>
+      {% if section.settings.subheading != blank %}
+        <p class="section__description">{{ section.settings.subheading }}</p>
       {% endif %}
     </header>
-    <div class="feature__body" data-feature-body>
-      {% if section.settings.body != blank %}
-        <div class="feature__richtext">{{ section.settings.body }}</div>
-      {% endif %}
-      <div class="feature__preview" data-feature-preview>
-        <div class="feature__placeholder" data-feature-placeholder>Activate Logo list feature here.</div>
-      </div>
-      {% if section.settings.button_label != blank %}
-        <a class="button" href="{{ section.settings.button_link | default: '#' }}" data-feature-action>
-          {{ section.settings.button_label }}
+  {% endif %}
+    <div class="logo-list">
+      {% for block in section.blocks %}
+        <a class="logo-list__item" href="{{ block.settings.link | default: '#' }}">
+          {% if block.settings.logo != blank %}
+            <img src="{{ block.settings.logo | image_url: width: 200 }}" alt="{{ block.settings.logo.alt | escape }}">
+          {% else %}
+            <span>{{ block.settings.label }}</span>
+          {% endif %}
         </a>
-      {% endif %}
+      {% endfor %}
     </div>
   </div>
 </section>
 
 {% schema %}
 {
-  "name": "Feature: Logo list",
+  "name": "Logo list",
   "settings": [
     {"type": "text", "id": "heading", "label": "Heading", "default": "Logo list"},
-    {"type": "textarea", "id": "description", "label": "Description", "default": "Brand logo list section."},
-    {"type": "richtext", "id": "body", "label": "Body"},
-    {"type": "text", "id": "button_label", "label": "Button label"},
-    {"type": "url", "id": "button_link", "label": "Button link"}
+    {"type": "text", "id": "subheading", "label": "Subheading"}],
+  "blocks": [
+    {
+      "type": "logo",
+      "name": "Logo",
+      "settings": [
+        {"type": "image_picker", "id": "logo", "label": "Logo"},
+        {"type": "text", "id": "label", "label": "Label", "default": "Brand"},
+        {"type": "url", "id": "link", "label": "Link"}
+      ]
+    }
   ],
+  "max_blocks": 12,
   "presets": [
-    {"name": "Feature: Logo list", "category": "Features"}
+    {"name": "Logo list", "category": "Brand"}
   ]
 }
 {% endschema %}

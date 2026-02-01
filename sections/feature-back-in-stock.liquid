@@ -1,45 +1,31 @@
 <section class="section feature feature--back-in-stock" data-feature="back-in-stock">
   <div class="container">
+  {% if section.settings.heading != blank %}
     <header class="section__header">
-      {% if section.settings.heading != blank %}
-        <h2 class="section__heading">{{ section.settings.heading }}</h2>
-      {% endif %}
-      {% if section.settings.description != blank %}
-        <p class="section__description">{{ section.settings.description }}</p>
+      <h2 class="section__heading">{{ section.settings.heading }}</h2>
+      {% if section.settings.subheading != blank %}
+        <p class="section__description">{{ section.settings.subheading }}</p>
       {% endif %}
     </header>
-    <div class="feature__body" data-feature-body>
-      {% if section.settings.body != blank %}
-        <div class="feature__richtext">{{ section.settings.body }}</div>
-      {% endif %}
-      <div class="feature__preview" data-feature-preview>
-        <form class="feature__form" data-feature-form>
-          <label class="feature__label">Email</label>
-          <input class="feature__input" type="email" placeholder="you@example.com" required>
-          <button class="button" type="submit">Notify me</button>
-        </form>
-      </div>
-      {% if section.settings.button_label != blank %}
-        <a class="button" href="{{ section.settings.button_link | default: '#' }}" data-feature-action>
-          {{ section.settings.button_label }}
-        </a>
-      {% endif %}
-    </div>
+  {% endif %}
+    <form class="feature__form" data-feature-form>
+      <label class="label">Email</label>
+      <input class="input" type="email" placeholder="Email" required>
+      <button class="button" type="submit">{{ section.settings.button_label }}</button>
+    </form>
   </div>
 </section>
 
 {% schema %}
 {
-  "name": "Feature: Back-in-stock alerts",
+  "name": "Back-in-stock alerts",
   "settings": [
     {"type": "text", "id": "heading", "label": "Heading", "default": "Back-in-stock alerts"},
-    {"type": "textarea", "id": "description", "label": "Description", "default": "Collect emails for out-of-stock items."},
-    {"type": "richtext", "id": "body", "label": "Body"},
-    {"type": "text", "id": "button_label", "label": "Button label"},
-    {"type": "url", "id": "button_link", "label": "Button link"}
+    {"type": "text", "id": "subheading", "label": "Subheading"},
+    {"type": "text", "id": "button_label", "label": "Button label", "default": "Notify me"}
   ],
   "presets": [
-    {"name": "Feature: Back-in-stock alerts", "category": "Features"}
+    {"name": "Back-in-stock alerts", "category": "Marketing"}
   ]
 }
 {% endschema %}

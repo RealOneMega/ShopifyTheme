@@ -1,44 +1,28 @@
-<section class="section feature feature--promo-bar" data-feature="promo-bar">
+<section class="promo-bar feature feature--promo-bar" data-feature="promo-bar" data-promo-item>
   <div class="container">
-    <header class="section__header">
-      {% if section.settings.heading != blank %}
-        <h2 class="section__heading">{{ section.settings.heading }}</h2>
-      {% endif %}
-      {% if section.settings.description != blank %}
-        <p class="section__description">{{ section.settings.description }}</p>
-      {% endif %}
-    </header>
-    <div class="feature__body" data-feature-body>
-      {% if section.settings.body != blank %}
-        <div class="feature__richtext">{{ section.settings.body }}</div>
-      {% endif %}
-      <div class="feature__preview" data-feature-preview>
-        <div class="feature__promo" data-promo-bar>
-          <span>Promotion message</span>
-          <button class="button" type="button" aria-label="Dismiss">×</button>
-        </div>
-      </div>
+    <div class="promo-bar__content">
+      <span>{{ section.settings.message }}</span>
       {% if section.settings.button_label != blank %}
-        <a class="button" href="{{ section.settings.button_link | default: '#' }}" data-feature-action>
-          {{ section.settings.button_label }}
-        </a>
+        <a class="button" href="{{ section.settings.button_link | default: '#' }}">{{ section.settings.button_label }}</a>
       {% endif %}
     </div>
+    {% if section.settings.dismissible %}
+      <button class="button" type="button" data-promo-dismiss="promo-{{ section.id }}" aria-label="Dismiss">×</button>
+    {% endif %}
   </div>
 </section>
 
 {% schema %}
 {
-  "name": "Feature: Promo bar",
+  "name": "Promo bar",
   "settings": [
-    {"type": "text", "id": "heading", "label": "Heading", "default": "Promo bar"},
-    {"type": "textarea", "id": "description", "label": "Description", "default": "Sticky or rotating promo messages."},
-    {"type": "richtext", "id": "body", "label": "Body"},
+    {"type": "text", "id": "message", "label": "Message", "default": "Free shipping on orders over $100."},
     {"type": "text", "id": "button_label", "label": "Button label"},
-    {"type": "url", "id": "button_link", "label": "Button link"}
+    {"type": "url", "id": "button_link", "label": "Button link"},
+    {"type": "checkbox", "id": "dismissible", "label": "Dismissible", "default": true}
   ],
   "presets": [
-    {"name": "Feature: Promo bar", "category": "Features"}
+    {"name": "Promo bar", "category": "Marketing"}
   ]
 }
 {% endschema %}

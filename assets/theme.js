@@ -357,6 +357,93 @@ const Theme = (() => {
     });
   };
 
+  const initCountdown = () => {
+    document.querySelectorAll('[data-countdown]').forEach((countdown) => {
+      const target = countdown.dataset.countdownTarget;
+      const timer = countdown.querySelector('[data-countdown-timer]');
+      if (!target || !timer) return;
+      const targetDate = new Date(target);
+      const update = () => {
+        const now = new Date();
+        const diff = Math.max(0, targetDate - now);
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+        const minutes = Math.floor((diff / (1000 * 60)) % 60);
+        const seconds = Math.floor((diff / 1000) % 60);
+        timer.textContent = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+      };
+      update();
+      setInterval(update, 1000);
+    });
+  };
+
+  const initBeforeAfter = () => {
+    document.querySelectorAll('[data-before-after]').forEach((wrapper) => {
+      const range = wrapper.querySelector('[data-before-after-range]');
+      const images = wrapper.querySelector('[data-before-after-images]');
+      const after = wrapper.querySelector('.before-after__after');
+      if (!range || !images || !after) return;
+      images.style.position = 'relative';
+      after.style.position = 'absolute';
+      after.style.left = '0';
+      after.style.top = '0';
+      after.style.height = '100%';
+      after.style.objectFit = 'cover';
+      const update = () => {
+        const value = range.value;
+        after.style.width = `${value}%`;
+      };
+      range.addEventListener('input', update);
+      update();
+    });
+  };
+
+  const initShippingEstimator = () => {
+    document.querySelectorAll('[data-shipping-estimator]').forEach((form) => {
+      const results = form.querySelector('[data-shipping-results]');
+      if (!results) return;
+      form.addEventListener('submit', (event) => {
+        event.preventDefault();
+        const data = new FormData(form);
+        const zip = data.get('zip');
+        const country = data.get('country');
+        results.textContent = 'Loading...';
+        fetch(`/cart/shipping_rates.json?shipping_address%5Bzip%5D=${encodeURIComponent(zip)}&shipping_address%5Bcountry%5D=${encodeURIComponent(country)}`)
+          .then((response) => response.json())
+          .then((json) => {
+            if (!json.shipping_rates || !json.shipping_rates.length) {
+              results.textContent = 'No rates available.';
+              return;
+            }
+            results.innerHTML = `<ul>${json.shipping_rates.map((rate) => `<li>${rate.name}: ${rate.price}</li>`).join('')}</ul>`;
+          })
+          .catch(() => {
+            results.textContent = 'Unable to fetch rates.';
+          });
+      });
+    });
+  };
+
+  const initRecentlyViewedSection = () => {
+    const container = document.querySelector('[data-recently-viewed-items]');
+    if (!container) return;
+    const handles = JSON.parse(localStorage.getItem('recently-viewed') || '[]');
+    if (!handles.length) {
+      container.innerHTML = '<p>No recently viewed products yet.</p>';
+      return;
+    }
+    container.innerHTML = `<ul class="stack">${handles.map((handle) => `<li><a href="/products/${handle}">${handle.replace(/-/g, ' ')}</a></li>`).join('')}</ul>`;
+  };
+
+  const initCopyButtons = () => {
+    document.querySelectorAll('[data-copy-button]').forEach((button) => {
+      const text = button.dataset.copyText || '';
+      button.addEventListener('click', () => {
+        navigator.clipboard?.writeText(text);
+      });
+    });
+  };
+
   const init = () => {
     initDrawers();
     initMegaMenu();
@@ -369,6 +456,11 @@ const Theme = (() => {
     initRecentlyViewed();
     initTabs();
     initAnimatedHeadlines();
+    initCountdown();
+    initBeforeAfter();
+    initShippingEstimator();
+    initRecentlyViewedSection();
+    initCopyButtons();
   };
 
   return { init };

@@ -1,41 +1,29 @@
 <section class="section feature feature--rich-text" data-feature="rich-text">
   <div class="container">
+  {% if section.settings.heading != blank %}
     <header class="section__header">
-      {% if section.settings.heading != blank %}
-        <h2 class="section__heading">{{ section.settings.heading }}</h2>
-      {% endif %}
-      {% if section.settings.description != blank %}
-        <p class="section__description">{{ section.settings.description }}</p>
+      <h2 class="section__heading">{{ section.settings.heading }}</h2>
+      {% if section.settings.subheading != blank %}
+        <p class="section__description">{{ section.settings.subheading }}</p>
       {% endif %}
     </header>
-    <div class="feature__body" data-feature-body>
-      {% if section.settings.body != blank %}
-        <div class="feature__richtext">{{ section.settings.body }}</div>
-      {% endif %}
-      <div class="feature__preview" data-feature-preview>
-        <div class="feature__placeholder" data-feature-placeholder>Activate Rich text feature here.</div>
-      </div>
-      {% if section.settings.button_label != blank %}
-        <a class="button" href="{{ section.settings.button_link | default: '#' }}" data-feature-action>
-          {{ section.settings.button_label }}
-        </a>
-      {% endif %}
-    </div>
+  {% endif %}
+    {% if section.settings.body != blank %}
+      <div class="rte">{{ section.settings.body }}</div>
+    {% endif %}
   </div>
 </section>
 
 {% schema %}
 {
-  "name": "Feature: Rich text",
+  "name": "Rich text",
   "settings": [
     {"type": "text", "id": "heading", "label": "Heading", "default": "Rich text"},
-    {"type": "textarea", "id": "description", "label": "Description", "default": "Text-only content blocks."},
-    {"type": "richtext", "id": "body", "label": "Body"},
-    {"type": "text", "id": "button_label", "label": "Button label"},
-    {"type": "url", "id": "button_link", "label": "Button link"}
+    {"type": "text", "id": "subheading", "label": "Subheading"},
+    {"type": "richtext", "id": "body", "label": "Body", "default": "<p>Add your content here.</p>"}
   ],
   "presets": [
-    {"name": "Feature: Rich text", "category": "Features"}
+    {"name": "Rich text", "category": "Text"}
   ]
 }
 {% endschema %}

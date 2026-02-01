@@ -1,27 +1,40 @@
 <section class="section feature feature--sticky-atc-mobile" data-feature="sticky-atc-mobile">
   <div class="container">
+  {% if section.settings.heading != blank %}
     <header class="section__header">
-      {% if section.settings.heading != blank %}
-        <h2 class="section__heading">{{ section.settings.heading }}</h2>
-      {% endif %}
-      {% if section.settings.description != blank %}
-        <p class="section__description">{{ section.settings.description }}</p>
+      <h2 class="section__heading">{{ section.settings.heading }}</h2>
+      {% if section.settings.subheading != blank %}
+        <p class="section__description">{{ section.settings.subheading }}</p>
       {% endif %}
     </header>
-    <div class="feature__body" data-feature-body>
-      {% if section.settings.body != blank %}
-        <div class="feature__richtext">{{ section.settings.body }}</div>
-      {% endif %}
-      <div class="feature__preview" data-feature-preview>
-        <div class="feature__bar" data-sticky-atc>
-          <span class="feature__label">Sample product</span>
-          <button class="button" type="button">Add to cart</button>
-        </div>
-      </div>
-      {% if section.settings.button_label != blank %}
-        <a class="button" href="{{ section.settings.button_link | default: '#' }}" data-feature-action>
-          {{ section.settings.button_label }}
-        </a>
+  {% endif %}
+    <div class="feature__product">
+      {% assign featured_product = section.settings.product %}
+      {% if featured_product != blank %}
+        {% form 'product', featured_product %}
+          <div class="product-card">
+            <h3 class="product-card__title">{{ featured_product.title }}</h3>
+            {% if featured_product.featured_image != blank %}
+              <img src="{{ featured_product.featured_image | image_url: width: 480 }}" alt="{{ featured_product.featured_image.alt | escape }}">
+            {% endif %}
+            <p class="price">{{ featured_product.price | money }}</p>
+            {% if featured_product.has_only_default_variant == false %}
+              <label class="label">Variant</label>
+              <select name="id" class="select">
+                {% for variant in featured_product.variants %}
+                  <option value="{{ variant.id }}">{{ variant.title }}</option>
+                {% endfor %}
+              </select>
+            {% else %}
+              <input type="hidden" name="id" value="{{ featured_product.selected_or_first_available_variant.id }}">
+            {% endif %}
+            <label class="label">Quantity</label>
+            <input class="input" type="number" name="quantity" value="1" min="1">
+            <button class="button" type="submit">{{ section.settings.button_label }}</button>
+          </div>
+        {% endform %}
+      {% else %}
+        <p>Select a product to enable this feature.</p>
       {% endif %}
     </div>
   </div>
@@ -29,16 +42,15 @@
 
 {% schema %}
 {
-  "name": "Feature: Mobile sticky ATC",
+  "name": "Mobile sticky ATC",
   "settings": [
     {"type": "text", "id": "heading", "label": "Heading", "default": "Mobile sticky ATC"},
-    {"type": "textarea", "id": "description", "label": "Description", "default": "Persistent ATC on mobile view."},
-    {"type": "richtext", "id": "body", "label": "Body"},
-    {"type": "text", "id": "button_label", "label": "Button label"},
-    {"type": "url", "id": "button_link", "label": "Button link"}
+    {"type": "text", "id": "subheading", "label": "Subheading"},
+    {"type": "product", "id": "product", "label": "Product"},
+    {"type": "text", "id": "button_label", "label": "Button label", "default": "Add to cart"}
   ],
   "presets": [
-    {"name": "Feature: Mobile sticky ATC", "category": "Features"}
+    {"name": "Mobile sticky ATC", "category": "Features"}
   ]
 }
 {% endschema %}

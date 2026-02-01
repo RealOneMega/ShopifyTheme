@@ -1,24 +1,21 @@
 <section class="section feature feature--hotspots" data-feature="hotspots">
   <div class="container">
+  {% if section.settings.heading != blank %}
     <header class="section__header">
-      {% if section.settings.heading != blank %}
-        <h2 class="section__heading">{{ section.settings.heading }}</h2>
-      {% endif %}
-      {% if section.settings.description != blank %}
-        <p class="section__description">{{ section.settings.description }}</p>
+      <h2 class="section__heading">{{ section.settings.heading }}</h2>
+      {% if section.settings.subheading != blank %}
+        <p class="section__description">{{ section.settings.subheading }}</p>
       {% endif %}
     </header>
-    <div class="feature__body" data-feature-body>
-      {% if section.settings.body != blank %}
-        <div class="feature__richtext">{{ section.settings.body }}</div>
-      {% endif %}
-      <div class="feature__preview" data-feature-preview>
-        <div class="feature__placeholder" data-feature-placeholder>Activate Shoppable hotspots feature here.</div>
-      </div>
-      {% if section.settings.button_label != blank %}
-        <a class="button" href="{{ section.settings.button_link | default: '#' }}" data-feature-action>
-          {{ section.settings.button_label }}
-        </a>
+  {% endif %}
+    <div class="hotspots">
+      {% if section.settings.image != blank %}
+        <div class="hotspots__image" style="position: relative;">
+          <img src="{{ section.settings.image | image_url: width: 1000 }}" alt="{{ section.settings.image.alt | escape }}">
+          {% for block in section.blocks %}
+            <a class="hotspot" href="{{ block.settings.link | default: '#' }}" style="position:absolute; top: {{ block.settings.top }}%; left: {{ block.settings.left }}%;">{{ block.settings.label }}</a>
+          {% endfor %}
+        </div>
       {% endif %}
     </div>
   </div>
@@ -26,16 +23,26 @@
 
 {% schema %}
 {
-  "name": "Feature: Shoppable hotspots",
+  "name": "Shoppable hotspots",
   "settings": [
     {"type": "text", "id": "heading", "label": "Heading", "default": "Shoppable hotspots"},
-    {"type": "textarea", "id": "description", "label": "Description", "default": "Clickable product hotspots on images."},
-    {"type": "richtext", "id": "body", "label": "Body"},
-    {"type": "text", "id": "button_label", "label": "Button label"},
-    {"type": "url", "id": "button_link", "label": "Button link"}
+    {"type": "text", "id": "subheading", "label": "Subheading"},
+    {"type": "image_picker", "id": "image", "label": "Image"}
+  ],
+  "blocks": [
+    {
+      "type": "hotspot",
+      "name": "Hotspot",
+      "settings": [
+        {"type": "text", "id": "label", "label": "Label", "default": "+"},
+        {"type": "range", "id": "top", "label": "Top (%)", "min": 0, "max": 100, "step": 1, "default": 50},
+        {"type": "range", "id": "left", "label": "Left (%)", "min": 0, "max": 100, "step": 1, "default": 50},
+        {"type": "url", "id": "link", "label": "Link"}
+      ]
+    }
   ],
   "presets": [
-    {"name": "Feature: Shoppable hotspots", "category": "Features"}
+    {"name": "Shoppable hotspots", "category": "Image"}
   ]
 }
 {% endschema %}

@@ -1,44 +1,28 @@
 <section class="section feature feature--free-shipping-bar" data-feature="free-shipping-bar">
   <div class="container">
-    <header class="section__header">
-      {% if section.settings.heading != blank %}
-        <h2 class="section__heading">{{ section.settings.heading }}</h2>
-      {% endif %}
-      {% if section.settings.description != blank %}
-        <p class="section__description">{{ section.settings.description }}</p>
-      {% endif %}
-    </header>
-    <div class="feature__body" data-feature-body>
-      {% if section.settings.body != blank %}
-        <div class="feature__richtext">{{ section.settings.body }}</div>
-      {% endif %}
-      <div class="feature__preview" data-feature-preview>
-        <div class="feature__progress" data-free-shipping-bar>
-          <span>$20 away from free shipping</span>
-          <div class="feature__progress-track"><div class="feature__progress-fill" style="width:40%;"></div></div>
-        </div>
+    {% assign goal = section.settings.goal | times: 100 %}
+    {% assign current = cart.total_price %}
+    {% assign percent = current | times: 100 | divided_by: goal %}
+    {% if percent > 100 %}{% assign percent = 100 %}{% endif %}
+    <div class="shipping-bar">
+      <p>{{ section.settings.message }}</p>
+      <div class="shipping-bar__track">
+        <div class="shipping-bar__fill" style="width: {{ percent }}%;"></div>
       </div>
-      {% if section.settings.button_label != blank %}
-        <a class="button" href="{{ section.settings.button_link | default: '#' }}" data-feature-action>
-          {{ section.settings.button_label }}
-        </a>
-      {% endif %}
+      <p>{{ goal | minus: current | money }} away from free shipping.</p>
     </div>
   </div>
 </section>
 
 {% schema %}
 {
-  "name": "Feature: Free shipping bar",
+  "name": "Free shipping bar",
   "settings": [
-    {"type": "text", "id": "heading", "label": "Heading", "default": "Free shipping bar"},
-    {"type": "textarea", "id": "description", "label": "Description", "default": "Progress bar to free shipping."},
-    {"type": "richtext", "id": "body", "label": "Body"},
-    {"type": "text", "id": "button_label", "label": "Button label"},
-    {"type": "url", "id": "button_link", "label": "Button link"}
+    {"type": "number", "id": "goal", "label": "Free shipping goal", "default": 100},
+    {"type": "text", "id": "message", "label": "Message", "default": "Free shipping progress"}
   ],
   "presets": [
-    {"name": "Feature: Free shipping bar", "category": "Features"}
+    {"name": "Free shipping bar", "category": "Marketing"}
   ]
 }
 {% endschema %}

@@ -1,47 +1,26 @@
-<section class="section feature feature--newsletter-popup" data-feature="newsletter-popup">
-  <div class="container">
-    <header class="section__header">
-      {% if section.settings.heading != blank %}
-        <h2 class="section__heading">{{ section.settings.heading }}</h2>
-      {% endif %}
-      {% if section.settings.description != blank %}
-        <p class="section__description">{{ section.settings.description }}</p>
-      {% endif %}
-    </header>
-    <div class="feature__body" data-feature-body>
-      {% if section.settings.body != blank %}
-        <div class="feature__richtext">{{ section.settings.body }}</div>
-      {% endif %}
-      <div class="feature__preview" data-feature-preview>
-        <div class="feature__popup" data-newsletter-popup>
-          <p>Newsletter signup</p>
-          <form class="feature__form">
-            <input class="feature__input" type="email" placeholder="you@example.com">
-            <button class="button" type="submit">Subscribe</button>
-          </form>
-        </div>
-      </div>
-      {% if section.settings.button_label != blank %}
-        <a class="button" href="{{ section.settings.button_link | default: '#' }}" data-feature-action>
-          {{ section.settings.button_label }}
-        </a>
-      {% endif %}
-    </div>
+<section class="popup feature feature--newsletter-popup" data-feature="newsletter-popup" data-popup='{"id":"newsletter-newsletter-popup-{{ section.id }}","trigger":"delay","delay":{{ section.settings.delay }} }'>
+  <div class="popup__content">
+    <button class="popup__close" type="button" data-popup-close aria-label="Close">×</button>
+    <h2>{{ section.settings.heading }}</h2>
+    <p>{{ section.settings.text }}</p>
+    <form class="newsletter">
+      <input class="input" type="email" placeholder="you@example.com" required>
+      <button class="button" type="submit">{{ section.settings.button_label }}</button>
+    </form>
   </div>
 </section>
 
 {% schema %}
 {
-  "name": "Feature: Newsletter popup",
+  "name": "Newsletter popup",
   "settings": [
-    {"type": "text", "id": "heading", "label": "Heading", "default": "Newsletter popup"},
-    {"type": "textarea", "id": "description", "label": "Description", "default": "Timed/exit-intent newsletter capture."},
-    {"type": "richtext", "id": "body", "label": "Body"},
-    {"type": "text", "id": "button_label", "label": "Button label"},
-    {"type": "url", "id": "button_link", "label": "Button link"}
+    {"type": "text", "id": "heading", "label": "Heading", "default": "Join our list"},
+    {"type": "textarea", "id": "text", "label": "Text", "default": "Get updates and offers."},
+    {"type": "text", "id": "button_label", "label": "Button label", "default": "Subscribe"},
+    {"type": "range", "id": "delay", "label": "Delay (seconds)", "min": 1, "max": 30, "step": 1, "default": 5}
   ],
   "presets": [
-    {"name": "Feature: Newsletter popup", "category": "Features"}
+    {"name": "Newsletter popup", "category": "Marketing"}
   ]
 }
 {% endschema %}

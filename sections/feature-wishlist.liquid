@@ -1,41 +1,45 @@
 <section class="section feature feature--wishlist" data-feature="wishlist">
   <div class="container">
+  {% if section.settings.heading != blank %}
     <header class="section__header">
-      {% if section.settings.heading != blank %}
-        <h2 class="section__heading">{{ section.settings.heading }}</h2>
-      {% endif %}
-      {% if section.settings.description != blank %}
-        <p class="section__description">{{ section.settings.description }}</p>
+      <h2 class="section__heading">{{ section.settings.heading }}</h2>
+      {% if section.settings.subheading != blank %}
+        <p class="section__description">{{ section.settings.subheading }}</p>
       {% endif %}
     </header>
-    <div class="feature__body" data-feature-body>
-      {% if section.settings.body != blank %}
-        <div class="feature__richtext">{{ section.settings.body }}</div>
-      {% endif %}
-      <div class="feature__preview" data-feature-preview>
-        <div class="feature__placeholder" data-feature-placeholder>Activate Wishlist feature here.</div>
-      </div>
-      {% if section.settings.button_label != blank %}
-        <a class="button" href="{{ section.settings.button_link | default: '#' }}" data-feature-action>
-          {{ section.settings.button_label }}
-        </a>
-      {% endif %}
+  {% endif %}
+    <div class="wishlist-grid">
+      {% for block in section.blocks %}
+        {% assign product = block.settings.product %}
+        {% if product != blank %}
+          <div class="product-card">
+            <h3>{{ product.title }}</h3>
+            <button class="button" type="button" data-wishlist-toggle="{{ product.handle }}">Save</button>
+          </div>
+        {% endif %}
+      {% endfor %}
     </div>
+    <div data-wishlist-items></div>
   </div>
 </section>
 
 {% schema %}
 {
-  "name": "Feature: Wishlist",
+  "name": "Wishlist",
   "settings": [
     {"type": "text", "id": "heading", "label": "Heading", "default": "Wishlist"},
-    {"type": "textarea", "id": "description", "label": "Description", "default": "Wishlist UI and storage hooks."},
-    {"type": "richtext", "id": "body", "label": "Body"},
-    {"type": "text", "id": "button_label", "label": "Button label"},
-    {"type": "url", "id": "button_link", "label": "Button link"}
+    {"type": "text", "id": "subheading", "label": "Subheading"}],
+  "blocks": [
+    {
+      "type": "product",
+      "name": "Product",
+      "settings": [
+        {"type": "product", "id": "product", "label": "Product"}
+      ]
+    }
   ],
   "presets": [
-    {"name": "Feature: Wishlist", "category": "Features"}
+    {"name": "Wishlist", "category": "Product"}
   ]
 }
 {% endschema %}

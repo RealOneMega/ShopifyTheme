@@ -1,47 +1,25 @@
-<section class="section feature feature--breadcrumb" data-feature="breadcrumb">
-  <div class="container">
-    <header class="section__header">
-      {% if section.settings.heading != blank %}
-        <h2 class="section__heading">{{ section.settings.heading }}</h2>
-      {% endif %}
-      {% if section.settings.description != blank %}
-        <p class="section__description">{{ section.settings.description }}</p>
-      {% endif %}
-    </header>
-    <div class="feature__body" data-feature-body>
-      {% if section.settings.body != blank %}
-        <div class="feature__richtext">{{ section.settings.body }}</div>
-      {% endif %}
-      <div class="feature__preview" data-feature-preview>
-        <nav class="breadcrumb" aria-label="Breadcrumb">
-          <ol class="breadcrumb__list">
-            <li class="breadcrumb__item"><a href="/">Home</a></li>
-            <li class="breadcrumb__item"><a href="#">Category</a></li>
-            <li class="breadcrumb__item" aria-current="page">Current</li>
-          </ol>
-        </nav>
-      </div>
-      {% if section.settings.button_label != blank %}
-        <a class="button" href="{{ section.settings.button_link | default: '#' }}" data-feature-action>
-          {{ section.settings.button_label }}
-        </a>
-      {% endif %}
-    </div>
-  </div>
-</section>
+<nav class="breadcrumb feature feature--breadcrumb" aria-label="Breadcrumb" data-feature="breadcrumb">
+  <ol class="breadcrumb__list">
+    <li class="breadcrumb__item"><a href="{{ routes.root_url }}">Home</a></li>
+    {% if collection != blank %}
+      <li class="breadcrumb__item"><a href="{{ collection.url }}">{{ collection.title }}</a></li>
+    {% endif %}
+    {% if product != blank %}
+      <li class="breadcrumb__item" aria-current="page">{{ product.title }}</li>
+    {% elsif page != blank %}
+      <li class="breadcrumb__item" aria-current="page">{{ page.title }}</li>
+    {% elsif article != blank %}
+      <li class="breadcrumb__item" aria-current="page">{{ article.title }}</li>
+    {% endif %}
+  </ol>
+</nav>
 
 {% schema %}
 {
-  "name": "Feature: Breadcrumbs",
-  "settings": [
-    {"type": "text", "id": "heading", "label": "Heading", "default": "Breadcrumbs"},
-    {"type": "textarea", "id": "description", "label": "Description", "default": "SEO-friendly breadcrumb navigation."},
-    {"type": "richtext", "id": "body", "label": "Body"},
-    {"type": "text", "id": "button_label", "label": "Button label"},
-    {"type": "url", "id": "button_link", "label": "Button link"}
-  ],
+  "name": "Breadcrumbs",
+  "settings": [],
   "presets": [
-    {"name": "Feature: Breadcrumbs", "category": "Features"}
+    {"name": "Breadcrumbs", "category": "Navigation"}
   ]
 }
 {% endschema %}
