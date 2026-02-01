@@ -1,4 +1,5 @@
-<section class="header {% if section.settings.sticky %}header--sticky{% endif %}">
+<section class="header {% if section.settings.sticky %}header--sticky{% endif %} section--background" style="{% render 'section-background-style', section: section %}">
+  {% render 'section-background-media', section: section %}
   {% if section.settings.show_utility_row %}
     {% assign utility_alignment = section.settings.utility_alignment | default: 'center' %}
     <div class="header__utility">
@@ -237,8 +238,14 @@
       "label": "Layout",
       "default": "logo_left",
       "options": [
-        {"value": "logo_left", "label": "Logo left"},
-        {"value": "logo_center", "label": "Logo center"}
+        {
+          "value": "logo_left",
+          "label": "Logo left"
+        },
+        {
+          "value": "logo_center",
+          "label": "Logo center"
+        }
       ]
     },
     {
@@ -247,8 +254,14 @@
       "label": "Menu position (logo left)",
       "default": "center",
       "options": [
-        {"value": "center", "label": "Center"},
-        {"value": "right", "label": "Right"}
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
       ]
     },
     {
@@ -289,9 +302,18 @@
       "label": "Utility menu alignment",
       "default": "center",
       "options": [
-        {"value": "left", "label": "Left"},
-        {"value": "center", "label": "Center"},
-        {"value": "right", "label": "Right (next to selector)"}
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right (next to selector)"
+        }
       ]
     },
     {
@@ -299,6 +321,119 @@
       "id": "show_localization",
       "label": "Show country selector",
       "default": true
+    },
+    {
+      "type": "header",
+      "content": "Background"
+    },
+    {
+      "type": "select",
+      "id": "background_type",
+      "label": "Background type",
+      "default": "none",
+      "options": [
+        {
+          "value": "none",
+          "label": "None"
+        },
+        {
+          "value": "color",
+          "label": "Solid color"
+        },
+        {
+          "value": "gradient",
+          "label": "Gradient"
+        },
+        {
+          "value": "image",
+          "label": "Image"
+        },
+        {
+          "value": "video",
+          "label": "Video"
+        }
+      ]
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color_background",
+      "id": "background_gradient",
+      "label": "Background gradient"
+    },
+    {
+      "type": "image_picker",
+      "id": "background_image",
+      "label": "Background image"
+    },
+    {
+      "type": "video",
+      "id": "background_video",
+      "label": "Background video"
+    },
+    {
+      "type": "range",
+      "id": "background_position_x",
+      "label": "Background position horizontal",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "background_position_y",
+      "label": "Background position vertical",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "default": 50
+    },
+    {
+      "type": "select",
+      "id": "background_size",
+      "label": "Background size",
+      "default": "cover",
+      "options": [
+        {
+          "value": "cover",
+          "label": "Cover"
+        },
+        {
+          "value": "contain",
+          "label": "Contain"
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "background_repeat",
+      "label": "Background repeat",
+      "default": "no-repeat",
+      "options": [
+        {
+          "value": "no-repeat",
+          "label": "No repeat"
+        },
+        {
+          "value": "repeat",
+          "label": "Repeat"
+        },
+        {
+          "value": "repeat-x",
+          "label": "Repeat horizontally"
+        },
+        {
+          "value": "repeat-y",
+          "label": "Repeat vertically"
+        }
+      ]
     }
   ],
   "blocks": [
