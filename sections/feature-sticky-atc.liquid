@@ -1,0 +1,44 @@
+<section class="section feature feature--sticky-atc" data-feature="sticky-atc">
+  <div class="container">
+    <header class="section__header">
+      {% if section.settings.heading != blank %}
+        <h2 class="section__heading">{{ section.settings.heading }}</h2>
+      {% endif %}
+      {% if section.settings.description != blank %}
+        <p class="section__description">{{ section.settings.description }}</p>
+      {% endif %}
+    </header>
+    <div class="feature__body" data-feature-body>
+      {% if section.settings.body != blank %}
+        <div class="feature__richtext">{{ section.settings.body }}</div>
+      {% endif %}
+      <div class="feature__preview" data-feature-preview>
+        <div class="feature__bar" data-sticky-atc>
+          <span class="feature__label">Sample product</span>
+          <button class="button" type="button">Add to cart</button>
+        </div>
+      </div>
+      {% if section.settings.button_label != blank %}
+        <a class="button" href="{{ section.settings.button_link | default: '#' }}" data-feature-action>
+          {{ section.settings.button_label }}
+        </a>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Feature: Sticky add to cart",
+  "settings": [
+    {"type": "text", "id": "heading", "label": "Heading", "default": "Sticky add to cart"},
+    {"type": "textarea", "id": "description", "label": "Description", "default": "Enable a sticky add-to-cart bar on product pages."},
+    {"type": "richtext", "id": "body", "label": "Body"},
+    {"type": "text", "id": "button_label", "label": "Button label"},
+    {"type": "url", "id": "button_link", "label": "Button link"}
+  ],
+  "presets": [
+    {"name": "Feature: Sticky add to cart", "category": "Features"}
+  ]
+}
+{% endschema %}
