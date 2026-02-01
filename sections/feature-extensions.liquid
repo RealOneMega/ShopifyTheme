@@ -1,0 +1,401 @@
+<section class="section">
+  <div class="container">
+    {% for block in section.blocks %}
+      {% case block.settings.feature_type %}
+        {% when 'sticky_atc' %}
+          <div data-sticky-atc class="product-card" style="padding:1.5rem;">
+            <strong>Sticky add to cart</strong>
+            <p>Enable a sticky add-to-cart bar on product pages.</p>
+          </div>
+        {% when 'buy_now' %}
+          <div data-buy-now class="product-card" style="padding:1.5rem;">
+            <strong>Buy now toggle</strong>
+            <p>Show accelerated checkout button on product pages.</p>
+          </div>
+        {% when 'back_in_stock' %}
+          <div data-back-in-stock class="product-card" style="padding:1.5rem;">
+            <strong>Back-in-stock alerts</strong>
+            <p>Collect emails for out-of-stock items.</p>
+          </div>
+        {% when 'size_chart' %}
+          <div data-size-chart class="product-card" style="padding:1.5rem;">
+            <strong>Size chart modal</strong>
+            <p>Provide size guidance per product.</p>
+          </div>
+        {% when 'shipping_returns_modal' %}
+          <div data-shipping-returns class="product-card" style="padding:1.5rem;">
+            <strong>Shipping & returns modal</strong>
+            <p>Show policies in a modal drawer.</p>
+          </div>
+        {% when 'trust_badges' %}
+          <div data-trust-badges class="product-card" style="padding:1.5rem;">
+            <strong>Trust badges row</strong>
+            <p>Show secure checkout, guarantees, and support badges.</p>
+          </div>
+        {% when 'quantity_breaks' %}
+          <div data-quantity-breaks class="product-card" style="padding:1.5rem;">
+            <strong>Quantity breaks</strong>
+            <p>Display tiered pricing per quantity.</p>
+          </div>
+        {% when 'upsell_cart' %}
+          <div data-cart-upsell class="product-card" style="padding:1.5rem;">
+            <strong>Cart upsell</strong>
+            <p>Recommend complementary products in cart.</p>
+          </div>
+        {% when 'recently_viewed' %}
+          <div data-recently-viewed class="product-card" style="padding:1.5rem;">
+            <strong>Recently viewed</strong>
+            <p>Surface products visitors recently viewed.</p>
+          </div>
+        {% when 'social_proof' %}
+          <div data-social-proof class="product-card" style="padding:1.5rem;">
+            <strong>Social proof</strong>
+            <p>Show live sales or review highlights.</p>
+          </div>
+        {% when 'zoom' %}
+          <div data-zoom class="product-card" style="padding:1.5rem;">
+            <strong>Image zoom</strong>
+            <p>Enable hover/pinch zoom on product images.</p>
+          </div>
+        {% when 'variant_images' %}
+          <div data-variant-images class="product-card" style="padding:1.5rem;">
+            <strong>Variant image switching</strong>
+            <p>Swap media when variants change.</p>
+          </div>
+        {% when 'compare' %}
+          <div data-compare class="product-card" style="padding:1.5rem;">
+            <strong>Compare products</strong>
+            <p>Allow customers to compare products.</p>
+          </div>
+        {% when 'quick_view' %}
+          <div data-quick-view class="product-card" style="padding:1.5rem;">
+            <strong>Quick view modal</strong>
+            <p>Preview products without leaving collection.</p>
+          </div>
+        {% when 'quick_add' %}
+          <div data-quick-add class="product-card" style="padding:1.5rem;">
+            <strong>Quick add</strong>
+            <p>Add products to cart from list pages.</p>
+          </div>
+        {% when 'collection_banner' %}
+          <div data-collection-banner class="product-card" style="padding:1.5rem;">
+            <strong>Collection banner</strong>
+            <p>Hero banner for collection pages.</p>
+          </div>
+        {% when 'collection_filters' %}
+          <div data-collection-filters class="product-card" style="padding:1.5rem;">
+            <strong>Advanced filters</strong>
+            <p>Facet filters and sort controls.</p>
+          </div>
+        {% when 'search_enhanced' %}
+          <div data-search-enhanced class="product-card" style="padding:1.5rem;">
+            <strong>Enhanced search</strong>
+            <p>Live search with result categories.</p>
+          </div>
+        {% when 'search_no_results' %}
+          <div data-search-no-results class="product-card" style="padding:1.5rem;">
+            <strong>No-results suggestions</strong>
+            <p>Suggest popular items when no matches.</p>
+          </div>
+        {% when 'countdown' %}
+          <div data-countdown class="product-card" style="padding:1.5rem;">
+            <strong>Countdown timer</strong>
+            <p>Display time-limited offers.</p>
+          </div>
+        {% when 'hotspots' %}
+          <div data-hotspots class="product-card" style="padding:1.5rem;">
+            <strong>Shoppable hotspots</strong>
+            <p>Clickable product hotspots on images.</p>
+          </div>
+        {% when 'before_after' %}
+          <div data-before-after class="product-card" style="padding:1.5rem;">
+            <strong>Before/after slider</strong>
+            <p>Compare two images with a slider.</p>
+          </div>
+        {% when 'video_banner' %}
+          <div data-video-banner class="product-card" style="padding:1.5rem;">
+            <strong>Video banner</strong>
+            <p>Background video hero support.</p>
+          </div>
+        {% when 'announcement_tiles' %}
+          <div data-announcement-tiles class="product-card" style="padding:1.5rem;">
+            <strong>Announcement tiles</strong>
+            <p>Multi-tile promo blocks.</p>
+          </div>
+        {% when 'newsletter_popup' %}
+          <div data-newsletter-popup class="product-card" style="padding:1.5rem;">
+            <strong>Newsletter popup</strong>
+            <p>Timed/exit-intent newsletter capture.</p>
+          </div>
+        {% when 'promo_bar' %}
+          <div data-promo-bar class="product-card" style="padding:1.5rem;">
+            <strong>Promo bar</strong>
+            <p>Sticky or rotating promo messages.</p>
+          </div>
+        {% when 'rewards_ui' %}
+          <div data-rewards-ui class="product-card" style="padding:1.5rem;">
+            <strong>Rewards UI</strong>
+            <p>Points balance and redemption UI.</p>
+          </div>
+        {% when 'reviews_block' %}
+          <div data-reviews-block class="product-card" style="padding:1.5rem;">
+            <strong>Reviews block</strong>
+            <p>Integrated reviews placement.</p>
+          </div>
+        {% when 'sticky_filters' %}
+          <div data-sticky-filters class="product-card" style="padding:1.5rem;">
+            <strong>Sticky filters</strong>
+            <p>Keep filters visible while scrolling.</p>
+          </div>
+        {% when 'filter_drawer' %}
+          <div data-filter-drawer class="product-card" style="padding:1.5rem;">
+            <strong>Filter drawer (mobile)</strong>
+            <p>Mobile filter modal/drawer.</p>
+          </div>
+        {% when 'breadcrumb' %}
+          <div data-breadcrumb class="product-card" style="padding:1.5rem;">
+            <strong>Breadcrumbs</strong>
+            <p>SEO-friendly breadcrumb navigation.</p>
+          </div>
+        {% when 'faq_schema' %}
+          <div data-faq-schema class="product-card" style="padding:1.5rem;">
+            <strong>FAQ schema</strong>
+            <p>Structured data for FAQs.</p>
+          </div>
+        {% when 'sticky_atc_mobile' %}
+          <div data-sticky-atc-mobile class="product-card" style="padding:1.5rem;">
+            <strong>Mobile sticky ATC</strong>
+            <p>Persistent ATC on mobile view.</p>
+          </div>
+        {% when 'unit_price' %}
+          <div data-unit-price class="product-card" style="padding:1.5rem;">
+            <strong>Unit pricing</strong>
+            <p>Show unit pricing when applicable.</p>
+          </div>
+        {% when 'inventory_status' %}
+          <div data-inventory-status class="product-card" style="padding:1.5rem;">
+            <strong>Inventory status</strong>
+            <p>Show low stock messaging.</p>
+          </div>
+        {% when 'shipping_estimator' %}
+          <div data-shipping-estimator class="product-card" style="padding:1.5rem;">
+            <strong>Shipping estimator</strong>
+            <p>Estimate shipping at cart.</p>
+          </div>
+        {% when 'account_cta' %}
+          <div data-account-cta class="product-card" style="padding:1.5rem;">
+            <strong>Account CTA</strong>
+            <p>Login/signup prompts for guests.</p>
+          </div>
+        {% when 'gift_wrap' %}
+          <div data-gift-wrap class="product-card" style="padding:1.5rem;">
+            <strong>Gift wrap</strong>
+            <p>Offer gift wrap add-on.</p>
+          </div>
+        {% when 'gift_note' %}
+          <div data-gift-note class="product-card" style="padding:1.5rem;">
+            <strong>Gift note</strong>
+            <p>Allow a personalized note.</p>
+          </div>
+        {% when 'free_shipping_bar' %}
+          <div data-free-shipping-bar class="product-card" style="padding:1.5rem;">
+            <strong>Free shipping bar</strong>
+            <p>Progress bar to free shipping.</p>
+          </div>
+        {% when 'upsell_bundle' %}
+          <div data-upsell-bundle class="product-card" style="padding:1.5rem;">
+            <strong>Bundle builder</strong>
+            <p>Create bundles with discounts.</p>
+          </div>
+        {% when 'recently_purchased' %}
+          <div data-recently-purchased class="product-card" style="padding:1.5rem;">
+            <strong>Recently purchased</strong>
+            <p>Show recent purchase notifications.</p>
+          </div>
+        {% when 'email_capture' %}
+          <div data-email-capture class="product-card" style="padding:1.5rem;">
+            <strong>Email capture</strong>
+            <p>Inline email capture blocks.</p>
+          </div>
+        {% when 'sms_capture' %}
+          <div data-sms-capture class="product-card" style="padding:1.5rem;">
+            <strong>SMS capture</strong>
+            <p>Collect SMS opt-ins.</p>
+          </div>
+        {% when 'referrals' %}
+          <div data-referrals class="product-card" style="padding:1.5rem;">
+            <strong>Referrals</strong>
+            <p>Referral program hooks.</p>
+          </div>
+        {% when 'loyalty_tiers' %}
+          <div data-loyalty-tiers class="product-card" style="padding:1.5rem;">
+            <strong>Loyalty tiers</strong>
+            <p>Display loyalty tier badges.</p>
+          </div>
+        {% when 'wishlist' %}
+          <div data-wishlist-feature class="product-card" style="padding:1.5rem;">
+            <strong>Wishlist</strong>
+            <p>Wishlist UI and storage hooks.</p>
+          </div>
+        {% when 'compare_at' %}
+          <div data-compare-at class="product-card" style="padding:1.5rem;">
+            <strong>Compare-at callouts</strong>
+            <p>Sale price emphasis.</p>
+          </div>
+        {% when 'product_tabs' %}
+          <div data-product-tabs class="product-card" style="padding:1.5rem;">
+            <strong>Product tabs</strong>
+            <p>Tabbed details layout.</p>
+          </div>
+        {% when 'usp_icons' %}
+          <div data-usp-icons class="product-card" style="padding:1.5rem;">
+            <strong>USP icons</strong>
+            <p>Shipping, returns, support icons.</p>
+          </div>
+        {% when 'brand_strip' %}
+          <div data-brand-strip class="product-card" style="padding:1.5rem;">
+            <strong>Brand strip</strong>
+            <p>Logos or brand partners.</p>
+          </div>
+        {% when 'testimonials' %}
+          <div data-testimonials class="product-card" style="padding:1.5rem;">
+            <strong>Testimonials</strong>
+            <p>Customer testimonials section.</p>
+          </div>
+        {% when 'faq' %}
+          <div data-faq class="product-card" style="padding:1.5rem;">
+            <strong>FAQ</strong>
+            <p>Frequently asked questions.</p>
+          </div>
+        {% when 'image_with_text' %}
+          <div data-image-with-text class="product-card" style="padding:1.5rem;">
+            <strong>Image with text</strong>
+            <p>Side-by-side image and copy.</p>
+          </div>
+        {% when 'rich_text' %}
+          <div data-rich-text class="product-card" style="padding:1.5rem;">
+            <strong>Rich text</strong>
+            <p>Text-only content blocks.</p>
+          </div>
+        {% when 'logo_list' %}
+          <div data-logo-list class="product-card" style="padding:1.5rem;">
+            <strong>Logo list</strong>
+            <p>Brand logo list section.</p>
+          </div>
+        {% when 'blog_posts' %}
+          <div data-blog-posts class="product-card" style="padding:1.5rem;">
+            <strong>Blog posts</strong>
+            <p>Latest articles section.</p>
+          </div>
+        {% when 'video_review' %}
+          <div data-video-review class="product-card" style="padding:1.5rem;">
+            <strong>Video reviews</strong>
+            <p>Customer video review embeds.</p>
+          </div>
+        {% when 'accessibility' %}
+          <div data-accessibility class="product-card" style="padding:1.5rem;">
+            <strong>Accessibility enhancements</strong>
+            <p>Focus states, reduced motion, keyboard nav.</p>
+          </div>
+        {% when 'seo_meta' %}
+          <div data-seo-meta class="product-card" style="padding:1.5rem;">
+            <strong>SEO meta tools</strong>
+            <p>OpenGraph and structured data enhancements.</p>
+          </div>
+        {% else %}
+          <div class="product-card" style="padding:1.5rem;">
+            <strong>{{ block.settings.feature_label }}</strong>
+            <p>{{ block.settings.feature_description }}</p>
+          </div>
+      {% endcase %}
+    {% endfor %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Feature extensions",
+  "settings": [],
+  "blocks": [
+    {
+      "type": "feature",
+      "name": "Feature",
+      "settings": [
+        {
+          "type": "select",
+          "id": "feature_type",
+          "label": "Feature type",
+          "default": "sticky_atc",
+          "options": [
+            {"value": "sticky_atc", "label": "Sticky add to cart"},
+            {"value": "buy_now", "label": "Buy now toggle"},
+            {"value": "back_in_stock", "label": "Back-in-stock alerts"},
+            {"value": "size_chart", "label": "Size chart"},
+            {"value": "shipping_returns_modal", "label": "Shipping & returns modal"},
+            {"value": "trust_badges", "label": "Trust badges"},
+            {"value": "quantity_breaks", "label": "Quantity breaks"},
+            {"value": "upsell_cart", "label": "Cart upsell"},
+            {"value": "recently_viewed", "label": "Recently viewed"},
+            {"value": "social_proof", "label": "Social proof"},
+            {"value": "zoom", "label": "Image zoom"},
+            {"value": "variant_images", "label": "Variant images"},
+            {"value": "compare", "label": "Compare products"},
+            {"value": "quick_view", "label": "Quick view"},
+            {"value": "quick_add", "label": "Quick add"},
+            {"value": "collection_banner", "label": "Collection banner"},
+            {"value": "collection_filters", "label": "Collection filters"},
+            {"value": "search_enhanced", "label": "Enhanced search"},
+            {"value": "search_no_results", "label": "Search no-results"},
+            {"value": "countdown", "label": "Countdown timer"},
+            {"value": "hotspots", "label": "Shoppable hotspots"},
+            {"value": "before_after", "label": "Before/after"},
+            {"value": "video_banner", "label": "Video banner"},
+            {"value": "announcement_tiles", "label": "Announcement tiles"},
+            {"value": "newsletter_popup", "label": "Newsletter popup"},
+            {"value": "promo_bar", "label": "Promo bar"},
+            {"value": "rewards_ui", "label": "Rewards UI"},
+            {"value": "reviews_block", "label": "Reviews block"},
+            {"value": "sticky_filters", "label": "Sticky filters"},
+            {"value": "filter_drawer", "label": "Filter drawer"},
+            {"value": "breadcrumb", "label": "Breadcrumbs"},
+            {"value": "faq_schema", "label": "FAQ schema"},
+            {"value": "sticky_atc_mobile", "label": "Mobile sticky ATC"},
+            {"value": "unit_price", "label": "Unit pricing"},
+            {"value": "inventory_status", "label": "Inventory status"},
+            {"value": "shipping_estimator", "label": "Shipping estimator"},
+            {"value": "account_cta", "label": "Account CTA"},
+            {"value": "gift_wrap", "label": "Gift wrap"},
+            {"value": "gift_note", "label": "Gift note"},
+            {"value": "free_shipping_bar", "label": "Free shipping bar"},
+            {"value": "upsell_bundle", "label": "Bundle builder"},
+            {"value": "recently_purchased", "label": "Recently purchased"},
+            {"value": "email_capture", "label": "Email capture"},
+            {"value": "sms_capture", "label": "SMS capture"},
+            {"value": "referrals", "label": "Referrals"},
+            {"value": "loyalty_tiers", "label": "Loyalty tiers"},
+            {"value": "wishlist", "label": "Wishlist"},
+            {"value": "compare_at", "label": "Compare-at callouts"},
+            {"value": "product_tabs", "label": "Product tabs"},
+            {"value": "usp_icons", "label": "USP icons"},
+            {"value": "brand_strip", "label": "Brand strip"},
+            {"value": "testimonials", "label": "Testimonials"},
+            {"value": "faq", "label": "FAQ"},
+            {"value": "image_with_text", "label": "Image with text"},
+            {"value": "rich_text", "label": "Rich text"},
+            {"value": "logo_list", "label": "Logo list"},
+            {"value": "blog_posts", "label": "Blog posts"},
+            {"value": "video_review", "label": "Video reviews"},
+            {"value": "accessibility", "label": "Accessibility"},
+            {"value": "seo_meta", "label": "SEO meta"}
+          ]
+        },
+        {"type": "text", "id": "feature_label", "label": "Custom label"},
+        {"type": "textarea", "id": "feature_description", "label": "Custom description"}
+      ]
+    }
+  ],
+  "presets": [
+    {"name": "Feature extensions", "category": "Marketing"}
+  ]
+}
+{% endschema %}
