@@ -1,0 +1,48 @@
+<section class="section feature feature--hotspots" data-feature="hotspots">
+  <div class="container">
+  {% if section.settings.heading != blank %}
+    <header class="section__header">
+      <h2 class="section__heading">{{ section.settings.heading }}</h2>
+      {% if section.settings.subheading != blank %}
+        <p class="section__description">{{ section.settings.subheading }}</p>
+      {% endif %}
+    </header>
+  {% endif %}
+    <div class="hotspots">
+      {% if section.settings.image != blank %}
+        <div class="hotspots__image" style="position: relative;">
+          <img src="{{ section.settings.image | image_url: width: 1000 }}" alt="{{ section.settings.image.alt | escape }}">
+          {% for block in section.blocks %}
+            <a class="hotspot" href="{{ block.settings.link | default: '#' }}" style="position:absolute; top: {{ block.settings.top }}%; left: {{ block.settings.left }}%;">{{ block.settings.label }}</a>
+          {% endfor %}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Shoppable hotspots",
+  "settings": [
+    {"type": "text", "id": "heading", "label": "Heading", "default": "Shoppable hotspots"},
+    {"type": "text", "id": "subheading", "label": "Subheading"},
+    {"type": "image_picker", "id": "image", "label": "Image"}
+  ],
+  "blocks": [
+    {
+      "type": "hotspot",
+      "name": "Hotspot",
+      "settings": [
+        {"type": "text", "id": "label", "label": "Label", "default": "+"},
+        {"type": "range", "id": "top", "label": "Top (%)", "min": 0, "max": 100, "step": 1, "default": 50},
+        {"type": "range", "id": "left", "label": "Left (%)", "min": 0, "max": 100, "step": 1, "default": 50},
+        {"type": "url", "id": "link", "label": "Link"}
+      ]
+    }
+  ],
+  "presets": [
+    {"name": "Shoppable hotspots", "category": "Image"}
+  ]
+}
+{% endschema %}

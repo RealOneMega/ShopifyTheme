@@ -1,0 +1,28 @@
+<section class="promo-bar feature feature--promo-bar" data-feature="promo-bar" data-promo-item>
+  <div class="container">
+    <div class="promo-bar__content">
+      <span>{{ section.settings.message }}</span>
+      {% if section.settings.button_label != blank %}
+        <a class="button" href="{{ section.settings.button_link | default: '#' }}">{{ section.settings.button_label }}</a>
+      {% endif %}
+    </div>
+    {% if section.settings.dismissible %}
+      <button class="button" type="button" data-promo-dismiss="promo-{{ section.id }}" aria-label="Dismiss">×</button>
+    {% endif %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Promo bar",
+  "settings": [
+    {"type": "text", "id": "message", "label": "Message", "default": "Free shipping on orders over $100."},
+    {"type": "text", "id": "button_label", "label": "Button label"},
+    {"type": "url", "id": "button_link", "label": "Button link"},
+    {"type": "checkbox", "id": "dismissible", "label": "Dismissible", "default": true}
+  ],
+  "presets": [
+    {"name": "Promo bar", "category": "Marketing"}
+  ]
+}
+{% endschema %}

@@ -1,0 +1,42 @@
+<section class="section feature feature--testimonials" data-feature="testimonials">
+  <div class="container">
+  {% if section.settings.heading != blank %}
+    <header class="section__header">
+      <h2 class="section__heading">{{ section.settings.heading }}</h2>
+      {% if section.settings.subheading != blank %}
+        <p class="section__description">{{ section.settings.subheading }}</p>
+      {% endif %}
+    </header>
+  {% endif %}
+    <div class="testimonials">
+      {% for block in section.blocks %}
+        <figure class="testimonial">
+          <blockquote>{{ block.settings.quote }}</blockquote>
+          <figcaption>{{ block.settings.author }}</figcaption>
+        </figure>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Testimonials",
+  "settings": [
+    {"type": "text", "id": "heading", "label": "Heading", "default": "Testimonials"},
+    {"type": "text", "id": "subheading", "label": "Subheading"}],
+  "blocks": [
+    {
+      "type": "testimonial",
+      "name": "Testimonial",
+      "settings": [
+        {"type": "textarea", "id": "quote", "label": "Quote", "default": "Great product and service."},
+        {"type": "text", "id": "author", "label": "Author", "default": "Customer"}
+      ]
+    }
+  ],
+  "presets": [
+    {"name": "Testimonials", "category": "Testimonials"}
+  ]
+}
+{% endschema %}

@@ -1,0 +1,45 @@
+<section class="section feature feature--quick-view" data-feature="quick-view">
+  <div class="container">
+  {% if section.settings.heading != blank %}
+    <header class="section__header">
+      <h2 class="section__heading">{{ section.settings.heading }}</h2>
+      {% if section.settings.subheading != blank %}
+        <p class="section__description">{{ section.settings.subheading }}</p>
+      {% endif %}
+    </header>
+  {% endif %}
+    <div class="quick-view">
+      {% for block in section.blocks %}
+        {% assign product = block.settings.product %}
+        {% if product != blank %}
+          <details class="quick-view__item">
+            <summary>{{ product.title }}</summary>
+            <p>{{ product.price | money }}</p>
+            <a class="button" href="{{ product.url }}">View product</a>
+          </details>
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Quick view",
+  "settings": [
+    {"type": "text", "id": "heading", "label": "Heading", "default": "Quick view"},
+    {"type": "text", "id": "subheading", "label": "Subheading"}],
+  "blocks": [
+    {
+      "type": "product",
+      "name": "Product",
+      "settings": [
+        {"type": "product", "id": "product", "label": "Product"}
+      ]
+    }
+  ],
+  "presets": [
+    {"name": "Quick view", "category": "Product"}
+  ]
+}
+{% endschema %}

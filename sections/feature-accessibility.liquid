@@ -1,0 +1,41 @@
+<section class="section feature feature--accessibility" data-feature="accessibility">
+  <div class="container">
+    <a class="skip-link" href="#MainContent">{{ section.settings.skip_label }}</a>
+  {% if section.settings.heading != blank %}
+    <header class="section__header">
+      <h2 class="section__heading">{{ section.settings.heading }}</h2>
+      {% if section.settings.subheading != blank %}
+        <p class="section__description">{{ section.settings.subheading }}</p>
+      {% endif %}
+    </header>
+  {% endif %}
+    <ul>
+      {% for block in section.blocks %}
+        <li>{{ block.settings.item }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Accessibility",
+  "settings": [
+    {"type": "text", "id": "heading", "label": "Heading", "default": "Accessibility"},
+    {"type": "text", "id": "subheading", "label": "Subheading"},
+    {"type": "text", "id": "skip_label", "label": "Skip link label", "default": "Skip to content"}
+  ],
+  "blocks": [
+    {
+      "type": "item",
+      "name": "Feature",
+      "settings": [
+        {"type": "text", "id": "item", "label": "Feature", "default": "Keyboard navigation supported"}
+      ]
+    }
+  ],
+  "presets": [
+    {"name": "Accessibility", "category": "Accessibility"}
+  ]
+}
+{% endschema %}

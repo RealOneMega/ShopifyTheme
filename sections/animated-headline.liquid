@@ -1,0 +1,42 @@
+<section class="section">
+  <div class="container text-center">
+    {% capture words_json %}
+      [
+      {% for block in section.blocks %}
+        "{{ block.settings.word | escape }}"{% unless forloop.last %},{% endunless %}
+      {% endfor %}
+      ]
+    {% endcapture %}
+    {% assign initial_word = section.blocks.first.settings.word | default: 'new' %}
+    <h2 class="heading">
+      {{ section.settings.prefix }}
+      <span class="animated-headline" data-animated-headline data-words='{{ words_json | strip_newlines }}' aria-live="polite">
+        <span class="animated-headline__word">{{ initial_word }}</span>
+      </span>
+      {{ section.settings.suffix }}
+    </h2>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Animated headline",
+  "settings": [
+    {"type": "text", "id": "prefix", "label": "Prefix", "default": "Shop"},
+    {"type": "text", "id": "suffix", "label": "Suffix", "default": "today"}
+  ],
+  "blocks": [
+    {
+      "type": "word",
+      "name": "Word",
+      "settings": [
+        {"type": "text", "id": "word", "label": "Word", "default": "new"}
+      ]
+    }
+  ],
+  "max_blocks": 3,
+  "presets": [
+    {"name": "Animated headline", "category": "Text"}
+  ]
+}
+{% endschema %}

@@ -1,0 +1,25 @@
+<nav class="breadcrumb feature feature--breadcrumb" aria-label="Breadcrumb" data-feature="breadcrumb">
+  <ol class="breadcrumb__list">
+    <li class="breadcrumb__item"><a href="{{ routes.root_url }}">Home</a></li>
+    {% if collection != blank %}
+      <li class="breadcrumb__item"><a href="{{ collection.url }}">{{ collection.title }}</a></li>
+    {% endif %}
+    {% if product != blank %}
+      <li class="breadcrumb__item" aria-current="page">{{ product.title }}</li>
+    {% elsif page != blank %}
+      <li class="breadcrumb__item" aria-current="page">{{ page.title }}</li>
+    {% elsif article != blank %}
+      <li class="breadcrumb__item" aria-current="page">{{ article.title }}</li>
+    {% endif %}
+  </ol>
+</nav>
+
+{% schema %}
+{
+  "name": "Breadcrumbs",
+  "settings": [],
+  "presets": [
+    {"name": "Breadcrumbs", "category": "Navigation"}
+  ]
+}
+{% endschema %}

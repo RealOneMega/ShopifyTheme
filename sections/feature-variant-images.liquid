@@ -1,0 +1,39 @@
+<section class="section feature feature--variant-images" data-feature="variant-images">
+  <div class="container">
+  {% if section.settings.heading != blank %}
+    <header class="section__header">
+      <h2 class="section__heading">{{ section.settings.heading }}</h2>
+      {% if section.settings.subheading != blank %}
+        <p class="section__description">{{ section.settings.subheading }}</p>
+      {% endif %}
+    </header>
+  {% endif %}
+    {% assign product = section.settings.product %}
+    {% if product != blank %}
+      <div class="variant-images">
+        {% for variant in product.variants %}
+          {% if variant.featured_image != blank %}
+            <div class="variant-images__item">
+              <img src="{{ variant.featured_image | image_url: width: 300 }}" alt="{{ variant.featured_image.alt | escape }}">
+              <p>{{ variant.title }}</p>
+            </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Variant images",
+  "settings": [
+    {"type": "text", "id": "heading", "label": "Heading", "default": "Variant images"},
+    {"type": "text", "id": "subheading", "label": "Subheading"},
+    {"type": "product", "id": "product", "label": "Product"}
+  ],
+  "presets": [
+    {"name": "Variant images", "category": "Product"}
+  ]
+}
+{% endschema %}

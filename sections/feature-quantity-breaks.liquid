@@ -1,0 +1,47 @@
+<section class="section feature feature--quantity-breaks" data-feature="quantity-breaks">
+  <div class="container">
+  {% if section.settings.heading != blank %}
+    <header class="section__header">
+      <h2 class="section__heading">{{ section.settings.heading }}</h2>
+      {% if section.settings.subheading != blank %}
+        <p class="section__description">{{ section.settings.subheading }}</p>
+      {% endif %}
+    </header>
+  {% endif %}
+    <table class="quantity-breaks">
+      <thead>
+        <tr><th>Qty</th><th>Price</th></tr>
+      </thead>
+      <tbody>
+        {% for block in section.blocks %}
+          <tr>
+            <td>{{ block.settings.quantity }}</td>
+            <td>{{ block.settings.price }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Quantity breaks",
+  "settings": [
+    {"type": "text", "id": "heading", "label": "Heading", "default": "Quantity breaks"},
+    {"type": "text", "id": "subheading", "label": "Subheading"}],
+  "blocks": [
+    {
+      "type": "tier",
+      "name": "Tier",
+      "settings": [
+        {"type": "number", "id": "quantity", "label": "Quantity", "default": 5},
+        {"type": "text", "id": "price", "label": "Price", "default": "$10.00"}
+      ]
+    }
+  ],
+  "presets": [
+    {"name": "Quantity breaks", "category": "Pricing"}
+  ]
+}
+{% endschema %}

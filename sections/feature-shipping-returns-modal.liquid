@@ -1,0 +1,31 @@
+<section class="section feature feature--shipping-returns-modal" data-feature="shipping-returns-modal">
+  <div class="container">
+  {% if section.settings.heading != blank %}
+    <header class="section__header">
+      <h2 class="section__heading">{{ section.settings.heading }}</h2>
+      {% if section.settings.subheading != blank %}
+        <p class="section__description">{{ section.settings.subheading }}</p>
+      {% endif %}
+    </header>
+  {% endif %}
+    <details class="shipping-returns">
+      <summary>{{ section.settings.toggle_label }}</summary>
+      {{ section.settings.body }}
+    </details>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Shipping & returns modal",
+  "settings": [
+    {"type": "text", "id": "heading", "label": "Heading", "default": "Shipping & returns modal"},
+    {"type": "text", "id": "subheading", "label": "Subheading"},
+    {"type": "text", "id": "toggle_label", "label": "Toggle label", "default": "Shipping & returns"},
+    {"type": "richtext", "id": "body", "label": "Body"}
+  ],
+  "presets": [
+    {"name": "Shipping & returns modal", "category": "Product"}
+  ]
+}
+{% endschema %}

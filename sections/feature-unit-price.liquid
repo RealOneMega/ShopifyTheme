@@ -1,0 +1,35 @@
+<section class="section feature feature--unit-price" data-feature="unit-price">
+  <div class="container">
+  {% if section.settings.heading != blank %}
+    <header class="section__header">
+      <h2 class="section__heading">{{ section.settings.heading }}</h2>
+      {% if section.settings.subheading != blank %}
+        <p class="section__description">{{ section.settings.subheading }}</p>
+      {% endif %}
+    </header>
+  {% endif %}
+    {% assign product = section.settings.product %}
+    {% if product != blank %}
+      {% assign variant = product.selected_or_first_available_variant %}
+      {% if variant.unit_price %}
+        <p>{{ variant.unit_price | money }} / {{ variant.unit_price_measurement.reference_value }}{{ variant.unit_price_measurement.reference_unit }}</p>
+      {% else %}
+        <p>No unit pricing available.</p>
+      {% endif %}
+    {% endif %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Unit pricing",
+  "settings": [
+    {"type": "text", "id": "heading", "label": "Heading", "default": "Unit pricing"},
+    {"type": "text", "id": "subheading", "label": "Subheading"},
+    {"type": "product", "id": "product", "label": "Product"}
+  ],
+  "presets": [
+    {"name": "Unit pricing", "category": "Pricing"}
+  ]
+}
+{% endschema %}

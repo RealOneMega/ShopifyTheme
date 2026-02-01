@@ -1,0 +1,32 @@
+<section class="section feature feature--collection-filters" data-feature="collection-filters">
+  <div class="container">
+    {% if collection != blank %}
+      <div class="collection-filters">
+        {% for filter in collection.filters %}
+          <div class="collection-filter">
+            <h3>{{ filter.label }}</h3>
+            <ul>
+              {% for value in filter.values %}
+                <li>
+                  <a href="{{ value.url }}">{{ value.label }} ({{ value.count }})</a>
+                </li>
+              {% endfor %}
+            </ul>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p>Add this section to a collection template to show filters.</p>
+    {% endif %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Collection filters",
+  "settings": [],
+  "presets": [
+    {"name": "Collection filters", "category": "Collection"}
+  ]
+}
+{% endschema %}

@@ -1,0 +1,31 @@
+<section class="section feature feature--zoom" data-feature="zoom">
+  <div class="container">
+  {% if section.settings.heading != blank %}
+    <header class="section__header">
+      <h2 class="section__heading">{{ section.settings.heading }}</h2>
+      {% if section.settings.subheading != blank %}
+        <p class="section__description">{{ section.settings.subheading }}</p>
+      {% endif %}
+    </header>
+  {% endif %}
+    {% if section.settings.image != blank %}
+      <a href="{{ section.settings.image | image_url: width: 2000 }}" target="_blank" rel="noopener">
+        <img src="{{ section.settings.image | image_url: width: 800 }}" alt="{{ section.settings.image.alt | escape }}">
+      </a>
+    {% endif %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Image zoom",
+  "settings": [
+    {"type": "text", "id": "heading", "label": "Heading", "default": "Image zoom"},
+    {"type": "text", "id": "subheading", "label": "Subheading"},
+    {"type": "image_picker", "id": "image", "label": "Image"}
+  ],
+  "presets": [
+    {"name": "Image zoom", "category": "Image"}
+  ]
+}
+{% endschema %}

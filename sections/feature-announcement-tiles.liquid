@@ -1,0 +1,51 @@
+<section class="section feature feature--announcement-tiles" data-feature="announcement-tiles">
+  <div class="container">
+  {% if section.settings.heading != blank %}
+    <header class="section__header">
+      <h2 class="section__heading">{{ section.settings.heading }}</h2>
+      {% if section.settings.subheading != blank %}
+        <p class="section__description">{{ section.settings.subheading }}</p>
+      {% endif %}
+    </header>
+  {% endif %}
+    <div class="tiles">
+      {% for block in section.blocks %}
+        <div class="tile">
+          {% if block.settings.image != blank %}
+            <img src="{{ block.settings.image | image_url: width: 600 }}" alt="{{ block.settings.image.alt | escape }}">
+          {% endif %}
+          <h3>{{ block.settings.title }}</h3>
+          <p>{{ block.settings.text }}</p>
+          {% if block.settings.button_label != blank %}
+            <a class="button" href="{{ block.settings.button_link | default: '#' }}">{{ block.settings.button_label }}</a>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Announcement tiles",
+  "settings": [
+    {"type": "text", "id": "heading", "label": "Heading", "default": "Announcement tiles"},
+    {"type": "text", "id": "subheading", "label": "Subheading"}],
+  "blocks": [
+    {
+      "type": "tile",
+      "name": "Tile",
+      "settings": [
+        {"type": "image_picker", "id": "image", "label": "Image"},
+        {"type": "text", "id": "title", "label": "Title", "default": "Announcement"},
+        {"type": "textarea", "id": "text", "label": "Text", "default": "Share a promotion or message."},
+        {"type": "text", "id": "button_label", "label": "Button label"},
+        {"type": "url", "id": "button_link", "label": "Button link"}
+      ]
+    }
+  ],
+  "presets": [
+    {"name": "Announcement tiles", "category": "Marketing"}
+  ]
+}
+{% endschema %}

@@ -1,0 +1,28 @@
+<section class="section feature feature--free-shipping-bar" data-feature="free-shipping-bar">
+  <div class="container">
+    {% assign goal = section.settings.goal | times: 100 %}
+    {% assign current = cart.total_price %}
+    {% assign percent = current | times: 100 | divided_by: goal %}
+    {% if percent > 100 %}{% assign percent = 100 %}{% endif %}
+    <div class="shipping-bar">
+      <p>{{ section.settings.message }}</p>
+      <div class="shipping-bar__track">
+        <div class="shipping-bar__fill" style="width: {{ percent }}%;"></div>
+      </div>
+      <p>{{ goal | minus: current | money }} away from free shipping.</p>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Free shipping bar",
+  "settings": [
+    {"type": "number", "id": "goal", "label": "Free shipping goal", "default": 100},
+    {"type": "text", "id": "message", "label": "Message", "default": "Free shipping progress"}
+  ],
+  "presets": [
+    {"name": "Free shipping bar", "category": "Marketing"}
+  ]
+}
+{% endschema %}

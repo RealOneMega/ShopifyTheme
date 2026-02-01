@@ -1,0 +1,38 @@
+<section class="section feature feature--social-proof" data-feature="social-proof">
+  <div class="container">
+  {% if section.settings.heading != blank %}
+    <header class="section__header">
+      <h2 class="section__heading">{{ section.settings.heading }}</h2>
+      {% if section.settings.subheading != blank %}
+        <p class="section__description">{{ section.settings.subheading }}</p>
+      {% endif %}
+    </header>
+  {% endif %}
+    <ul class="social-proof">
+      {% for block in section.blocks %}
+        <li>{{ block.settings.text }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Social proof",
+  "settings": [
+    {"type": "text", "id": "heading", "label": "Heading", "default": "Social proof"},
+    {"type": "text", "id": "subheading", "label": "Subheading"}],
+  "blocks": [
+    {
+      "type": "proof",
+      "name": "Proof",
+      "settings": [
+        {"type": "text", "id": "text", "label": "Text", "default": "Someone just purchased this item."}
+      ]
+    }
+  ],
+  "presets": [
+    {"name": "Social proof", "category": "Marketing"}
+  ]
+}
+{% endschema %}

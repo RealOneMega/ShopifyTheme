@@ -1,0 +1,32 @@
+<section class="section feature feature--shipping-estimator" data-feature="shipping-estimator">
+  <div class="container">
+  {% if section.settings.heading != blank %}
+    <header class="section__header">
+      <h2 class="section__heading">{{ section.settings.heading }}</h2>
+      {% if section.settings.subheading != blank %}
+        <p class="section__description">{{ section.settings.subheading }}</p>
+      {% endif %}
+    </header>
+  {% endif %}
+    <form class="shipping-estimator" data-shipping-estimator>
+      <label class="label">Country</label>
+      <input class="input" type="text" name="country" required>
+      <label class="label">Postal code</label>
+      <input class="input" type="text" name="zip" required>
+      <button class="button" type="submit">Estimate</button>
+      <div class="shipping-estimator__results" data-shipping-results></div>
+    </form>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Shipping estimator",
+  "settings": [
+    {"type": "text", "id": "heading", "label": "Heading", "default": "Shipping estimator"},
+    {"type": "text", "id": "subheading", "label": "Subheading"}],
+  "presets": [
+    {"name": "Shipping estimator", "category": "Cart"}
+  ]
+}
+{% endschema %}

@@ -1,0 +1,48 @@
+<section class="section feature feature--upsell-cart" data-feature="upsell-cart">
+  <div class="container">
+  {% if section.settings.heading != blank %}
+    <header class="section__header">
+      <h2 class="section__heading">{{ section.settings.heading }}</h2>
+      {% if section.settings.subheading != blank %}
+        <p class="section__description">{{ section.settings.subheading }}</p>
+      {% endif %}
+    </header>
+  {% endif %}
+    <div class="upsell-grid">
+      {% for block in section.blocks %}
+        {% assign product = block.settings.product %}
+        {% if product != blank %}
+          {% form 'product', product %}
+            <div class="product-card">
+              <h3>{{ product.title }}</h3>
+              <p>{{ product.price | money }}</p>
+              <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+              <button class="button" type="submit">Add</button>
+            </div>
+          {% endform %}
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Cart upsell",
+  "settings": [
+    {"type": "text", "id": "heading", "label": "Heading", "default": "Cart upsell"},
+    {"type": "text", "id": "subheading", "label": "Subheading"}],
+  "blocks": [
+    {
+      "type": "product",
+      "name": "Product",
+      "settings": [
+        {"type": "product", "id": "product", "label": "Product"}
+      ]
+    }
+  ],
+  "presets": [
+    {"name": "Cart upsell", "category": "Cart"}
+  ]
+}
+{% endschema %}
