@@ -1,0 +1,30 @@
+<section class="section feature feature--collection-banner" data-feature="collection-banner">
+  <div class="container">
+    {% assign selected_collection = collections[section.settings.collection] %}
+    {% if selected_collection != blank %}
+      <div class="collection-banner">
+        {% if section.settings.image != blank %}
+          <img src="{{ section.settings.image | image_url: width: 1200 }}" alt="{{ section.settings.image.alt | escape }}">
+        {% endif %}
+        <div class="collection-banner__content">
+          <h2>{{ selected_collection.title }}</h2>
+          <p>{{ selected_collection.description | strip_html | truncate: 160 }}</p>
+          <a class="button" href="{{ selected_collection.url }}">Shop collection</a>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Collection banner",
+  "settings": [
+    {"type": "collection", "id": "collection", "label": "Collection"},
+    {"type": "image_picker", "id": "image", "label": "Image"}
+  ],
+  "presets": [
+    {"name": "Collection banner", "category": "Collection"}
+  ]
+}
+{% endschema %}

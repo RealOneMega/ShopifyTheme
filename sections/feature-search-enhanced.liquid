@@ -1,0 +1,29 @@
+<section class="section feature feature--search-enhanced" data-feature="search-enhanced">
+  <div class="container">
+  {% if section.settings.heading != blank %}
+    <header class="section__header">
+      <h2 class="section__heading">{{ section.settings.heading }}</h2>
+      {% if section.settings.subheading != blank %}
+        <p class="section__description">{{ section.settings.subheading }}</p>
+      {% endif %}
+    </header>
+  {% endif %}
+    <form class="search" action="{{ routes.search_url }}" method="get" data-predictive-search>
+      <input class="input" type="search" name="q" placeholder="Search" autocomplete="off">
+      <button class="button" type="submit">Search</button>
+      <div class="predictive-results" data-predictive-results></div>
+    </form>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Enhanced search",
+  "settings": [
+    {"type": "text", "id": "heading", "label": "Heading", "default": "Enhanced search"},
+    {"type": "text", "id": "subheading", "label": "Subheading"}],
+  "presets": [
+    {"name": "Enhanced search", "category": "Search"}
+  ]
+}
+{% endschema %}

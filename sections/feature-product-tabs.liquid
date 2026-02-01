@@ -1,0 +1,48 @@
+<section class="section feature feature--product-tabs" data-feature="product-tabs" data-collection-tabs>
+  <div class="container">
+  {% if section.settings.heading != blank %}
+    <header class="section__header">
+      <h2 class="section__heading">{{ section.settings.heading }}</h2>
+      {% if section.settings.subheading != blank %}
+        <p class="section__description">{{ section.settings.subheading }}</p>
+      {% endif %}
+    </header>
+  {% endif %}
+    <div class="tabs">
+      <div class="tabs__triggers">
+        {% for block in section.blocks %}
+          <button class="tabs__trigger" data-tab-trigger data-tab-id="tab-{{ block.id }}">{{ block.settings.title }}</button>
+        {% endfor %}
+      </div>
+      <div class="tabs__panels">
+        {% for block in section.blocks %}
+          <div class="tabs__panel{% if forloop.first %} is-active{% endif %}" id="tab-{{ block.id }}" data-tab-panel>
+            {{ block.settings.content }}
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Product tabs",
+  "settings": [
+    {"type": "text", "id": "heading", "label": "Heading", "default": "Product tabs"},
+    {"type": "text", "id": "subheading", "label": "Subheading"}],
+  "blocks": [
+    {
+      "type": "tab",
+      "name": "Tab",
+      "settings": [
+        {"type": "text", "id": "title", "label": "Title", "default": "Details"},
+        {"type": "richtext", "id": "content", "label": "Content"}
+      ]
+    }
+  ],
+  "presets": [
+    {"name": "Product tabs", "category": "Product"}
+  ]
+}
+{% endschema %}

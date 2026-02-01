@@ -1,0 +1,52 @@
+<section class="section feature feature--upsell-bundle" data-feature="upsell-bundle">
+  <div class="container">
+  {% if section.settings.heading != blank %}
+    <header class="section__header">
+      <h2 class="section__heading">{{ section.settings.heading }}</h2>
+      {% if section.settings.subheading != blank %}
+        <p class="section__description">{{ section.settings.subheading }}</p>
+      {% endif %}
+    </header>
+  {% endif %}
+    {% assign total = 0 %}
+    <div class="bundle-grid">
+      {% for block in section.blocks %}
+        {% assign product = block.settings.product %}
+        {% if product != blank %}
+          {% assign total = total | plus: product.price %}
+          <div class="product-card">
+            <h3>{{ product.title }}</h3>
+            <p>{{ product.price | money }}</p>
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+    <p>Total: {{ total | money }}</p>
+    {% if section.settings.bundle_price != blank %}
+      <p>Bundle price: {{ section.settings.bundle_price }}</p>
+    {% endif %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Bundle builder",
+  "settings": [
+    {"type": "text", "id": "heading", "label": "Heading", "default": "Bundle builder"},
+    {"type": "text", "id": "subheading", "label": "Subheading"},
+    {"type": "text", "id": "bundle_price", "label": "Bundle price"}
+  ],
+  "blocks": [
+    {
+      "type": "product",
+      "name": "Product",
+      "settings": [
+        {"type": "product", "id": "product", "label": "Product"}
+      ]
+    }
+  ],
+  "presets": [
+    {"name": "Bundle builder", "category": "Pricing"}
+  ]
+}
+{% endschema %}

@@ -1,0 +1,29 @@
+<section class="section feature feature--rich-text" data-feature="rich-text">
+  <div class="container">
+  {% if section.settings.heading != blank %}
+    <header class="section__header">
+      <h2 class="section__heading">{{ section.settings.heading }}</h2>
+      {% if section.settings.subheading != blank %}
+        <p class="section__description">{{ section.settings.subheading }}</p>
+      {% endif %}
+    </header>
+  {% endif %}
+    {% if section.settings.body != blank %}
+      <div class="rte">{{ section.settings.body }}</div>
+    {% endif %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Rich text",
+  "settings": [
+    {"type": "text", "id": "heading", "label": "Heading", "default": "Rich text"},
+    {"type": "text", "id": "subheading", "label": "Subheading"},
+    {"type": "richtext", "id": "body", "label": "Body", "default": "<p>Add your content here.</p>"}
+  ],
+  "presets": [
+    {"name": "Rich text", "category": "Text"}
+  ]
+}
+{% endschema %}

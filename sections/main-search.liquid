@@ -1,0 +1,29 @@
+<section class="section">
+  <div class="container">
+    <h1 class="heading">Search</h1>
+    <form action="{{ routes.search_url }}" method="get" role="search">
+      <input type="search" name="q" value="{{ search.terms }}" placeholder="Search" aria-label="Search">
+    </form>
+    {% if search.performed %}
+      <div class="product-grid" style="margin-top:2rem;">
+        {% for item in search.results %}
+          {% if item.object_type == 'product' %}
+            {% render 'product-card', product: item, style: 'below' %}
+          {% else %}
+            <article class="product-card" style="padding:1.5rem;">
+              <a href="{{ item.url }}"><strong>{{ item.title }}</strong></a>
+              <p>{{ item.content | strip_html | truncate: 80 }}</p>
+            </article>
+          {% endif %}
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Main search",
+  "settings": []
+}
+{% endschema %}

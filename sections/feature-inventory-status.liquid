@@ -1,0 +1,35 @@
+<section class="section feature feature--inventory-status" data-feature="inventory-status">
+  <div class="container">
+  {% if section.settings.heading != blank %}
+    <header class="section__header">
+      <h2 class="section__heading">{{ section.settings.heading }}</h2>
+      {% if section.settings.subheading != blank %}
+        <p class="section__description">{{ section.settings.subheading }}</p>
+      {% endif %}
+    </header>
+  {% endif %}
+    {% assign product = section.settings.product %}
+    {% if product != blank %}
+      {% assign variant = product.selected_or_first_available_variant %}
+      {% if variant.inventory_management %}
+        <p>Stock: {{ variant.inventory_quantity }}</p>
+      {% else %}
+        <p>Inventory not tracked.</p>
+      {% endif %}
+    {% endif %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Inventory status",
+  "settings": [
+    {"type": "text", "id": "heading", "label": "Heading", "default": "Inventory status"},
+    {"type": "text", "id": "subheading", "label": "Subheading"},
+    {"type": "product", "id": "product", "label": "Product"}
+  ],
+  "presets": [
+    {"name": "Inventory status", "category": "Product"}
+  ]
+}
+{% endschema %}

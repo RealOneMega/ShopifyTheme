@@ -1,0 +1,56 @@
+<section class="section">
+  <div class="container">
+    <h1 class="heading">{{ collection.title }}</h1>
+    <form id="CollectionFilters" class="stack" method="get">
+      <div style="display:flex;flex-wrap:wrap;gap:1rem;align-items:center;justify-content:space-between;">
+        <div style="display:flex;gap:1rem;flex-wrap:wrap;align-items:center;">
+          {% for filter in collection.filters %}
+            {% if filter.type == 'list' %}
+              <fieldset style="border:none;padding:0;">
+                <legend><strong>{{ filter.label }}</strong></legend>
+                <div class="stack" style="grid-auto-flow:column;gap:0.75rem;align-items:center;">
+                  {% for value in filter.values %}
+                    <label>
+                      <input type="checkbox" name="{{ value.param_name }}" value="{{ value.value }}" {% if value.active %}checked{% endif %} {% if value.count == 0 and value.active == false %}disabled{% endif %}>
+                      {{ value.label }}
+                    </label>
+                  {% endfor %}
+                </div>
+              </fieldset>
+            {% elsif filter.type == 'price_range' %}
+              <fieldset style="border:none;padding:0;">
+                <legend><strong>{{ filter.label }}</strong></legend>
+                <div style="display:flex;gap:0.5rem;align-items:center;">
+                  <input class="field" type="number" name="{{ filter.min_value.param_name }}" value="{{ filter.min_value.value | default: '' }}" placeholder="Min">
+                  <input class="field" type="number" name="{{ filter.max_value.param_name }}" value="{{ filter.max_value.value | default: '' }}" placeholder="Max">
+                </div>
+              </fieldset>
+            {% endif %}
+          {% endfor %}
+        </div>
+        <div style="display:flex;gap:0.75rem;align-items:center;">
+          <label for="SortBy"><strong>Sort by</strong></label>
+          <select id="SortBy" class="field field--select" name="sort_by">
+            {% assign sort_by = collection.sort_by | default: collection.default_sort_by %}
+            {% for option in collection.sort_options %}
+              <option value="{{ option.value }}" {% if option.value == sort_by %}selected{% endif %}>{{ option.name }}</option>
+            {% endfor %}
+          </select>
+          <button class="button button--secondary" type="submit">Apply</button>
+        </div>
+      </div>
+    </form>
+    <div class="product-grid">
+      {% for product in collection.products %}
+        {% render 'product-card', product: product, style: 'below' %}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Main collection",
+  "settings": []
+}
+{% endschema %}

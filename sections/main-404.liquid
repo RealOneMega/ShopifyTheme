@@ -1,0 +1,20 @@
+<section class="section">
+  <div class="container">
+    <div class="empty-state">
+      <h1 class="heading">{{ section.settings.heading }}</h1>
+      <p>{{ section.settings.subheading }}</p>
+      <a class="button button--primary" href="{{ routes.root_url }}">{{ section.settings.button_label }}</a>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Main 404",
+  "settings": [
+    {"type": "text", "id": "heading", "label": "Heading", "default": "Page not found"},
+    {"type": "textarea", "id": "subheading", "label": "Subheading", "default": "Sorry, we couldn't find that page."},
+    {"type": "text", "id": "button_label", "label": "Button label", "default": "Back to home"}
+  ]
+}
+{% endschema %}

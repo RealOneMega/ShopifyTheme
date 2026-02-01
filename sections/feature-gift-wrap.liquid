@@ -1,0 +1,39 @@
+<section class="section feature feature--gift-wrap" data-feature="gift-wrap">
+  <div class="container">
+  {% if section.settings.heading != blank %}
+    <header class="section__header">
+      <h2 class="section__heading">{{ section.settings.heading }}</h2>
+      {% if section.settings.subheading != blank %}
+        <p class="section__description">{{ section.settings.subheading }}</p>
+      {% endif %}
+    </header>
+  {% endif %}
+    {% assign product = section.settings.product %}
+    {% if product != blank %}
+      {% form 'product', product %}
+        <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+        <label class="checkbox">
+          <input type="checkbox" name="properties[Gift wrap]" value="Yes">
+          {{ section.settings.label }}
+        </label>
+        <button class="button" type="submit">{{ section.settings.button_label }}</button>
+      {% endform %}
+    {% endif %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Gift wrap",
+  "settings": [
+    {"type": "text", "id": "heading", "label": "Heading", "default": "Gift wrap"},
+    {"type": "text", "id": "subheading", "label": "Subheading"},
+    {"type": "product", "id": "product", "label": "Product"},
+    {"type": "text", "id": "label", "label": "Checkbox label", "default": "Add gift wrap"},
+    {"type": "text", "id": "button_label", "label": "Button label", "default": "Add to cart"}
+  ],
+  "presets": [
+    {"name": "Gift wrap", "category": "Product"}
+  ]
+}
+{% endschema %}

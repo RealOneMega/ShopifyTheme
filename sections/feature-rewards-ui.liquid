@@ -1,0 +1,45 @@
+<section class="section feature feature--rewards-ui" data-feature="rewards-ui">
+  <div class="container">
+  {% if section.settings.heading != blank %}
+    <header class="section__header">
+      <h2 class="section__heading">{{ section.settings.heading }}</h2>
+      {% if section.settings.subheading != blank %}
+        <p class="section__description">{{ section.settings.subheading }}</p>
+      {% endif %}
+    </header>
+  {% endif %}
+    <div class="rewards">
+      <p>Points: {{ section.settings.points }}</p>
+      <p>Tier: {{ section.settings.tier }}</p>
+      <ul>
+        {% for block in section.blocks %}
+          <li>{{ block.settings.reward }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Rewards UI",
+  "settings": [
+    {"type": "text", "id": "heading", "label": "Heading", "default": "Rewards UI"},
+    {"type": "text", "id": "subheading", "label": "Subheading"},
+    {"type": "number", "id": "points", "label": "Points", "default": 1200},
+    {"type": "text", "id": "tier", "label": "Tier", "default": "Gold"}
+  ],
+  "blocks": [
+    {
+      "type": "reward",
+      "name": "Reward",
+      "settings": [
+        {"type": "text", "id": "reward", "label": "Reward", "default": "Free shipping"}
+      ]
+    }
+  ],
+  "presets": [
+    {"name": "Rewards UI", "category": "Marketing"}
+  ]
+}
+{% endschema %}

@@ -1,0 +1,35 @@
+<section class="section feature feature--compare-at" data-feature="compare-at">
+  <div class="container">
+  {% if section.settings.heading != blank %}
+    <header class="section__header">
+      <h2 class="section__heading">{{ section.settings.heading }}</h2>
+      {% if section.settings.subheading != blank %}
+        <p class="section__description">{{ section.settings.subheading }}</p>
+      {% endif %}
+    </header>
+  {% endif %}
+    {% assign product = section.settings.product %}
+    {% if product != blank %}
+      <p class="price">
+        <span class="price--sale">{{ product.price | money }}</span>
+        {% if product.compare_at_price > product.price %}
+          <span class="price--compare">{{ product.compare_at_price | money }}</span>
+        {% endif %}
+      </p>
+    {% endif %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Compare-at pricing",
+  "settings": [
+    {"type": "text", "id": "heading", "label": "Heading", "default": "Compare-at pricing"},
+    {"type": "text", "id": "subheading", "label": "Subheading"},
+    {"type": "product", "id": "product", "label": "Product"}
+  ],
+  "presets": [
+    {"name": "Compare-at pricing", "category": "Pricing"}
+  ]
+}
+{% endschema %}

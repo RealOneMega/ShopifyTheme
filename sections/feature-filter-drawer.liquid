@@ -1,0 +1,34 @@
+<section class="section feature feature--filter-drawer" data-feature="filter-drawer">
+  <div class="container">
+    <button class="button" type="button" data-drawer-open="#FilterDrawer-{{ section.id }}">Open filters</button>
+  </div>
+  <div id="FilterDrawer-{{ section.id }}" class="drawer" role="dialog" aria-modal="true">
+    <button class="button" type="button" data-drawer-close>Close</button>
+    {% if collection != blank %}
+      <div class="collection-filters">
+        {% for filter in collection.filters %}
+          <div class="collection-filter">
+            <h3>{{ filter.label }}</h3>
+            <ul>
+              {% for value in filter.values %}
+                <li>
+                  <a href="{{ value.url }}">{{ value.label }} ({{ value.count }})</a>
+                </li>
+              {% endfor %}
+            </ul>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Filter drawer",
+  "settings": [],
+  "presets": [
+    {"name": "Filter drawer", "category": "Collection"}
+  ]
+}
+{% endschema %}
