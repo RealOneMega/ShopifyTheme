@@ -320,6 +320,25 @@ const Theme = (() => {
     }
   };
 
+  const initAnimatedHeadlines = () => {
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    document.querySelectorAll('[data-animated-headline]').forEach((headline) => {
+      const words = JSON.parse(headline.dataset.words || '[]').filter(Boolean);
+      if (words.length < 2 || prefersReduced) return;
+      const wordEl = headline.querySelector('.animated-headline__word');
+      let index = 0;
+      setInterval(() => {
+        index = (index + 1) % words.length;
+        wordEl.classList.remove('is-visible');
+        setTimeout(() => {
+          wordEl.textContent = words[index];
+          wordEl.classList.add('is-visible');
+        }, 200);
+      }, 2500);
+      wordEl.classList.add('is-visible');
+    });
+  };
+
   const initTabs = () => {
     document.querySelectorAll('[data-collection-tabs]').forEach((tabs) => {
       const triggers = tabs.querySelectorAll('[data-tab-trigger]');
@@ -349,6 +368,7 @@ const Theme = (() => {
     initAccordion();
     initRecentlyViewed();
     initTabs();
+    initAnimatedHeadlines();
   };
 
   return { init };

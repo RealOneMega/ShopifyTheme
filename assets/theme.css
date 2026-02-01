@@ -702,20 +702,15 @@ p {
 }
 
 .animated-headline__word {
-  position: relative;
   display: inline-block;
-  animation: headlineFade 6s infinite;
   opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
-.animated-headline__word:nth-child(1) { animation-delay: 0s; }
-.animated-headline__word:nth-child(2) { animation-delay: 2s; }
-.animated-headline__word:nth-child(3) { animation-delay: 4s; }
-
-@keyframes headlineFade {
-  0%, 10% { opacity: 0; transform: translateY(6px); }
-  20%, 40% { opacity: 1; transform: translateY(0); }
-  50%, 100% { opacity: 0; transform: translateY(-6px); }
+.animated-headline__word.is-visible {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .field {
