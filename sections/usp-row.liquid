@@ -1,0 +1,48 @@
+<section class="section">
+  <div class="container">
+    <div class="product-grid">
+      {% for block in section.blocks %}
+        <div class="stack" style="align-items:flex-start;">
+          {% if block.settings.icon != 'none' %}
+            {% assign icon_snippet = 'icon-' | append: block.settings.icon %}
+            {% render icon_snippet %}
+          {% endif %}
+          <strong>{{ block.settings.heading }}</strong>
+          <p>{{ block.settings.text }}</p>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "USP row",
+  "blocks": [
+    {
+      "type": "usp",
+      "name": "USP",
+      "settings": [
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Icon",
+          "default": "truck",
+          "options": [
+            {"value": "none", "label": "None"},
+            {"value": "truck", "label": "Truck"},
+            {"value": "shield", "label": "Shield"},
+            {"value": "star", "label": "Star"}
+          ]
+        },
+        {"type": "text", "id": "heading", "label": "Heading", "default": "Free shipping"},
+        {"type": "textarea", "id": "text", "label": "Text", "default": "On all orders over $75."}
+      ]
+    }
+  ],
+  "max_blocks": 4,
+  "presets": [
+    {"name": "USP row", "category": "Text"}
+  ]
+}
+{% endschema %}
