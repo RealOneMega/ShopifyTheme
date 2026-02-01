@@ -71,6 +71,42 @@ main {
   padding: var(--section-padding-y-mobile) 1.5rem;
 }
 
+.section--background {
+  position: relative;
+  overflow: hidden;
+  background-color: var(--section-background-color, transparent);
+}
+
+.section--background::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: var(--section-background-image, var(--section-background-gradient, none));
+  background-position: var(--section-background-position, center);
+  background-size: var(--section-background-size, cover);
+  background-repeat: var(--section-background-repeat, no-repeat);
+  z-index: 0;
+}
+
+.section--background > * {
+  position: relative;
+  z-index: 1;
+}
+
+.section__background-media {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.section__background-video {
+  width: 100%;
+  height: 100%;
+  object-fit: var(--section-background-size, cover);
+  object-position: var(--section-background-position, center);
+}
+
 @media (min-width: 768px) {
   .section {
     padding: var(--section-padding-y) 4vw;

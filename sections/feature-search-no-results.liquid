@@ -1,4 +1,5 @@
-<section class="section feature feature--search-no-results" data-feature="search-no-results">
+<section class="section feature feature--search-no-results section--background" data-feature="search-no-results" style="{% render 'section-background-style', section: section %}">
+  {% render 'section-background-media', section: section %}
   <div class="container">
   {% if section.settings.heading != blank %}
     <header class="section__header">
@@ -27,21 +28,155 @@
 {
   "name": "Search no-results",
   "settings": [
-    {"type": "text", "id": "heading", "label": "Heading", "default": "Search no-results"},
-    {"type": "text", "id": "subheading", "label": "Subheading"},
-    {"type": "textarea", "id": "message", "label": "Message", "default": "No results found. Try these picks."}
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Search no-results"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading"
+    },
+    {
+      "type": "textarea",
+      "id": "message",
+      "label": "Message",
+      "default": "No results found. Try these picks."
+    },
+    {
+      "type": "header",
+      "content": "Background"
+    },
+    {
+      "type": "select",
+      "id": "background_type",
+      "label": "Background type",
+      "default": "none",
+      "options": [
+        {
+          "value": "none",
+          "label": "None"
+        },
+        {
+          "value": "color",
+          "label": "Solid color"
+        },
+        {
+          "value": "gradient",
+          "label": "Gradient"
+        },
+        {
+          "value": "image",
+          "label": "Image"
+        },
+        {
+          "value": "video",
+          "label": "Video"
+        }
+      ]
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color_background",
+      "id": "background_gradient",
+      "label": "Background gradient"
+    },
+    {
+      "type": "image_picker",
+      "id": "background_image",
+      "label": "Background image"
+    },
+    {
+      "type": "video",
+      "id": "background_video",
+      "label": "Background video"
+    },
+    {
+      "type": "range",
+      "id": "background_position_x",
+      "label": "Background position horizontal",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "background_position_y",
+      "label": "Background position vertical",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "default": 50
+    },
+    {
+      "type": "select",
+      "id": "background_size",
+      "label": "Background size",
+      "default": "cover",
+      "options": [
+        {
+          "value": "cover",
+          "label": "Cover"
+        },
+        {
+          "value": "contain",
+          "label": "Contain"
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "background_repeat",
+      "label": "Background repeat",
+      "default": "no-repeat",
+      "options": [
+        {
+          "value": "no-repeat",
+          "label": "No repeat"
+        },
+        {
+          "value": "repeat",
+          "label": "Repeat"
+        },
+        {
+          "value": "repeat-x",
+          "label": "Repeat horizontally"
+        },
+        {
+          "value": "repeat-y",
+          "label": "Repeat vertically"
+        }
+      ]
+    }
   ],
   "blocks": [
     {
       "type": "product",
       "name": "Product",
       "settings": [
-        {"type": "product", "id": "product", "label": "Product"}
+        {
+          "type": "product",
+          "id": "product",
+          "label": "Product"
+        }
       ]
     }
   ],
   "presets": [
-    {"name": "Search no-results", "category": "Search"}
+    {
+      "name": "Search no-results",
+      "category": "Search"
+    }
   ]
 }
 {% endschema %}

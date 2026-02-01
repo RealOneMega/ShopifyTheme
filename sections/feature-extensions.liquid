@@ -1,4 +1,5 @@
-<section class="section">
+<section class="section section--background" style="{% render 'section-background-style', section: section %}">
+  {% render 'section-background-media', section: section %}
   <div class="container">
     {% for block in section.blocks %}
       {% case block.settings.feature_type %}
@@ -315,7 +316,121 @@
 {% schema %}
 {
   "name": "Feature extensions",
-  "settings": [],
+  "settings": [
+    {
+      "type": "header",
+      "content": "Background"
+    },
+    {
+      "type": "select",
+      "id": "background_type",
+      "label": "Background type",
+      "default": "none",
+      "options": [
+        {
+          "value": "none",
+          "label": "None"
+        },
+        {
+          "value": "color",
+          "label": "Solid color"
+        },
+        {
+          "value": "gradient",
+          "label": "Gradient"
+        },
+        {
+          "value": "image",
+          "label": "Image"
+        },
+        {
+          "value": "video",
+          "label": "Video"
+        }
+      ]
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color_background",
+      "id": "background_gradient",
+      "label": "Background gradient"
+    },
+    {
+      "type": "image_picker",
+      "id": "background_image",
+      "label": "Background image"
+    },
+    {
+      "type": "video",
+      "id": "background_video",
+      "label": "Background video"
+    },
+    {
+      "type": "range",
+      "id": "background_position_x",
+      "label": "Background position horizontal",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "background_position_y",
+      "label": "Background position vertical",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "default": 50
+    },
+    {
+      "type": "select",
+      "id": "background_size",
+      "label": "Background size",
+      "default": "cover",
+      "options": [
+        {
+          "value": "cover",
+          "label": "Cover"
+        },
+        {
+          "value": "contain",
+          "label": "Contain"
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "background_repeat",
+      "label": "Background repeat",
+      "default": "no-repeat",
+      "options": [
+        {
+          "value": "no-repeat",
+          "label": "No repeat"
+        },
+        {
+          "value": "repeat",
+          "label": "Repeat"
+        },
+        {
+          "value": "repeat-x",
+          "label": "Repeat horizontally"
+        },
+        {
+          "value": "repeat-y",
+          "label": "Repeat vertically"
+        }
+      ]
+    }
+  ],
   "blocks": [
     {
       "type": "feature",
@@ -327,75 +442,266 @@
           "label": "Feature type",
           "default": "sticky_atc",
           "options": [
-            {"value": "sticky_atc", "label": "Sticky add to cart"},
-            {"value": "buy_now", "label": "Buy now toggle"},
-            {"value": "back_in_stock", "label": "Back-in-stock alerts"},
-            {"value": "size_chart", "label": "Size chart"},
-            {"value": "shipping_returns_modal", "label": "Shipping & returns modal"},
-            {"value": "trust_badges", "label": "Trust badges"},
-            {"value": "quantity_breaks", "label": "Quantity breaks"},
-            {"value": "upsell_cart", "label": "Cart upsell"},
-            {"value": "recently_viewed", "label": "Recently viewed"},
-            {"value": "social_proof", "label": "Social proof"},
-            {"value": "zoom", "label": "Image zoom"},
-            {"value": "variant_images", "label": "Variant images"},
-            {"value": "compare", "label": "Compare products"},
-            {"value": "quick_view", "label": "Quick view"},
-            {"value": "quick_add", "label": "Quick add"},
-            {"value": "collection_banner", "label": "Collection banner"},
-            {"value": "collection_filters", "label": "Collection filters"},
-            {"value": "search_enhanced", "label": "Enhanced search"},
-            {"value": "search_no_results", "label": "Search no-results"},
-            {"value": "countdown", "label": "Countdown timer"},
-            {"value": "hotspots", "label": "Shoppable hotspots"},
-            {"value": "before_after", "label": "Before/after"},
-            {"value": "video_banner", "label": "Video banner"},
-            {"value": "announcement_tiles", "label": "Announcement tiles"},
-            {"value": "newsletter_popup", "label": "Newsletter popup"},
-            {"value": "promo_bar", "label": "Promo bar"},
-            {"value": "rewards_ui", "label": "Rewards UI"},
-            {"value": "reviews_block", "label": "Reviews block"},
-            {"value": "sticky_filters", "label": "Sticky filters"},
-            {"value": "filter_drawer", "label": "Filter drawer"},
-            {"value": "breadcrumb", "label": "Breadcrumbs"},
-            {"value": "faq_schema", "label": "FAQ schema"},
-            {"value": "sticky_atc_mobile", "label": "Mobile sticky ATC"},
-            {"value": "unit_price", "label": "Unit pricing"},
-            {"value": "inventory_status", "label": "Inventory status"},
-            {"value": "shipping_estimator", "label": "Shipping estimator"},
-            {"value": "account_cta", "label": "Account CTA"},
-            {"value": "gift_wrap", "label": "Gift wrap"},
-            {"value": "gift_note", "label": "Gift note"},
-            {"value": "free_shipping_bar", "label": "Free shipping bar"},
-            {"value": "upsell_bundle", "label": "Bundle builder"},
-            {"value": "recently_purchased", "label": "Recently purchased"},
-            {"value": "email_capture", "label": "Email capture"},
-            {"value": "sms_capture", "label": "SMS capture"},
-            {"value": "referrals", "label": "Referrals"},
-            {"value": "loyalty_tiers", "label": "Loyalty tiers"},
-            {"value": "wishlist", "label": "Wishlist"},
-            {"value": "compare_at", "label": "Compare-at callouts"},
-            {"value": "product_tabs", "label": "Product tabs"},
-            {"value": "usp_icons", "label": "USP icons"},
-            {"value": "brand_strip", "label": "Brand strip"},
-            {"value": "testimonials", "label": "Testimonials"},
-            {"value": "faq", "label": "FAQ"},
-            {"value": "image_with_text", "label": "Image with text"},
-            {"value": "rich_text", "label": "Rich text"},
-            {"value": "logo_list", "label": "Logo list"},
-            {"value": "blog_posts", "label": "Blog posts"},
-            {"value": "video_review", "label": "Video reviews"},
-            {"value": "accessibility", "label": "Accessibility"},
-            {"value": "seo_meta", "label": "SEO meta"}
+            {
+              "value": "sticky_atc",
+              "label": "Sticky add to cart"
+            },
+            {
+              "value": "buy_now",
+              "label": "Buy now toggle"
+            },
+            {
+              "value": "back_in_stock",
+              "label": "Back-in-stock alerts"
+            },
+            {
+              "value": "size_chart",
+              "label": "Size chart"
+            },
+            {
+              "value": "shipping_returns_modal",
+              "label": "Shipping & returns modal"
+            },
+            {
+              "value": "trust_badges",
+              "label": "Trust badges"
+            },
+            {
+              "value": "quantity_breaks",
+              "label": "Quantity breaks"
+            },
+            {
+              "value": "upsell_cart",
+              "label": "Cart upsell"
+            },
+            {
+              "value": "recently_viewed",
+              "label": "Recently viewed"
+            },
+            {
+              "value": "social_proof",
+              "label": "Social proof"
+            },
+            {
+              "value": "zoom",
+              "label": "Image zoom"
+            },
+            {
+              "value": "variant_images",
+              "label": "Variant images"
+            },
+            {
+              "value": "compare",
+              "label": "Compare products"
+            },
+            {
+              "value": "quick_view",
+              "label": "Quick view"
+            },
+            {
+              "value": "quick_add",
+              "label": "Quick add"
+            },
+            {
+              "value": "collection_banner",
+              "label": "Collection banner"
+            },
+            {
+              "value": "collection_filters",
+              "label": "Collection filters"
+            },
+            {
+              "value": "search_enhanced",
+              "label": "Enhanced search"
+            },
+            {
+              "value": "search_no_results",
+              "label": "Search no-results"
+            },
+            {
+              "value": "countdown",
+              "label": "Countdown timer"
+            },
+            {
+              "value": "hotspots",
+              "label": "Shoppable hotspots"
+            },
+            {
+              "value": "before_after",
+              "label": "Before/after"
+            },
+            {
+              "value": "video_banner",
+              "label": "Video banner"
+            },
+            {
+              "value": "announcement_tiles",
+              "label": "Announcement tiles"
+            },
+            {
+              "value": "newsletter_popup",
+              "label": "Newsletter popup"
+            },
+            {
+              "value": "promo_bar",
+              "label": "Promo bar"
+            },
+            {
+              "value": "rewards_ui",
+              "label": "Rewards UI"
+            },
+            {
+              "value": "reviews_block",
+              "label": "Reviews block"
+            },
+            {
+              "value": "sticky_filters",
+              "label": "Sticky filters"
+            },
+            {
+              "value": "filter_drawer",
+              "label": "Filter drawer"
+            },
+            {
+              "value": "breadcrumb",
+              "label": "Breadcrumbs"
+            },
+            {
+              "value": "faq_schema",
+              "label": "FAQ schema"
+            },
+            {
+              "value": "sticky_atc_mobile",
+              "label": "Mobile sticky ATC"
+            },
+            {
+              "value": "unit_price",
+              "label": "Unit pricing"
+            },
+            {
+              "value": "inventory_status",
+              "label": "Inventory status"
+            },
+            {
+              "value": "shipping_estimator",
+              "label": "Shipping estimator"
+            },
+            {
+              "value": "account_cta",
+              "label": "Account CTA"
+            },
+            {
+              "value": "gift_wrap",
+              "label": "Gift wrap"
+            },
+            {
+              "value": "gift_note",
+              "label": "Gift note"
+            },
+            {
+              "value": "free_shipping_bar",
+              "label": "Free shipping bar"
+            },
+            {
+              "value": "upsell_bundle",
+              "label": "Bundle builder"
+            },
+            {
+              "value": "recently_purchased",
+              "label": "Recently purchased"
+            },
+            {
+              "value": "email_capture",
+              "label": "Email capture"
+            },
+            {
+              "value": "sms_capture",
+              "label": "SMS capture"
+            },
+            {
+              "value": "referrals",
+              "label": "Referrals"
+            },
+            {
+              "value": "loyalty_tiers",
+              "label": "Loyalty tiers"
+            },
+            {
+              "value": "wishlist",
+              "label": "Wishlist"
+            },
+            {
+              "value": "compare_at",
+              "label": "Compare-at callouts"
+            },
+            {
+              "value": "product_tabs",
+              "label": "Product tabs"
+            },
+            {
+              "value": "usp_icons",
+              "label": "USP icons"
+            },
+            {
+              "value": "brand_strip",
+              "label": "Brand strip"
+            },
+            {
+              "value": "testimonials",
+              "label": "Testimonials"
+            },
+            {
+              "value": "faq",
+              "label": "FAQ"
+            },
+            {
+              "value": "image_with_text",
+              "label": "Image with text"
+            },
+            {
+              "value": "rich_text",
+              "label": "Rich text"
+            },
+            {
+              "value": "logo_list",
+              "label": "Logo list"
+            },
+            {
+              "value": "blog_posts",
+              "label": "Blog posts"
+            },
+            {
+              "value": "video_review",
+              "label": "Video reviews"
+            },
+            {
+              "value": "accessibility",
+              "label": "Accessibility"
+            },
+            {
+              "value": "seo_meta",
+              "label": "SEO meta"
+            }
           ]
         },
-        {"type": "text", "id": "feature_label", "label": "Custom label"},
-        {"type": "textarea", "id": "feature_description", "label": "Custom description"}
+        {
+          "type": "text",
+          "id": "feature_label",
+          "label": "Custom label"
+        },
+        {
+          "type": "textarea",
+          "id": "feature_description",
+          "label": "Custom description"
+        }
       ]
     }
   ],
   "presets": [
-    {"name": "Feature extensions", "category": "Marketing"}
+    {
+      "name": "Feature extensions",
+      "category": "Marketing"
+    }
   ]
 }
 {% endschema %}
