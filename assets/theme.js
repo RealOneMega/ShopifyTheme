@@ -166,8 +166,30 @@ const Theme = (() => {
 
   const initWishlist = () => {
     const storageKey = 'wishlist-items';
-    const getItems = () => JSON.parse(localStorage.getItem(storageKey) || '[]');
+    const normalizeItems = (items) =>
+      items
+        .map((item) => {
+          if (typeof item === 'string') {
+            return { handle: item, variantId: null };
+          }
+          if (item && item.handle) {
+            return { handle: item.handle, variantId: item.variantId || null };
+          }
+          return null;
+        })
+        .filter(Boolean);
+    const getItems = () => normalizeItems(JSON.parse(localStorage.getItem(storageKey) || '[]'));
     const setItems = (items) => localStorage.setItem(storageKey, JSON.stringify(items));
+    const findItem = (items, handle) => items.find((item) => item.handle === handle);
+    const upsertItem = (items, handle, variantId) => {
+      const existing = findItem(items, handle);
+      if (existing) {
+        existing.variantId = variantId || existing.variantId;
+        return items;
+      }
+      items.push({ handle, variantId: variantId || null });
+      return items;
+    };
     const formatMoney = (cents) => {
       if (window.Shopify?.formatMoney) {
         return Shopify.formatMoney(cents);
@@ -183,8 +205,9 @@ const Theme = (() => {
         return;
       }
       container.innerHTML = '<p>Loading wishlist...</p>';
+      const handles = [...new Set(items.map((item) => item.handle))];
       const products = await Promise.all(
-        items.map((handle) =>
+        handles.map((handle) =>
           fetch(`/products/${handle}.js`)
             .then((response) => (response.ok ? response.json() : null))
             .catch(() => null),
@@ -199,7 +222,8 @@ const Theme = (() => {
         <div class="stack">
           ${validProducts
             .map((product) => {
-              const variantId = product.variants?.[0]?.id;
+              const savedItem = findItem(items, product.handle);
+              const variantId = savedItem?.variantId || product.variants?.[0]?.id;
               const price = formatMoney(product.price);
               const image = product.featured_image
                 ? `<img src="${product.featured_image}&width=140" alt="${product.title}">`
@@ -229,10 +253,12 @@ const Theme = (() => {
       const updateList = () => {
         const items = getItems();
         if (localStorage.getItem(key) === 'true') {
-          if (!items.includes(handle)) items.push(handle);
+          upsertItem(items, handle, button.dataset.variantId ? Number(button.dataset.variantId) : null);
         } else {
-          const index = items.indexOf(handle);
-          if (index >= 0) items.splice(index, 1);
+          const nextItems = items.filter((item) => item.handle !== handle);
+          setItems(nextItems);
+          renderWishlist();
+          return;
         }
         setItems(items);
         renderWishlist();
@@ -250,14 +276,49 @@ const Theme = (() => {
       });
       update();
     });
+    document.querySelectorAll('[data-wishlist-add]').forEach((button) => {
+      const form = button.closest('[data-product-form]');
+      if (!form) return;
+      const handle = form.dataset.productHandle;
+      const variantInput = form.querySelector('[data-variant-id]');
+      const key = `wishlist:${handle}`;
+      const updateButton = () => {
+        const items = getItems();
+        const active = !!findItem(items, handle);
+        button.setAttribute('aria-pressed', active);
+        button.classList.toggle('is-active', active);
+        button.textContent = active ? 'Saved to wishlist' : 'Save to wishlist';
+      };
+      button.addEventListener('click', () => {
+        const items = getItems();
+        const existing = findItem(items, handle);
+        if (existing) {
+          const nextItems = items.filter((item) => item.handle !== handle);
+          setItems(nextItems);
+          localStorage.setItem(key, 'false');
+          renderWishlist();
+          updateButton();
+          return;
+        }
+        const variantId = variantInput ? Number(variantInput.value) : null;
+        upsertItem(items, handle, variantId);
+        setItems(items);
+        localStorage.setItem(key, 'true');
+        renderWishlist();
+        updateButton();
+      });
+      updateButton();
+    });
     const container = document.querySelector('[data-wishlist-items]');
     if (container) {
       container.addEventListener('click', (event) => {
         const removeButton = event.target.closest('[data-wishlist-remove]');
         if (removeButton) {
           const handle = removeButton.dataset.handle;
-          const items = getItems().filter((item) => item !== handle);
+          const key = `wishlist:${handle}`;
+          const items = getItems().filter((item) => item.handle !== handle);
           setItems(items);
+          localStorage.setItem(key, 'false');
           renderWishlist();
           return;
         }
@@ -273,8 +334,10 @@ const Theme = (() => {
           })
             .then((response) => {
               if (!response.ok) throw new Error('Add to cart failed.');
-              const items = getItems().filter((item) => item !== handle);
+              const key = `wishlist:${handle}`;
+              const items = getItems().filter((item) => item.handle !== handle);
               setItems(items);
+              localStorage.setItem(key, 'false');
               renderWishlist();
             })
             .catch(() => {});

@@ -43,7 +43,7 @@
           <p>In stock: {{ product.inventory_quantity }}</p>
         {% endif %}
 
-        <form method="post" action="/cart/add" class="product-form" data-product-form {% if color_option %}data-color-position="{{ color_option.position }}"{% endif %} {% if size_option %}data-size-position="{{ size_option.position }}"{% endif %}>
+        <form method="post" action="/cart/add" class="product-form" data-product-form {% if color_option %}data-color-position="{{ color_option.position }}"{% endif %} {% if size_option %}data-size-position="{{ size_option.position }}"{% endif %} data-product-handle="{{ product.handle }}">
           {% if product.has_only_default_variant %}
             <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
           {% else %}
@@ -108,16 +108,43 @@
             {% endfor %}
           {% endif %}
           <button class="button button--primary" type="submit">Add to cart</button>
+          <button class="button button--secondary" type="button" data-wishlist-add aria-pressed="false">Save to wishlist</button>
         </form>
 
+        {% assign size_fit = product.metafields.custom.size_fit %}
+        {% assign details_materials = product.metafields.custom.details_materials %}
+        {% assign shipping_returns = product.metafields.custom.shipping_returns %}
+        {% assign size_chart = product.metafields.custom.size_chart %}
         <div class="accordion" data-accordion>
           <div class="accordion__item">
-            <button class="accordion__button" data-accordion-button aria-expanded="false">Shipping</button>
-            <div class="accordion__panel hidden">{{ section.settings.shipping_text }}</div>
+            <button class="accordion__button" data-accordion-button aria-expanded="false">Size &amp; Fit</button>
+            <div class="accordion__panel hidden">
+              {% if size_fit != blank %}
+                {{ size_fit | metafield_tag }}
+              {% endif %}
+              {% if size_chart != blank %}
+                <div class="product-size-chart">
+                  <h3 class="heading heading--small">Size chart</h3>
+                  {{ size_chart | metafield_tag }}
+                </div>
+              {% endif %}
+            </div>
           </div>
           <div class="accordion__item">
-            <button class="accordion__button" data-accordion-button aria-expanded="false">Returns</button>
-            <div class="accordion__panel hidden">{{ section.settings.returns_text }}</div>
+            <button class="accordion__button" data-accordion-button aria-expanded="false">Details &amp; Materials</button>
+            <div class="accordion__panel hidden">
+              {% if details_materials != blank %}
+                {{ details_materials | metafield_tag }}
+              {% endif %}
+            </div>
+          </div>
+          <div class="accordion__item">
+            <button class="accordion__button" data-accordion-button aria-expanded="false">Shipping &amp; Returns</button>
+            <div class="accordion__panel hidden">
+              {% if shipping_returns != blank %}
+                {{ shipping_returns | metafield_tag }}
+              {% endif %}
+            </div>
           </div>
         </div>
       </div>
