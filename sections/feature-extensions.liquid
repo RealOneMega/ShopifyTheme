@@ -3,16 +3,6 @@
   <div class="container">
     {% for block in section.blocks %}
       {% case block.settings.feature_type %}
-        {% when 'sticky_atc' %}
-          <div data-sticky-atc class="product-card" style="padding:1.5rem;">
-            <strong>Sticky add to cart</strong>
-            <p>Enable a sticky add-to-cart bar on product pages.</p>
-          </div>
-        {% when 'buy_now' %}
-          <div data-buy-now class="product-card" style="padding:1.5rem;">
-            <strong>Buy now toggle</strong>
-            <p>Show accelerated checkout button on product pages.</p>
-          </div>
         {% when 'back_in_stock' %}
           <div data-back-in-stock class="product-card" style="padding:1.5rem;">
             <strong>Back-in-stock alerts</strong>
@@ -72,11 +62,6 @@
           <div data-quick-view class="product-card" style="padding:1.5rem;">
             <strong>Quick view modal</strong>
             <p>Preview products without leaving collection.</p>
-          </div>
-        {% when 'quick_add' %}
-          <div data-quick-add class="product-card" style="padding:1.5rem;">
-            <strong>Quick add</strong>
-            <p>Add products to cart from list pages.</p>
           </div>
         {% when 'collection_banner' %}
           <div data-collection-banner class="product-card" style="padding:1.5rem;">
@@ -157,16 +142,6 @@
           <div data-breadcrumb class="product-card" style="padding:1.5rem;">
             <strong>Breadcrumbs</strong>
             <p>SEO-friendly breadcrumb navigation.</p>
-          </div>
-        {% when 'faq_schema' %}
-          <div data-faq-schema class="product-card" style="padding:1.5rem;">
-            <strong>FAQ schema</strong>
-            <p>Structured data for FAQs.</p>
-          </div>
-        {% when 'sticky_atc_mobile' %}
-          <div data-sticky-atc-mobile class="product-card" style="padding:1.5rem;">
-            <strong>Mobile sticky ATC</strong>
-            <p>Persistent ATC on mobile view.</p>
           </div>
         {% when 'unit_price' %}
           <div data-unit-price class="product-card" style="padding:1.5rem;">
@@ -440,16 +415,8 @@
           "type": "select",
           "id": "feature_type",
           "label": "Feature type",
-          "default": "sticky_atc",
+          "default": "back_in_stock",
           "options": [
-            {
-              "value": "sticky_atc",
-              "label": "Sticky add to cart"
-            },
-            {
-              "value": "buy_now",
-              "label": "Buy now toggle"
-            },
             {
               "value": "back_in_stock",
               "label": "Back-in-stock alerts"
@@ -497,10 +464,6 @@
             {
               "value": "quick_view",
               "label": "Quick view"
-            },
-            {
-              "value": "quick_add",
-              "label": "Quick add"
             },
             {
               "value": "collection_banner",
@@ -565,14 +528,6 @@
             {
               "value": "breadcrumb",
               "label": "Breadcrumbs"
-            },
-            {
-              "value": "faq_schema",
-              "label": "FAQ schema"
-            },
-            {
-              "value": "sticky_atc_mobile",
-              "label": "Mobile sticky ATC"
             },
             {
               "value": "unit_price",

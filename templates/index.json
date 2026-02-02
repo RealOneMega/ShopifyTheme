@@ -68,12 +68,40 @@
         "background_size": "cover",
         "background_repeat": "no-repeat"
       }
+    },
+    "feature_faq_K3cRyh": {
+      "type": "feature-faq",
+      "blocks": {
+        "faq_QgMJH8": {
+          "type": "faq",
+          "settings": {
+            "question": "What is your return policy?",
+            "answer": "<p>We accept returns within 30 days.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "faq_QgMJH8"
+      ],
+      "name": "FAQ",
+      "settings": {
+        "heading": "FAQ",
+        "subheading": "",
+        "background_type": "none",
+        "background_color": "#ffffff",
+        "background_gradient": "",
+        "background_position_x": 50,
+        "background_position_y": 50,
+        "background_size": "cover",
+        "background_repeat": "no-repeat"
+      }
     }
   },
   "order": [
     "hero",
     "featured_collection",
     "usp",
-    "rich_text"
+    "rich_text",
+    "feature_faq_K3cRyh"
   ]
 }
