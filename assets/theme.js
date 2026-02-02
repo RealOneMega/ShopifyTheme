@@ -102,6 +102,19 @@ const Theme = (() => {
     });
   };
 
+  const initMobileMenu = () => {
+    document.querySelectorAll('[data-mobile-menu-toggle]').forEach((button) => {
+      button.addEventListener('click', () => {
+        const item = button.closest('.mobile-menu__item');
+        const submenu = item?.querySelector(':scope > .mobile-menu__submenu');
+        if (!item || !submenu) return;
+        const isOpen = item.classList.toggle('is-open');
+        button.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        submenu.setAttribute('aria-hidden', isOpen ? 'false' : 'true');
+      });
+    });
+  };
+
   const initSlideshow = () => {
     document.querySelectorAll('[data-slideshow]').forEach((slideshow) => {
       const slides = Array.from(slideshow.querySelectorAll('[data-slide]'));
