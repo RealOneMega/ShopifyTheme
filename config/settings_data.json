@@ -15,13 +15,48 @@
     "sections": {
       "footer": {
         "type": "footer",
+        "blocks": {
+          "menu_pzbtYc": {
+            "type": "menu",
+            "settings": {
+              "heading": "",
+              "menu": ""
+            }
+          },
+          "menu_6N4dw7": {
+            "type": "menu",
+            "settings": {
+              "heading": "",
+              "menu": ""
+            }
+          },
+          "menu_KMXYcz": {
+            "type": "menu",
+            "settings": {
+              "heading": "Policies",
+              "menu": "policies"
+            }
+          }
+        },
+        "block_order": [
+          "menu_pzbtYc",
+          "menu_6N4dw7",
+          "menu_KMXYcz"
+        ],
         "settings": {
           "logo": "shopify://shop_images/RiskyLimitsCommericalFont_White.png",
           "text": "",
           "newsletter_heading": "Stay in the loop",
           "copyright": "Risky Limits. All Rights Reserved.",
           "show_payments": true,
-          "show_back_to_top": true
+          "show_back_to_top": true,
+          "background_type": "none",
+          "background_color": "#ffffff",
+          "background_gradient": "",
+          "background_position_x": 50,
+          "background_position_y": 50,
+          "background_size": "cover",
+          "background_repeat": "no-repeat"
         }
       },
       "newsletter-popup": {
@@ -35,7 +70,14 @@
           "subheading": "Get first access to new drops.",
           "gdpr_text": "By signing up you agree to receive emails.",
           "button_label": "Subscribe",
-          "button_style": "primary"
+          "button_style": "primary",
+          "background_type": "none",
+          "background_color": "#ffffff",
+          "background_gradient": "",
+          "background_position_x": 50,
+          "background_position_y": 50,
+          "background_size": "cover",
+          "background_repeat": "no-repeat"
         }
       }
     },
