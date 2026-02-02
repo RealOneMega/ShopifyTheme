@@ -1,4 +1,4 @@
-<section class="header {% if section.settings.sticky %}header--sticky{% endif %} section--background" style="{% render 'section-background-style', section: section %}">
+<section class="header section--background" style="{% render 'section-background-style', section: section %}">
   {% render 'section-background-media', section: section %}
   {% if section.settings.show_utility_row %}
     {% assign utility_alignment = section.settings.utility_alignment | default: 'center' %}
@@ -86,36 +86,68 @@
     </nav>
   {% endcapture %}
 
-  <div class="header__main {% if section.settings.layout == 'logo_center' %}header__main--center{% endif %}">
-    <button class="header__icon-button header__menu-toggle" type="button" data-drawer-open="#mobile-menu" aria-label="Open menu">
-      {% render 'icon-menu' %}
-    </button>
+  <div class="header__sticky {% if section.settings.sticky %}header__sticky--enabled{% endif %}">
+    <div class="header__main {% if section.settings.layout == 'logo_center' %}header__main--center{% endif %}">
+      <button class="header__icon-button header__menu-toggle" type="button" data-drawer-open="#mobile-menu" aria-label="Open menu">
+        {% render 'icon-menu' %}
+      </button>
 
-    {% assign logo_alignment = 'start' %}
-    {% if section.settings.layout == 'logo_center' %}
-      {% assign logo_alignment = 'center' %}
-    {% endif %}
-    <div class="header__logo {% if section.settings.layout == 'logo_center' %}header__logo--center{% else %}header__logo--left{% endif %}" style="max-width:{{ section.settings.logo_width }}px;">
-      <a href="{{ routes.root_url }}" aria-label="{{ shop.name }}">
-        {% if settings.logo != blank %}
-          {{ settings.logo | image_url: width: 320 | image_tag: loading: 'lazy', alt: shop.name, class: 'header__logo-image' }}
-        {% else %}
-          <strong>{{ shop.name }}</strong>
+      {% assign logo_alignment = 'start' %}
+      {% if section.settings.layout == 'logo_center' %}
+        {% assign logo_alignment = 'center' %}
+      {% endif %}
+      <div class="header__logo {% if section.settings.layout == 'logo_center' %}header__logo--center{% else %}header__logo--left{% endif %}" style="max-width:{{ section.settings.logo_width }}px;">
+        <a href="{{ routes.root_url }}" aria-label="{{ shop.name }}">
+          {% if settings.logo != blank %}
+            {{ settings.logo | image_url: width: 320 | image_tag: loading: 'lazy', alt: shop.name, class: 'header__logo-image' }}
+          {% else %}
+            <strong>{{ shop.name }}</strong>
+          {% endif %}
+        </a>
+      </div>
+
+      {% if section.settings.layout == 'logo_left' %}
+        {% assign menu_alignment = 'center' %}
+        {% if section.settings.menu_position == 'right' %}
+          {% assign menu_alignment = 'end' %}
         {% endif %}
-      </a>
+        <div style="justify-self:{{ menu_alignment }};">
+          {{ nav_markup }}
+        </div>
+      {% endif %}
+
+      <div class="header__icons header__icons--desktop" style="justify-self:end;">
+        <button class="header__icon-button" type="button" data-drawer-open="#search-drawer" aria-label="Search">
+          {% render 'icon-search' %}
+        </button>
+        <a class="header__icon-button" href="{{ routes.account_url }}" aria-label="Account">
+          {% render 'icon-account' %}
+        </a>
+        <button class="header__icon-button" type="button" data-drawer-open="#wishlist-drawer" aria-label="Wishlist">
+          {% render 'icon-heart' %}
+        </button>
+        <button class="header__icon-button" type="button" data-drawer-open="#cart-drawer" aria-label="Cart">
+          {% render 'icon-cart' %}
+          {% if cart.item_count > 0 %}
+            <span class="header__badge" aria-live="polite">{{ cart.item_count }}</span>
+          {% endif %}
+        </button>
+      </div>
     </div>
 
-    {% if section.settings.layout == 'logo_left' %}
-      {% assign menu_alignment = 'center' %}
-      {% if section.settings.menu_position == 'right' %}
-        {% assign menu_alignment = 'end' %}
-      {% endif %}
-      <div style="justify-self:{{ menu_alignment }};">
-        {{ nav_markup }}
-      </div>
+    {% if section.settings.layout == 'logo_center' %}
+      {{ nav_markup }}
     {% endif %}
+  </div>
+</section>
 
-    <div class="header__icons" style="justify-self:end;">
+<div id="mobile-menu" class="drawer" role="dialog" aria-modal="true" aria-label="Mobile menu">
+  <div class="drawer__header">
+    <strong>Menu</strong>
+    <button class="header__icon-button" type="button" data-drawer-close aria-label="Close menu">{% render 'icon-close' %}</button>
+  </div>
+  <div class="drawer__content">
+    <div class="mobile-menu__icons">
       <button class="header__icon-button" type="button" data-drawer-open="#search-drawer" aria-label="Search">
         {% render 'icon-search' %}
       </button>
@@ -132,34 +164,37 @@
         {% endif %}
       </button>
     </div>
-  </div>
-
-  {% if section.settings.layout == 'logo_center' %}
-    {{ nav_markup }}
-  {% endif %}
-</section>
-
-<div id="mobile-menu" class="drawer" role="dialog" aria-modal="true" aria-label="Mobile menu">
-  <div class="drawer__header">
-    <strong>Menu</strong>
-    <button class="header__icon-button" type="button" data-drawer-close aria-label="Close menu">{% render 'icon-close' %}</button>
-  </div>
-  <div class="drawer__content">
     <nav aria-label="Mobile">
       {% for link in linklists[section.settings.main_menu].links %}
-        <div class="stack" style="margin-bottom:1rem;">
-          <a href="{{ link.url }}"><strong>{{ link.title }}</strong></a>
+        <div class="mobile-menu__item">
+          <div class="mobile-menu__row">
+            <a class="mobile-menu__link" href="{{ link.url }}">{{ link.title }}</a>
+            {% if link.links != blank %}
+              <button class="mobile-menu__toggle" type="button" data-mobile-menu-toggle aria-expanded="false" aria-label="Toggle {{ link.title }} submenu">
+                <span class="mobile-menu__toggle-icon" aria-hidden="true"></span>
+              </button>
+            {% endif %}
+          </div>
           {% if link.links != blank %}
-            <div class="stack" style="margin-left:1rem;">
+            <div class="mobile-menu__submenu" aria-hidden="true">
               {% for child in link.links %}
-                <a href="{{ child.url }}">{{ child.title }}</a>
-                {% if child.links != blank %}
-                  <div class="stack" style="margin-left:1rem;">
-                    {% for grandchild in child.links %}
-                      <a href="{{ grandchild.url }}">{{ grandchild.title }}</a>
-                    {% endfor %}
+                <div class="mobile-menu__item">
+                  <div class="mobile-menu__row">
+                    <a class="mobile-menu__link" href="{{ child.url }}">{{ child.title }}</a>
+                    {% if child.links != blank %}
+                      <button class="mobile-menu__toggle" type="button" data-mobile-menu-toggle aria-expanded="false" aria-label="Toggle {{ child.title }} submenu">
+                        <span class="mobile-menu__toggle-icon" aria-hidden="true"></span>
+                      </button>
+                    {% endif %}
                   </div>
-                {% endif %}
+                  {% if child.links != blank %}
+                    <div class="mobile-menu__submenu" aria-hidden="true">
+                      {% for grandchild in child.links %}
+                        <a class="mobile-menu__link" href="{{ grandchild.url }}">{{ grandchild.title }}</a>
+                      {% endfor %}
+                    </div>
+                  {% endif %}
+                </div>
               {% endfor %}
             </div>
           {% endif %}
