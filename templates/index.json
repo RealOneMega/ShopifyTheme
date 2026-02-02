@@ -11,8 +11,58 @@
   "sections": {
     "hero": {
       "type": "hero-slideshow",
+      "blocks": {
+        "slide_FreEJr": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/BannerTest.png",
+            "subtitle": "",
+            "title": "",
+            "text": "",
+            "text_color": "light",
+            "text_position": "top:10%;left:10%;",
+            "focal_point": "object-position: center;",
+            "overlay_opacity": 20,
+            "button_label_1": "",
+            "button_link_1": "",
+            "button_style_1": "primary",
+            "button_label_2": "",
+            "button_link_2": "",
+            "button_style_2": "secondary",
+            "button_label_3": "",
+            "button_link_3": "",
+            "button_style_3": "tertiary"
+          }
+        },
+        "slide_jpdCQx": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/TerminalVelocityBanner.jpg",
+            "subtitle": "",
+            "title": "",
+            "text": "",
+            "text_color": "light",
+            "text_position": "top:10%;left:10%;",
+            "focal_point": "object-position: center;",
+            "overlay_opacity": 20,
+            "button_label_1": "",
+            "button_link_1": "",
+            "button_style_1": "primary",
+            "button_label_2": "",
+            "button_link_2": "",
+            "button_style_2": "secondary",
+            "button_label_3": "",
+            "button_link_3": "",
+            "button_style_3": "tertiary"
+          }
+        }
+      },
+      "block_order": [
+        "slide_FreEJr",
+        "slide_jpdCQx"
+      ],
       "settings": {
-        "layout": "contained",
+        "layout": "full",
         "autoplay": true,
         "autoplay_speed": 6000,
         "background_type": "none",
