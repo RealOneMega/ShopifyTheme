@@ -1,31 +1,111 @@
 <section class="section section--background" data-product-handle="{{ product.handle }}" style="{% render 'section-background-style', section: section %}">
   {% render 'section-background-media', section: section %}
   <div class="container">
-    <div style="display:grid;gap:2rem;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));">
-      <div>
-        {% for media in product.media %}
-          {{ media | media_tag: image_size: '800x', loading: 'lazy' }}
-        {% endfor %}
+    {% assign color_option = nil %}
+    {% assign size_option = nil %}
+    {% for option in product.options_with_values %}
+      {% assign option_name = option.name | downcase %}
+      {% if color_option == nil %}
+        {% if option_name contains 'color' or option_name contains 'colour' %}
+          {% assign color_option = option %}
+        {% endif %}
+      {% endif %}
+      {% if size_option == nil and option_name contains 'size' %}
+        {% assign size_option = option %}
+      {% endif %}
+    {% endfor %}
+
+    <div class="product-page">
+      <div class="product-gallery" data-product-gallery>
+        <div class="product-gallery__stage">
+          {% for media in product.media %}
+            <div class="product-gallery__item{% if forloop.first %} is-active{% endif %}" data-gallery-item data-media-id="{{ media.id }}">
+              {{ media | media_tag: image_size: '900x', loading: 'lazy' }}
+            </div>
+          {% endfor %}
+          <div class="product-gallery__controls">
+            <button class="product-gallery__arrow" type="button" data-gallery-prev aria-label="Previous image">‹</button>
+            <button class="product-gallery__arrow" type="button" data-gallery-next aria-label="Next image">›</button>
+          </div>
+        </div>
+        <div class="product-gallery__thumbs" data-gallery-thumbs>
+          {% for media in product.media %}
+            <button class="product-gallery__thumb{% if forloop.first %} is-selected{% endif %}" type="button" data-gallery-thumb data-media-id="{{ media.id }}" aria-label="View image {{ forloop.index }}">
+              {{ media | image_url: width: 120 | image_tag: loading: 'lazy', alt: media.alt | default: product.title }}
+            </button>
+          {% endfor %}
+        </div>
       </div>
-      <div class="stack">
+      <div class="product-details stack">
         <h1 class="heading">{{ product.title }}</h1>
         {% render 'price', product: product %}
         {% if section.settings.show_inventory and product.available %}
           <p>In stock: {{ product.inventory_quantity }}</p>
         {% endif %}
 
-        <form method="post" action="/cart/add">
+        <form method="post" action="/cart/add" class="product-form" data-product-form {% if color_option %}data-color-position="{{ color_option.position }}"{% endif %} {% if size_option %}data-size-position="{{ size_option.position }}"{% endif %}>
           {% if product.has_only_default_variant %}
             <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
           {% else %}
-            <label for="VariantSelect">Variant</label>
-            <select id="VariantSelect" class="field field--select" name="id">
-              {% for variant in product.variants %}
-                <option value="{{ variant.id }}" {% if variant == product.selected_or_first_available_variant %}selected{% endif %}>
-                  {{ variant.title }} - {{ variant.price | money }}
-                </option>
-              {% endfor %}
-            </select>
+            <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}" data-variant-id>
+            {% if color_option %}
+              {% assign color_index = color_option.position | minus: 1 %}
+              <div class="product-option">
+                <div class="product-option__header">
+                  <span class="label">{{ color_option.name }}</span>
+                  <span class="product-option__value" data-color-label>{{ product.selected_or_first_available_variant.options[color_index] }}</span>
+                </div>
+                <div class="product-color-swatches" data-color-swatches>
+                  {% for value in color_option.values %}
+                    {% assign swatch_color = value %}
+                    {% if value contains '#' %}
+                      {% assign swatch_color = value %}
+                    {% else %}
+                      {% assign swatch_color = value | downcase %}
+                    {% endif %}
+                    <button
+                      class="product-color-swatch{% if value == product.selected_or_first_available_variant.options[color_index] %} is-selected{% endif %}"
+                      type="button"
+                      data-option-value="{{ value | escape }}"
+                      aria-pressed="{% if value == product.selected_or_first_available_variant.options[color_index] %}true{% else %}false{% endif %}"
+                      style="--swatch-color: {{ swatch_color }};"
+                    >
+                      <span class="visually-hidden">{{ value }}</span>
+                    </button>
+                  {% endfor %}
+                </div>
+              </div>
+            {% endif %}
+
+            {% if size_option %}
+              {% assign size_index = size_option.position | minus: 1 %}
+              <div class="product-option">
+                <label class="label" for="SizeSelect">{{ size_option.name }}</label>
+                <select id="SizeSelect" class="select product-size-select" data-option-position="{{ size_option.position }}">
+                  {% for value in size_option.values %}
+                    <option value="{{ value }}" {% if value == product.selected_or_first_available_variant.options[size_index] %}selected{% endif %}>
+                      {{ value }}
+                    </option>
+                  {% endfor %}
+                </select>
+              </div>
+            {% endif %}
+
+            {% for option in product.options_with_values %}
+              {% if option != color_option and option != size_option %}
+                {% assign option_index = option.position | minus: 1 %}
+                <div class="product-option">
+                  <label class="label" for="OptionSelect{{ option.position }}">{{ option.name }}</label>
+                  <select id="OptionSelect{{ option.position }}" class="select product-option-select" data-option-position="{{ option.position }}">
+                    {% for value in option.values %}
+                      <option value="{{ value }}" {% if value == product.selected_or_first_available_variant.options[option_index] %}selected{% endif %}>
+                        {{ value }}
+                      </option>
+                    {% endfor %}
+                  </select>
+                </div>
+              {% endif %}
+            {% endfor %}
           {% endif %}
           <button class="button button--primary" type="submit">Add to cart</button>
         </form>
@@ -61,6 +141,10 @@
     </div>
   </div>
 </section>
+
+<script type="application/json" data-product-variants>
+  {{ product.variants | json }}
+</script>
 
 <script type="application/ld+json">
   {
