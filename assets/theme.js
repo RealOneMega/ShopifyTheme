@@ -487,6 +487,126 @@ const Theme = (() => {
     });
   };
 
+  const initProductPage = () => {
+    const form = document.querySelector('[data-product-form]');
+    const variantsData = document.querySelector('[data-product-variants]');
+    if (!form || !variantsData) return;
+    const variants = JSON.parse(variantsData.textContent || '[]');
+    if (!variants.length) return;
+
+    const colorPosition = Number(form.dataset.colorPosition || 0);
+    const sizePosition = Number(form.dataset.sizePosition || 0);
+    const variantIdInput = form.querySelector('[data-variant-id]');
+    const colorLabel = form.querySelector('[data-color-label]');
+    const colorSwatches = Array.from(form.querySelectorAll('[data-color-swatches] .product-color-swatch'));
+    const sizeSelect = form.querySelector('.product-size-select');
+    const optionSelects = Array.from(form.querySelectorAll('.product-option-select'));
+    const gallery = document.querySelector('[data-product-gallery]');
+    const galleryItems = Array.from(gallery?.querySelectorAll('[data-gallery-item]') || []);
+    const galleryThumbs = Array.from(gallery?.querySelectorAll('[data-gallery-thumb]') || []);
+    const prevButton = gallery?.querySelector('[data-gallery-prev]');
+    const nextButton = gallery?.querySelector('[data-gallery-next]');
+    let galleryIndex = 0;
+
+    const showGalleryIndex = (index) => {
+      if (!galleryItems.length) return;
+      galleryIndex = (index + galleryItems.length) % galleryItems.length;
+      galleryItems.forEach((item, idx) => {
+        item.classList.toggle('is-active', idx === galleryIndex);
+      });
+      galleryThumbs.forEach((thumb, idx) => {
+        thumb.classList.toggle('is-selected', idx === galleryIndex);
+      });
+    };
+
+    const showGalleryByMediaId = (mediaId) => {
+      if (!mediaId) return;
+      const targetIndex = galleryItems.findIndex((item) => item.dataset.mediaId === String(mediaId));
+      if (targetIndex >= 0) {
+        showGalleryIndex(targetIndex);
+      }
+    };
+
+    const getSelectedColor = () => {
+      const selectedSwatch = form.querySelector('.product-color-swatch.is-selected');
+      return selectedSwatch?.dataset.optionValue || null;
+    };
+
+    const getSelectedOptions = () => {
+      const totalOptions = variants[0]?.options?.length || 0;
+      const selected = new Array(totalOptions).fill(null);
+      const colorValue = getSelectedColor();
+      const sizeValue = sizeSelect?.value || null;
+      if (colorPosition) selected[colorPosition - 1] = colorValue;
+      if (sizePosition) selected[sizePosition - 1] = sizeValue;
+      optionSelects.forEach((select) => {
+        const position = Number(select.dataset.optionPosition || 0);
+        if (position) selected[position - 1] = select.value;
+      });
+      return selected;
+    };
+
+    const updateSizeAvailability = () => {
+      if (!sizeSelect || !sizePosition) return;
+      const colorValue = colorPosition ? getSelectedColor() : null;
+      const sizeOptions = Array.from(sizeSelect.options);
+      sizeOptions.forEach((option) => {
+        const hasVariant = variants.some((variant) => {
+          const matchesColor = colorPosition ? variant.options[colorPosition - 1] === colorValue : true;
+          return matchesColor && variant.options[sizePosition - 1] === option.value;
+        });
+        option.disabled = !hasVariant;
+      });
+      if (sizeSelect.selectedOptions[0]?.disabled) {
+        const firstEnabled = sizeOptions.find((option) => !option.disabled);
+        if (firstEnabled) sizeSelect.value = firstEnabled.value;
+      }
+    };
+
+    const updateVariant = () => {
+      const selectedOptions = getSelectedOptions();
+      const match = variants.find((variant) =>
+        selectedOptions.every((value, index) => !value || variant.options[index] === value),
+      );
+      if (match && variantIdInput) {
+        variantIdInput.value = match.id;
+        const mediaId = match.featured_media?.id || match.featured_media?.media_id;
+        showGalleryByMediaId(mediaId);
+      }
+    };
+
+    colorSwatches.forEach((swatch) => {
+      swatch.addEventListener('click', () => {
+        colorSwatches.forEach((item) => {
+          item.classList.toggle('is-selected', item === swatch);
+          item.setAttribute('aria-pressed', item === swatch ? 'true' : 'false');
+        });
+        if (colorLabel) colorLabel.textContent = swatch.dataset.optionValue || '';
+        updateSizeAvailability();
+        updateVariant();
+      });
+    });
+
+    sizeSelect?.addEventListener('change', () => {
+      updateVariant();
+    });
+
+    optionSelects.forEach((select) => {
+      select.addEventListener('change', updateVariant);
+    });
+
+    galleryThumbs.forEach((thumb, index) => {
+      thumb.addEventListener('click', () => showGalleryIndex(index));
+    });
+
+    prevButton?.addEventListener('click', () => showGalleryIndex(galleryIndex - 1));
+    nextButton?.addEventListener('click', () => showGalleryIndex(galleryIndex + 1));
+
+    updateSizeAvailability();
+    updateVariant();
+    showGalleryIndex(galleryIndex);
+  };
+
   const initShippingEstimator = () => {
     document.querySelectorAll('[data-shipping-estimator]').forEach((form) => {
       const results = form.querySelector('[data-shipping-results]');
@@ -551,6 +671,7 @@ const Theme = (() => {
     initShippingEstimator();
     initRecentlyViewedSection();
     initCopyButtons();
+    initProductPage();
   };
 
   return { init };
