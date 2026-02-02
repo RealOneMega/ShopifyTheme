@@ -27,6 +27,20 @@
     },
     "header": {
       "type": "header",
+      "blocks": {
+        "promo_H8EjRp": {
+          "type": "promo",
+          "settings": {
+            "parent_link": "",
+            "image": "shopify://shop_images/Main.jpg",
+            "heading": "",
+            "link": ""
+          }
+        }
+      },
+      "block_order": [
+        "promo_H8EjRp"
+      ],
       "settings": {
         "layout": "logo_center",
         "menu_position": "center",
