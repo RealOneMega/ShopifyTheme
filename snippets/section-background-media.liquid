@@ -1,0 +1,8 @@
+{%- if section.settings.background_type == 'video' and section.settings.background_video != blank -%}
+  <div class="section__background-media" aria-hidden="true">
+    {{
+      section.settings.background_video
+      | video_tag: autoplay: true, loop: true, muted: true, controls: false, playsinline: true, class: 'section__background-video'
+    }}
+  </div>
+{%- endif -%}
