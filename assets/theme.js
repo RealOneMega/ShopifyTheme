@@ -36,8 +36,9 @@ const Theme = (() => {
 
   const initMegaMenu = () => {
     document.querySelectorAll('[data-mega-trigger]').forEach((trigger) => {
+      const item = trigger.closest('.nav__item');
       const panel = trigger.nextElementSibling;
-      if (!panel) return;
+      if (!panel || !item) return;
       const getFocusable = () =>
         panel.querySelectorAll('a, button, [tabindex=\"0\"], input, select, textarea');
       const open = () => {
@@ -50,8 +51,14 @@ const Theme = (() => {
         panel.setAttribute('aria-hidden', 'true');
         trigger.setAttribute('aria-expanded', 'false');
       };
-      trigger.addEventListener('mouseenter', open);
-      trigger.addEventListener('mouseleave', close);
+      item.addEventListener('mouseenter', open);
+      item.addEventListener('mouseleave', close);
+      item.addEventListener('focusin', open);
+      item.addEventListener('focusout', (event) => {
+        if (!item.contains(event.relatedTarget)) {
+          close();
+        }
+      });
       trigger.addEventListener('click', (event) => {
         event.preventDefault();
         panel.getAttribute('aria-hidden') === 'true' ? open() : close();
@@ -79,7 +86,19 @@ const Theme = (() => {
           first.focus();
         }
       });
-      panel.addEventListener('mouseleave', close);
+    });
+  };
+
+  const initMobileMenu = () => {
+    document.querySelectorAll('[data-mobile-menu-toggle]').forEach((button) => {
+      button.addEventListener('click', () => {
+        const item = button.closest('.mobile-menu__item');
+        const submenu = item?.querySelector(':scope > .mobile-menu__submenu');
+        if (!item || !submenu) return;
+        const isOpen = item.classList.toggle('is-open');
+        button.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        submenu.setAttribute('aria-hidden', isOpen ? 'false' : 'true');
+      });
     });
   };
 
@@ -447,6 +466,7 @@ const Theme = (() => {
   const init = () => {
     initDrawers();
     initMegaMenu();
+    initMobileMenu();
     initSlideshow();
     initPromoDismiss();
     initWishlist();
