@@ -69,32 +69,6 @@
         "background_repeat": "no-repeat"
       }
     },
-    "faq_wjKFyC": {
-      "type": "faq",
-      "blocks": {
-        "faq_r9Arkh": {
-          "type": "faq",
-          "settings": {
-            "question": "What is your return policy?",
-            "answer": "<p>We accept returns within 30 days.</p>"
-          }
-        }
-      },
-      "block_order": [
-        "faq_r9Arkh"
-      ],
-      "name": "FAQ",
-      "settings": {
-        "heading": "FAQ",
-        "background_type": "none",
-        "background_color": "#ffffff",
-        "background_gradient": "",
-        "background_position_x": 50,
-        "background_position_y": 50,
-        "background_size": "cover",
-        "background_repeat": "no-repeat"
-      }
-    },
     "feature_faq_K3cRyh": {
       "type": "feature-faq",
       "blocks": {
@@ -121,33 +95,6 @@
         "background_size": "cover",
         "background_repeat": "no-repeat"
       }
-    },
-    "feature_faq_schema_9t7NN6": {
-      "type": "feature-faq-schema",
-      "blocks": {
-        "faq_yLVEVq": {
-          "type": "faq",
-          "settings": {
-            "question": "What is your return policy?",
-            "answer": "<p>We accept returns within 30 days.</p>"
-          }
-        }
-      },
-      "block_order": [
-        "faq_yLVEVq"
-      ],
-      "name": "FAQ schema",
-      "settings": {
-        "heading": "FAQ schema",
-        "subheading": "",
-        "background_type": "none",
-        "background_color": "#ffffff",
-        "background_gradient": "",
-        "background_position_x": 50,
-        "background_position_y": 50,
-        "background_size": "cover",
-        "background_repeat": "no-repeat"
-      }
     }
   },
   "order": [
@@ -155,8 +102,6 @@
     "featured_collection",
     "usp",
     "rich_text",
-    "faq_wjKFyC",
-    "feature_faq_K3cRyh",
-    "feature_faq_schema_9t7NN6"
+    "feature_faq_K3cRyh"
   ]
 }
