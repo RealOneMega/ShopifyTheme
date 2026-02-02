@@ -24,23 +24,9 @@
         "background_size": "cover",
         "background_repeat": "no-repeat"
       }
-    },
-    "feature_breadcrumb_JVBQkR": {
-      "type": "feature-breadcrumb",
-      "name": "Breadcrumbs",
-      "settings": {
-        "background_type": "none",
-        "background_color": "#ffffff",
-        "background_gradient": "",
-        "background_position_x": 50,
-        "background_position_y": 50,
-        "background_size": "cover",
-        "background_repeat": "no-repeat"
-      }
     }
   },
   "order": [
-    "feature_breadcrumb_JVBQkR",
     "main"
   ]
 }
