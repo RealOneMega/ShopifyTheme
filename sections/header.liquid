@@ -60,12 +60,14 @@
             <div class="nav__dropdown" aria-hidden="true">
               {% for child in link.links %}
                 <div>
-                  <strong>{{ child.title }}</strong>
-                  <div class="stack" style="margin-top:0.5rem;">
-                    {% for grandchild in child.links %}
-                      <a href="{{ grandchild.url }}">{{ grandchild.title }}</a>
-                    {% endfor %}
-                  </div>
+                  <a href="{{ child.url }}"><strong>{{ child.title }}</strong></a>
+                  {% if child.links != blank %}
+                    <div class="stack" style="margin-top:0.5rem;">
+                      {% for grandchild in child.links %}
+                        <a href="{{ grandchild.url }}">{{ grandchild.title }}</a>
+                      {% endfor %}
+                    </div>
+                  {% endif %}
                 </div>
               {% endfor %}
               {% for block in section.blocks %}

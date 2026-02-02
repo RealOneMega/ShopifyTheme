@@ -577,6 +577,42 @@ p {
   opacity: 0;
 }
 
+.wishlist-item {
+  display: grid;
+  grid-template-columns: 70px 1fr;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.wishlist-item__media img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: var(--radius-global);
+  border: 1px solid var(--color-border);
+}
+
+.wishlist-item__title {
+  display: inline-block;
+  font-weight: 600;
+}
+
+.wishlist-item__price {
+  margin-top: 0.25rem;
+  color: var(--color-muted);
+}
+
+.wishlist-item__actions {
+  margin-top: 0.75rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.wishlist-item__actions .button {
+  flex: 1 1 auto;
+}
+
 .drawer__content form {
   display: grid;
   gap: 0.75rem;

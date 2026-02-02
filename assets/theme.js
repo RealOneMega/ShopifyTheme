@@ -168,7 +168,13 @@ const Theme = (() => {
     const storageKey = 'wishlist-items';
     const getItems = () => JSON.parse(localStorage.getItem(storageKey) || '[]');
     const setItems = (items) => localStorage.setItem(storageKey, JSON.stringify(items));
-    const renderWishlist = () => {
+    const formatMoney = (cents) => {
+      if (window.Shopify?.formatMoney) {
+        return Shopify.formatMoney(cents);
+      }
+      return `$${(cents / 100).toFixed(2)}`;
+    };
+    const renderWishlist = async () => {
       const container = document.querySelector('[data-wishlist-items]');
       if (!container) return;
       const items = getItems();
@@ -176,10 +182,44 @@ const Theme = (() => {
         container.innerHTML = '<p>Your wishlist is empty.</p>';
         return;
       }
+      container.innerHTML = '<p>Loading wishlist...</p>';
+      const products = await Promise.all(
+        items.map((handle) =>
+          fetch(`/products/${handle}.js`)
+            .then((response) => (response.ok ? response.json() : null))
+            .catch(() => null),
+        ),
+      );
+      const validProducts = products.filter(Boolean);
+      if (!validProducts.length) {
+        container.innerHTML = '<p>Your wishlist is empty.</p>';
+        return;
+      }
       container.innerHTML = `
-        <ul class="stack">
-          ${items.map((handle) => `<li><a href="/products/${handle}">${handle.replace(/-/g, ' ')}</a></li>`).join('')}
-        </ul>
+        <div class="stack">
+          ${validProducts
+            .map((product) => {
+              const variantId = product.variants?.[0]?.id;
+              const price = formatMoney(product.price);
+              const image = product.featured_image
+                ? `<img src="${product.featured_image}&width=140" alt="${product.title}">`
+                : '';
+              return `
+                <div class="wishlist-item">
+                  <a class="wishlist-item__media" href="${product.url}">${image}</a>
+                  <div class="wishlist-item__details">
+                    <a class="wishlist-item__title" href="${product.url}">${product.title}</a>
+                    <div class="wishlist-item__price">${price}</div>
+                    <div class="wishlist-item__actions">
+                      <button class="button button--secondary" type="button" data-wishlist-move data-variant-id="${variantId}" data-handle="${product.handle}">Move to cart</button>
+                      <button class="button button--tertiary" type="button" data-wishlist-remove data-handle="${product.handle}">Remove</button>
+                    </div>
+                  </div>
+                </div>
+              `;
+            })
+            .join('')}
+        </div>
       `;
     };
 
@@ -210,6 +250,37 @@ const Theme = (() => {
       });
       update();
     });
+    const container = document.querySelector('[data-wishlist-items]');
+    if (container) {
+      container.addEventListener('click', (event) => {
+        const removeButton = event.target.closest('[data-wishlist-remove]');
+        if (removeButton) {
+          const handle = removeButton.dataset.handle;
+          const items = getItems().filter((item) => item !== handle);
+          setItems(items);
+          renderWishlist();
+          return;
+        }
+        const moveButton = event.target.closest('[data-wishlist-move]');
+        if (moveButton) {
+          const variantId = Number(moveButton.dataset.variantId);
+          const handle = moveButton.dataset.handle;
+          if (!variantId) return;
+          fetch('/cart/add.js', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: variantId, quantity: 1 }),
+          })
+            .then((response) => {
+              if (!response.ok) throw new Error('Add to cart failed.');
+              const items = getItems().filter((item) => item !== handle);
+              setItems(items);
+              renderWishlist();
+            })
+            .catch(() => {});
+        }
+      });
+    }
     renderWishlist();
   };
 
