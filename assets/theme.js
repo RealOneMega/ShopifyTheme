@@ -44,8 +44,6 @@ const Theme = (() => {
       const open = () => {
         panel.setAttribute('aria-hidden', 'false');
         trigger.setAttribute('aria-expanded', 'true');
-        const focusables = getFocusable();
-        focusables[0]?.focus();
       };
       const close = () => {
         panel.setAttribute('aria-hidden', 'true');
@@ -55,7 +53,8 @@ const Theme = (() => {
       item.addEventListener('mouseleave', close);
       item.addEventListener('focusin', open);
       item.addEventListener('focusout', (event) => {
-        if (!item.contains(event.relatedTarget)) {
+        const nextTarget = event.relatedTarget;
+        if (!nextTarget || !item.contains(nextTarget)) {
           close();
         }
       });
@@ -85,19 +84,6 @@ const Theme = (() => {
           event.preventDefault();
           first.focus();
         }
-      });
-    });
-  };
-
-  const initMobileMenu = () => {
-    document.querySelectorAll('[data-mobile-menu-toggle]').forEach((button) => {
-      button.addEventListener('click', () => {
-        const item = button.closest('.mobile-menu__item');
-        const submenu = item?.querySelector(':scope > .mobile-menu__submenu');
-        if (!item || !submenu) return;
-        const isOpen = item.classList.toggle('is-open');
-        button.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-        submenu.setAttribute('aria-hidden', isOpen ? 'false' : 'true');
       });
     });
   };
