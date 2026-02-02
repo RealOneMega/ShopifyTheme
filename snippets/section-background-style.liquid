@@ -1,0 +1,21 @@
+{%- liquid
+  assign background_type = section.settings.background_type | default: 'none'
+  assign position_x = section.settings.background_position_x | default: 50
+  assign position_y = section.settings.background_position_y | default: 50
+  assign background_size = section.settings.background_size | default: 'cover'
+  assign background_repeat = section.settings.background_repeat | default: 'no-repeat'
+-%}
+{%- if background_type == 'color' and section.settings.background_color != blank -%}
+  --section-background-color: {{ section.settings.background_color }};
+{%- endif -%}
+{%- if background_type == 'gradient' and section.settings.background_gradient != blank -%}
+  --section-background-gradient: {{ section.settings.background_gradient }};
+{%- endif -%}
+{%- if background_type == 'image' and section.settings.background_image != blank -%}
+  --section-background-image: url({{ section.settings.background_image | image_url: width: 2400 }});
+{%- endif -%}
+{%- if background_type == 'image' or background_type == 'video' -%}
+  --section-background-size: {{ background_size }};
+  --section-background-repeat: {{ background_repeat }};
+  --section-background-position: {{ position_x }}% {{ position_y }}%;
+{%- endif -%}
