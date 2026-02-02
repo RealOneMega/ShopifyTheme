@@ -5,9 +5,12 @@
     {% assign size_option = nil %}
     {% for option in product.options_with_values %}
       {% assign option_name = option.name | downcase %}
-      {% if color_option == nil and (option_name contains 'color' or option_name contains 'colour') %}
-        {% assign color_option = option %}
-      {% elsif size_option == nil and option_name contains 'size' %}
+      {% if color_option == nil %}
+        {% if option_name contains 'color' or option_name contains 'colour' %}
+          {% assign color_option = option %}
+        {% endif %}
+      {% endif %}
+      {% if size_option == nil and option_name contains 'size' %}
         {% assign size_option = option %}
       {% endif %}
     {% endfor %}
