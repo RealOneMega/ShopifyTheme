@@ -1,7 +1,32 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
-    "main": {"type": "main-product"},
-    "rewards": {"type": "rewards-program"}
+    "main": {
+      "type": "main-product",
+      "settings": {
+        "show_inventory": true,
+        "shipping_text": "Fast shipping worldwide.",
+        "returns_text": "30-day returns on unused items.",
+        "review_placeholder": "Install your preferred review app to display reviews here.",
+        "background_type": "none",
+        "background_color": "#ffffff",
+        "background_gradient": "",
+        "background_position_x": 50,
+        "background_position_y": 50,
+        "background_size": "cover",
+        "background_repeat": "no-repeat"
+      }
+    }
   },
-  "order": ["main", "rewards"]
+  "order": [
+    "main"
+  ]
 }
