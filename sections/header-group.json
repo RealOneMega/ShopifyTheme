@@ -15,7 +15,14 @@
       "type": "promo-bar",
       "settings": {
         "autoplay": true,
-        "autoplay_speed": 5000
+        "autoplay_speed": 5000,
+        "background_type": "none",
+        "background_color": "#ffffff",
+        "background_gradient": "",
+        "background_position_x": 50,
+        "background_position_y": 50,
+        "background_size": "cover",
+        "background_repeat": "no-repeat"
       }
     },
     "header": {
@@ -25,11 +32,19 @@
         "menu_position": "center",
         "main_menu": "menu",
         "sticky": true,
-        "show_utility_row": false,
+        "show_utility_row": true,
         "logo_width": 180,
-        "utility_menu": "",
-        "utility_alignment": "center",
-        "show_localization": true
+        "utility_menu": "utility-menu",
+        "utility_alignment": "left",
+        "show_localization": true,
+        "background_type": "none",
+        "background_color": "#ffffff",
+        "background_gradient": "",
+        "background_image": "shopify://shop_images/BoatCenterBanner.png",
+        "background_position_x": 50,
+        "background_position_y": 50,
+        "background_size": "cover",
+        "background_repeat": "no-repeat"
       }
     }
   },
