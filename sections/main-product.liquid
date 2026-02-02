@@ -38,7 +38,13 @@
       </div>
       <div class="product-details stack">
         <h1 class="heading">{{ product.title }}</h1>
-        {% render 'price', product: product %}
+        {% assign product_subtitle = product.metafields.custom.product_subtitle %}
+        {% if product_subtitle != blank %}
+          <p class="product-subtitle">{{ product_subtitle.value | escape }}</p>
+        {% endif %}
+        <div class="product-price">
+          {% render 'price', product: product %}
+        </div>
         {% if section.settings.show_inventory and product.available %}
           <p>In stock: {{ product.inventory_quantity }}</p>
         {% endif %}
@@ -115,9 +121,12 @@
         {% assign details_materials = product.metafields.custom.details_materials %}
         {% assign shipping_returns = product.metafields.custom.shipping_returns %}
         {% assign size_chart = product.metafields.custom.size_chart %}
-        <div class="accordion" data-accordion>
+        <div class="accordion product-accordion" data-accordion>
           <div class="accordion__item">
-            <button class="accordion__button" data-accordion-button aria-expanded="false">Size &amp; Fit</button>
+            <button class="accordion__button" data-accordion-button aria-expanded="false">
+              <span>Size &amp; Fit</span>
+              <span class="accordion__icon" aria-hidden="true">+</span>
+            </button>
             <div class="accordion__panel hidden">
               {% if size_fit != blank %}
                 {{ size_fit | metafield_tag }}
@@ -131,7 +140,10 @@
             </div>
           </div>
           <div class="accordion__item">
-            <button class="accordion__button" data-accordion-button aria-expanded="false">Details &amp; Materials</button>
+            <button class="accordion__button" data-accordion-button aria-expanded="false">
+              <span>Details &amp; Materials</span>
+              <span class="accordion__icon" aria-hidden="true">+</span>
+            </button>
             <div class="accordion__panel hidden">
               {% if details_materials != blank %}
                 {{ details_materials | metafield_tag }}
@@ -139,7 +151,10 @@
             </div>
           </div>
           <div class="accordion__item">
-            <button class="accordion__button" data-accordion-button aria-expanded="false">Shipping &amp; Returns</button>
+            <button class="accordion__button" data-accordion-button aria-expanded="false">
+              <span>Shipping &amp; Returns</span>
+              <span class="accordion__icon" aria-hidden="true">+</span>
+            </button>
             <div class="accordion__panel hidden">
               {% if shipping_returns != blank %}
                 {{ shipping_returns | metafield_tag }}

@@ -454,9 +454,15 @@ const Theme = (() => {
       accordion.querySelectorAll('[data-accordion-button]').forEach((button) => {
         button.addEventListener('click', () => {
           const panel = button.nextElementSibling;
+          const item = button.closest('.accordion__item');
+          const icon = button.querySelector('.accordion__icon');
           const expanded = button.getAttribute('aria-expanded') === 'true';
           button.setAttribute('aria-expanded', String(!expanded));
           panel?.classList.toggle('hidden', expanded);
+          item?.classList.toggle('is-open', !expanded);
+          if (icon) {
+            icon.textContent = expanded ? '+' : '–';
+          }
         });
       });
     });
