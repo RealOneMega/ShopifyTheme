@@ -14,7 +14,14 @@
       "settings": {
         "layout": "contained",
         "autoplay": true,
-        "autoplay_speed": 6000
+        "autoplay_speed": 6000,
+        "background_type": "none",
+        "background_color": "#ffffff",
+        "background_gradient": "",
+        "background_position_x": 50,
+        "background_position_y": 50,
+        "background_size": "cover",
+        "background_repeat": "no-repeat"
       }
     },
     "featured_collection": {
@@ -23,12 +30,27 @@
         "title": "Top picks",
         "collection": "",
         "limit": 8,
-        "card_style": "below"
+        "card_style": "below",
+        "background_type": "none",
+        "background_color": "#ffffff",
+        "background_gradient": "",
+        "background_position_x": 50,
+        "background_position_y": 50,
+        "background_size": "cover",
+        "background_repeat": "no-repeat"
       }
     },
     "usp": {
       "type": "usp-row",
-      "settings": {}
+      "settings": {
+        "background_type": "none",
+        "background_color": "#ffffff",
+        "background_gradient": "",
+        "background_position_x": 50,
+        "background_position_y": 50,
+        "background_size": "cover",
+        "background_repeat": "no-repeat"
+      }
     },
     "rich_text": {
       "type": "rich-text",
@@ -37,7 +59,14 @@
         "text": "<p>Share brand values and product benefits.</p>",
         "button_label": "",
         "button_link": "",
-        "button_style": "primary"
+        "button_style": "primary",
+        "background_type": "none",
+        "background_color": "#ffffff",
+        "background_gradient": "",
+        "background_position_x": 50,
+        "background_position_y": 50,
+        "background_size": "cover",
+        "background_repeat": "no-repeat"
       }
     }
   },
