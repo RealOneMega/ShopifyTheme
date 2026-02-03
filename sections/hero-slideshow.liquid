@@ -26,12 +26,69 @@
             {% assign text_class = text_class | append: ' hero__content--light' %}
           {% endif %}
           {% assign text_alignment = 'left' %}
-          {% if block.settings.text_position contains '50%' %}
-            {% assign text_alignment = 'center' %}
-          {% elsif block.settings.text_position contains 'right' %}
-            {% assign text_alignment = 'right' %}
-          {% endif %}
-          <div class="{{ text_class }}" style="{{ block.settings.text_position }}text-align:{{ text_alignment }};">
+          {% assign hero_justify = 'start' %}
+          {% assign hero_top = '' %}
+          {% assign hero_bottom = '' %}
+          {% assign hero_left = '' %}
+          {% assign hero_right = '' %}
+          {% assign hero_transform = '' %}
+          {% assign position_fallback = '' %}
+          {% case block.settings.text_position %}
+            {% when 'top:10%;left:10%;' %}
+              {% assign hero_top = '10%' %}
+              {% assign hero_left = '10%' %}
+            {% when 'top:10%;left:50%;transform:translateX(-50%);' %}
+              {% assign hero_top = '10%' %}
+              {% assign hero_left = '50%' %}
+              {% assign hero_transform = 'translateX(-50%)' %}
+              {% assign text_alignment = 'center' %}
+              {% assign hero_justify = 'center' %}
+            {% when 'top:10%;right:10%;' %}
+              {% assign hero_top = '10%' %}
+              {% assign hero_right = '10%' %}
+              {% assign text_alignment = 'right' %}
+              {% assign hero_justify = 'end' %}
+            {% when 'top:40%;left:10%;' %}
+              {% assign hero_top = '50%' %}
+              {% assign hero_left = '10%' %}
+              {% assign hero_transform = 'translateY(-50%)' %}
+            {% when 'top:40%;left:50%;transform:translateX(-50%);' %}
+              {% assign hero_top = '50%' %}
+              {% assign hero_left = '50%' %}
+              {% assign hero_transform = 'translate(-50%, -50%)' %}
+              {% assign text_alignment = 'center' %}
+              {% assign hero_justify = 'center' %}
+            {% when 'top:40%;right:10%;' %}
+              {% assign hero_top = '50%' %}
+              {% assign hero_right = '10%' %}
+              {% assign hero_transform = 'translateY(-50%)' %}
+              {% assign text_alignment = 'right' %}
+              {% assign hero_justify = 'end' %}
+            {% when 'bottom:10%;left:10%;' %}
+              {% assign hero_bottom = '10%' %}
+              {% assign hero_left = '10%' %}
+            {% when 'bottom:10%;left:50%;transform:translateX(-50%);' %}
+              {% assign hero_bottom = '10%' %}
+              {% assign hero_left = '50%' %}
+              {% assign hero_transform = 'translateX(-50%)' %}
+              {% assign text_alignment = 'center' %}
+              {% assign hero_justify = 'center' %}
+            {% when 'bottom:10%;right:10%;' %}
+              {% assign hero_bottom = '10%' %}
+              {% assign hero_right = '10%' %}
+              {% assign text_alignment = 'right' %}
+              {% assign hero_justify = 'end' %}
+            {% else %}
+              {% assign position_fallback = block.settings.text_position %}
+              {% if block.settings.text_position contains '50%' %}
+                {% assign text_alignment = 'center' %}
+                {% assign hero_justify = 'center' %}
+              {% elsif block.settings.text_position contains 'right' %}
+                {% assign text_alignment = 'right' %}
+                {% assign hero_justify = 'end' %}
+              {% endif %}
+          {% endcase %}
+          <div class="{{ text_class }}" style="{% if position_fallback != '' %}{{ position_fallback }}{% else %}{% if hero_top != '' %}top:{{ hero_top }};{% endif %}{% if hero_bottom != '' %}bottom:{{ hero_bottom }};{% endif %}{% if hero_left != '' %}left:{{ hero_left }};{% endif %}{% if hero_right != '' %}right:{{ hero_right }};{% endif %}{% if hero_transform != '' %}transform:{{ hero_transform }};{% endif %}{% endif %}text-align:{{ text_alignment }};justify-items:{{ hero_justify }};">
             {% if block.settings.subtitle != blank %}
               <p class="badge">{{ block.settings.subtitle }}</p>
             {% endif %}
