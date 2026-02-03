@@ -15,18 +15,18 @@
         "slide_FreEJr": {
           "type": "slide",
           "settings": {
-            "image": "shopify://shop_images/BannerTest.png",
-            "subtitle": "New drop",
-            "title": "Everyday layers",
-            "text": "Soft fleece, broken-in tees, and easy joggers made for daily wear.",
+            "image": "shopify://shop_images/Screenshot_2026-02-03_002616.png",
+            "subtitle": "NOW AVAILABLE",
+            "title": "DURANT'S TEARS",
+            "text": "Sold in indivdual quanities, Salty and prepackaged for any personal or commerical use!",
             "text_color": "light",
-            "text_position": "top:12%;left:8%;",
+            "text_position": "top:10%;left:10%;",
             "focal_point": "object-position: center;",
             "overlay_opacity": 25,
-            "button_label_1": "Shop women",
+            "button_label_1": "Shop Tears from 2026",
             "button_link_1": "/collections/all",
             "button_style_1": "primary",
-            "button_label_2": "Shop men",
+            "button_label_2": "Shop Tears from 2025",
             "button_link_2": "/collections/all",
             "button_style_2": "secondary",
             "button_label_3": "",
@@ -37,12 +37,12 @@
         "slide_jpdCQx": {
           "type": "slide",
           "settings": {
-            "image": "shopify://shop_images/TerminalVelocityBanner.jpg",
+            "image": "shopify://shop_images/resputia.png",
             "subtitle": "Performance",
             "title": "Move in comfort",
             "text": "Breathable knits and stretch fabric that keep up with you.",
             "text_color": "light",
-            "text_position": "top:12%;left:8%;",
+            "text_position": "top:40%;left:50%;transform:translateX(-50%);",
             "focal_point": "object-position: center;",
             "overlay_opacity": 25,
             "button_label_1": "Shop new arrivals",
@@ -63,8 +63,10 @@
       ],
       "settings": {
         "layout": "full",
+        "height_desktop": 650,
+        "height_mobile": 590,
         "autoplay": true,
-        "autoplay_speed": 6000,
+        "autoplay_speed": 3000,
         "background_type": "none",
         "background_color": "#ffffff",
         "background_gradient": "",
@@ -80,7 +82,6 @@
         "tile_women": {
           "type": "tile",
           "settings": {
-            "image": "",
             "title": "Women",
             "text": "Essentials, denim, and elevated basics.",
             "button_label": "Shop women",
@@ -90,7 +91,6 @@
         "tile_men": {
           "type": "tile",
           "settings": {
-            "image": "",
             "title": "Men",
             "text": "Soft layers, tees, and everyday sets.",
             "button_label": "Shop men",
@@ -100,7 +100,6 @@
         "tile_accessories": {
           "type": "tile",
           "settings": {
-            "image": "",
             "title": "Accessories",
             "text": "Hats, bags, and finishing touches.",
             "button_label": "Shop accessories",
@@ -189,7 +188,6 @@
       "settings": {
         "heading": "Built for movement",
         "subheading": "Performance details",
-        "image": "",
         "body": "<p>From breathable knits to four-way stretch, every piece is made to move with you. Layer it, lounge in it, live in it.</p>",
         "button_label": "Learn more",
         "button_link": "/pages/about",
