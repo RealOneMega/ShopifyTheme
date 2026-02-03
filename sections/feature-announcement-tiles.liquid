@@ -15,11 +15,13 @@
           {% if block.settings.image != blank %}
             <img src="{{ block.settings.image | image_url: width: 600 }}" alt="{{ block.settings.image.alt | escape }}">
           {% endif %}
-          <h3>{{ block.settings.title }}</h3>
-          <p>{{ block.settings.text }}</p>
-          {% if block.settings.button_label != blank %}
-            <a class="button" href="{{ block.settings.button_link | default: '#' }}">{{ block.settings.button_label }}</a>
-          {% endif %}
+          <div class="tile__content">
+            <h3>{{ block.settings.title }}</h3>
+            <p>{{ block.settings.text }}</p>
+            {% if block.settings.button_label != blank %}
+              <a class="button" href="{{ block.settings.button_link | default: '#' }}">{{ block.settings.button_label }}</a>
+            {% endif %}
+          </div>
         </div>
       {% endfor %}
     </div>

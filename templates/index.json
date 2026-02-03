@@ -16,18 +16,18 @@
           "type": "slide",
           "settings": {
             "image": "shopify://shop_images/BannerTest.png",
-            "subtitle": "",
-            "title": "",
-            "text": "",
+            "subtitle": "New drop",
+            "title": "Everyday layers",
+            "text": "Soft fleece, broken-in tees, and easy joggers made for daily wear.",
             "text_color": "light",
-            "text_position": "top:10%;left:10%;",
+            "text_position": "top:12%;left:8%;",
             "focal_point": "object-position: center;",
-            "overlay_opacity": 20,
-            "button_label_1": "",
-            "button_link_1": "",
+            "overlay_opacity": 25,
+            "button_label_1": "Shop women",
+            "button_link_1": "/collections/all",
             "button_style_1": "primary",
-            "button_label_2": "",
-            "button_link_2": "",
+            "button_label_2": "Shop men",
+            "button_link_2": "/collections/all",
             "button_style_2": "secondary",
             "button_label_3": "",
             "button_link_3": "",
@@ -38,18 +38,18 @@
           "type": "slide",
           "settings": {
             "image": "shopify://shop_images/TerminalVelocityBanner.jpg",
-            "subtitle": "",
-            "title": "",
-            "text": "",
+            "subtitle": "Performance",
+            "title": "Move in comfort",
+            "text": "Breathable knits and stretch fabric that keep up with you.",
             "text_color": "light",
-            "text_position": "top:10%;left:10%;",
+            "text_position": "top:12%;left:8%;",
             "focal_point": "object-position: center;",
-            "overlay_opacity": 20,
-            "button_label_1": "",
-            "button_link_1": "",
+            "overlay_opacity": 25,
+            "button_label_1": "Shop new arrivals",
+            "button_link_1": "/collections/all",
             "button_style_1": "primary",
-            "button_label_2": "",
-            "button_link_2": "",
+            "button_label_2": "Shop accessories",
+            "button_link_2": "/collections/all",
             "button_style_2": "secondary",
             "button_label_3": "",
             "button_link_3": "",
@@ -74,11 +74,105 @@
         "background_repeat": "no-repeat"
       }
     },
+    "category_tiles": {
+      "type": "feature-announcement-tiles",
+      "blocks": {
+        "tile_women": {
+          "type": "tile",
+          "settings": {
+            "image": "",
+            "title": "Women",
+            "text": "Essentials, denim, and elevated basics.",
+            "button_label": "Shop women",
+            "button_link": "/collections/all"
+          }
+        },
+        "tile_men": {
+          "type": "tile",
+          "settings": {
+            "image": "",
+            "title": "Men",
+            "text": "Soft layers, tees, and everyday sets.",
+            "button_label": "Shop men",
+            "button_link": "/collections/all"
+          }
+        },
+        "tile_accessories": {
+          "type": "tile",
+          "settings": {
+            "image": "",
+            "title": "Accessories",
+            "text": "Hats, bags, and finishing touches.",
+            "button_label": "Shop accessories",
+            "button_link": "/collections/all"
+          }
+        }
+      },
+      "block_order": [
+        "tile_women",
+        "tile_men",
+        "tile_accessories"
+      ],
+      "settings": {
+        "heading": "Shop by category",
+        "subheading": "Build the look with curated essentials.",
+        "background_type": "none",
+        "background_color": "#ffffff",
+        "background_gradient": "",
+        "background_position_x": 50,
+        "background_position_y": 50,
+        "background_size": "cover",
+        "background_repeat": "no-repeat"
+      }
+    },
+    "collection_tabs": {
+      "type": "collection-tabs",
+      "blocks": {
+        "tab_new": {
+          "type": "collection",
+          "settings": {
+            "label": "New arrivals",
+            "collection": "all"
+          }
+        },
+        "tab_best": {
+          "type": "collection",
+          "settings": {
+            "label": "Best sellers",
+            "collection": "all"
+          }
+        },
+        "tab_performance": {
+          "type": "collection",
+          "settings": {
+            "label": "Performance",
+            "collection": "all"
+          }
+        }
+      },
+      "block_order": [
+        "tab_new",
+        "tab_best",
+        "tab_performance"
+      ],
+      "settings": {
+        "heading": "Trending now",
+        "limit": 4,
+        "card_style": "below",
+        "background_type": "none",
+        "background_color": "#ffffff",
+        "background_gradient": "",
+        "background_position_x": 50,
+        "background_position_y": 50,
+        "background_size": "cover",
+        "background_repeat": "no-repeat"
+      }
+    },
     "featured_collection": {
       "type": "featured-collection",
       "settings": {
-        "title": "Top picks",
-        "collection": "",
+        "title": "New arrivals",
+        "collection": "all",
         "limit": 8,
         "card_style": "below",
         "background_type": "none",
@@ -90,53 +184,114 @@
         "background_repeat": "no-repeat"
       }
     },
+    "image_with_text": {
+      "type": "feature-image-with-text",
+      "settings": {
+        "heading": "Built for movement",
+        "subheading": "Performance details",
+        "image": "",
+        "body": "<p>From breathable knits to four-way stretch, every piece is made to move with you. Layer it, lounge in it, live in it.</p>",
+        "button_label": "Learn more",
+        "button_link": "/pages/about",
+        "background_type": "none",
+        "background_color": "#ffffff",
+        "background_gradient": "",
+        "background_position_x": 50,
+        "background_position_y": 50,
+        "background_size": "cover",
+        "background_repeat": "no-repeat"
+      }
+    },
     "usp": {
       "type": "usp-row",
-      "settings": {
-        "background_type": "none",
-        "background_color": "#ffffff",
-        "background_gradient": "",
-        "background_position_x": 50,
-        "background_position_y": 50,
-        "background_size": "cover",
-        "background_repeat": "no-repeat"
-      }
-    },
-    "rich_text": {
-      "type": "rich-text",
-      "settings": {
-        "heading": "Tell your story",
-        "text": "<p>Share brand values and product benefits.</p>",
-        "button_label": "",
-        "button_link": "",
-        "button_style": "primary",
-        "background_type": "none",
-        "background_color": "#ffffff",
-        "background_gradient": "",
-        "background_position_x": 50,
-        "background_position_y": 50,
-        "background_size": "cover",
-        "background_repeat": "no-repeat"
-      }
-    },
-    "feature_faq_K3cRyh": {
-      "type": "feature-faq",
       "blocks": {
-        "faq_QgMJH8": {
-          "type": "faq",
+        "usp_shipping": {
+          "type": "usp",
           "settings": {
-            "question": "What is your return policy?",
-            "answer": "<p>We accept returns within 30 days.</p>"
+            "icon": "truck",
+            "heading": "Free shipping",
+            "text": "On orders over $75."
+          }
+        },
+        "usp_returns": {
+          "type": "usp",
+          "settings": {
+            "icon": "shield",
+            "heading": "Easy returns",
+            "text": "30-day returns on all items."
+          }
+        },
+        "usp_rewards": {
+          "type": "usp",
+          "settings": {
+            "icon": "star",
+            "heading": "Member perks",
+            "text": "Early access to drops and rewards."
           }
         }
       },
       "block_order": [
-        "faq_QgMJH8"
+        "usp_shipping",
+        "usp_returns",
+        "usp_rewards"
       ],
-      "name": "FAQ",
       "settings": {
-        "heading": "FAQ",
-        "subheading": "",
+        "background_type": "none",
+        "background_color": "#ffffff",
+        "background_gradient": "",
+        "background_position_x": 50,
+        "background_position_y": 50,
+        "background_size": "cover",
+        "background_repeat": "no-repeat"
+      }
+    },
+    "testimonials": {
+      "type": "testimonials",
+      "blocks": {
+        "testimonial_1": {
+          "type": "testimonial",
+          "settings": {
+            "quote": "Best-fitting joggers I've owned.",
+            "author": "Taylor M."
+          }
+        },
+        "testimonial_2": {
+          "type": "testimonial",
+          "settings": {
+            "quote": "The fleece is soft but still holds shape.",
+            "author": "Jordan P."
+          }
+        },
+        "testimonial_3": {
+          "type": "testimonial",
+          "settings": {
+            "quote": "Fast shipping and the quality is unreal.",
+            "author": "Alex R."
+          }
+        }
+      },
+      "block_order": [
+        "testimonial_1",
+        "testimonial_2",
+        "testimonial_3"
+      ],
+      "settings": {
+        "heading": "Loved by customers",
+        "background_type": "none",
+        "background_color": "#ffffff",
+        "background_gradient": "",
+        "background_position_x": 50,
+        "background_position_y": 50,
+        "background_size": "cover",
+        "background_repeat": "no-repeat"
+      }
+    },
+    "email_capture": {
+      "type": "feature-email-capture",
+      "settings": {
+        "heading": "Join the club",
+        "subheading": "Get first access to new drops and member-only offers.",
+        "button_label": "Sign up",
         "background_type": "none",
         "background_color": "#ffffff",
         "background_gradient": "",
@@ -149,9 +304,12 @@
   },
   "order": [
     "hero",
+    "category_tiles",
+    "collection_tabs",
     "featured_collection",
+    "image_with_text",
     "usp",
-    "rich_text",
-    "feature_faq_K3cRyh"
+    "testimonials",
+    "email_capture"
   ]
 }
