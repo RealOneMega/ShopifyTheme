@@ -43,7 +43,7 @@
             "text": "Breathable knits and stretch fabric that keep up with you.",
             "text_color": "light",
             "text_position": "top:40%;left:50%;transform:translateX(-50%);",
-            "focal_point": "object-position: center;",
+            "focal_point": "object-position: center bottom;",
             "overlay_opacity": 25,
             "button_label_1": "Shop new arrivals",
             "button_link_1": "/collections/all",
