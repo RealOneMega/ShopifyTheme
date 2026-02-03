@@ -19,6 +19,16 @@
       {% elsif product.compare_at_price > product.price %}
         <span class="badge">Sale</span>
       {% endif %}
+      {% assign product_tag_string = product.tags | join: ',' | downcase | prepend: ',' | append: ',' %}
+      {% if product_tag_string contains ',new,' %}
+        <span class="badge">New</span>
+      {% endif %}
+      {% if product_tag_string contains ',bestseller,' or product_tag_string contains ',best-seller,' or product_tag_string contains ',best seller,' %}
+        <span class="badge">Best seller</span>
+      {% endif %}
+      {% if product_tag_string contains ',limited,' or product_tag_string contains ',limited drop,' %}
+        <span class="badge">Limited</span>
+      {% endif %}
     </div>
     {% if card_style == 'overlay' %}
       <div class="product-card__overlay-info">
@@ -41,7 +51,7 @@
       <div class="product-card__actions">
         {% if settings.enable_quick_add %}
           {% if product.variants.size == 1 %}
-            <form method="post" action="/cart/add">
+            <form method="post" action="/cart/add" data-ajax-cart>
               <input type="hidden" name="id" value="{{ product.variants.first.id }}">
               <button class="button button--secondary" type="submit">Quick add</button>
             </form>

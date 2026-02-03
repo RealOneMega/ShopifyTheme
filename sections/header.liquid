@@ -130,9 +130,7 @@
         </button>
         <button class="header__icon-button" type="button" data-drawer-open="#cart-drawer" aria-label="Cart">
           {% render 'icon-cart' %}
-          {% if cart.item_count > 0 %}
-            <span class="header__badge" aria-live="polite">{{ cart.item_count }}</span>
-          {% endif %}
+          <span class="header__badge{% if cart.item_count == 0 %} hidden{% endif %}" data-cart-count aria-live="polite">{{ cart.item_count }}</span>
         </button>
       </div>
     </div>
@@ -161,9 +159,7 @@
       </button>
       <button class="header__icon-button" type="button" data-drawer-open="#cart-drawer" aria-label="Cart">
         {% render 'icon-cart' %}
-        {% if cart.item_count > 0 %}
-          <span class="header__badge" aria-live="polite">{{ cart.item_count }}</span>
-        {% endif %}
+        <span class="header__badge{% if cart.item_count == 0 %} hidden{% endif %}" data-cart-count aria-live="polite">{{ cart.item_count }}</span>
       </button>
     </div>
     <nav aria-label="Mobile">
@@ -232,36 +228,37 @@
   </div>
 </div>
 
-<div id="cart-drawer" class="drawer" role="dialog" aria-modal="true" aria-label="Cart">
+<div id="cart-drawer" class="drawer" role="dialog" aria-modal="true" aria-label="Cart" data-cart-drawer>
   <div class="drawer__header">
     <strong>Cart</strong>
     <button class="header__icon-button" type="button" data-drawer-close aria-label="Close cart">{% render 'icon-close' %}</button>
   </div>
-  <div class="drawer__content">
-    {% if cart.item_count == 0 %}
+  <div class="drawer__content" data-cart-drawer-content>
+    <div data-cart-drawer-empty{% unless cart.item_count == 0 %} class="hidden"{% endunless %}>
       <p>Your cart is empty.</p>
       <a class="button button--primary" href="{{ routes.all_products_collection_url }}">Shop now</a>
-    {% else %}
-      <div class="stack">
+    </div>
+    <div data-cart-drawer-filled{% if cart.item_count == 0 %} class="hidden"{% endif %}>
+      <div class="stack" data-cart-drawer-items>
         {% for item in cart.items %}
-          <div style="display:grid;grid-template-columns:60px 1fr auto;gap:0.75rem;align-items:center;">
-            {{ item.image | image_url: width: 120 | image_tag: loading: 'lazy' }}
-            <div>
+          <div class="cart-drawer-item">
+            {{ item.image | image_url: width: 120 | image_tag: loading: 'lazy', alt: item.product.title }}
+            <div class="cart-drawer-item__details">
               <strong>{{ item.product.title }}</strong>
               <div>{{ item.final_price | money }}</div>
             </div>
-            <span>{{ item.quantity }}</span>
+            <span class="cart-drawer-item__qty">{{ item.quantity }}</span>
           </div>
         {% endfor %}
       </div>
-      <div style="margin-top:1.5rem;display:grid;gap:0.75rem;">
-        <strong>Total: {{ cart.total_price | money }}</strong>
+      <div class="cart-drawer-summary">
+        <strong>Total: <span data-cart-drawer-total>{{ cart.total_price | money }}</span></strong>
         <a class="button button--secondary" href="{{ routes.cart_url }}">View cart</a>
         <form action="{{ routes.cart_url }}" method="post">
           <button class="button button--primary" type="submit" name="checkout">Checkout</button>
         </form>
       </div>
-    {% endif %}
+    </div>
   </div>
 </div>
 

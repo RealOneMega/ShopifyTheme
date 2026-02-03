@@ -49,7 +49,24 @@
           <p>In stock: {{ product.inventory_quantity }}</p>
         {% endif %}
 
-        <form method="post" action="/cart/add" class="product-form" data-product-form {% if color_option %}data-color-position="{{ color_option.position }}"{% endif %} {% if size_option %}data-size-position="{{ size_option.position }}"{% endif %} data-product-handle="{{ product.handle }}">
+        {% assign size_fit = product.metafields.custom.size_fit %}
+        {% if size_fit == blank %}
+          {% assign size_fit = product.metafields.custom.size_and_fit %}
+        {% endif %}
+        {% assign details_materials = product.metafields.custom.details_materials %}
+        {% if details_materials == blank %}
+          {% assign details_materials = product.metafields.custom.details_and_materials %}
+        {% endif %}
+        {% assign shipping_returns = product.metafields.custom.shipping_returns %}
+        {% if shipping_returns == blank %}
+          {% assign shipping_returns = product.metafields.custom.shipping_and_returns %}
+        {% endif %}
+        {% assign size_chart = product.metafields.custom.size_chart %}
+        {% if size_chart == blank %}
+          {% assign size_chart = product.metafields.custom.size_chart_image %}
+        {% endif %}
+
+        <form method="post" action="/cart/add" class="product-form" data-product-form data-ajax-cart {% if color_option %}data-color-position="{{ color_option.position }}"{% endif %} {% if size_option %}data-size-position="{{ size_option.position }}"{% endif %} data-product-handle="{{ product.handle }}">
           {% if product.has_only_default_variant %}
             <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
           {% else %}
@@ -86,7 +103,12 @@
             {% if size_option %}
               {% assign size_index = size_option.position | minus: 1 %}
               <div class="product-option">
-                <label class="label" for="SizeSelect">{{ size_option.name }}</label>
+                <div class="product-option__header">
+                  <label class="label" for="SizeSelect">{{ size_option.name }}</label>
+                  {% if size_chart != blank %}
+                    <button class="button button--tertiary" type="button" data-drawer-open="#size-chart-drawer" aria-haspopup="dialog">Size chart</button>
+                  {% endif %}
+                </div>
                 <select id="SizeSelect" class="select product-size-select" data-option-position="{{ size_option.position }}">
                   {% for value in size_option.values %}
                     <option value="{{ value }}" {% if value == product.selected_or_first_available_variant.options[size_index] %}selected{% endif %}>
@@ -117,47 +139,46 @@
           <button class="button button--secondary" type="button" data-wishlist-add aria-pressed="false">Save to wishlist</button>
         </form>
 
-        {% assign size_fit = product.metafields.custom.size_fit %}
-        {% assign details_materials = product.metafields.custom.details_materials %}
-        {% assign shipping_returns = product.metafields.custom.shipping_returns %}
-        {% assign size_chart = product.metafields.custom.size_chart %}
-        <div class="accordion product-accordion" data-accordion>
-          <div class="accordion__item">
-            <button class="accordion__button" data-accordion-button aria-expanded="false">
-              <span>Size &amp; Fit</span>
-              <span class="accordion__icon" aria-hidden="true">+</span>
-            </button>
-            <div class="accordion__panel hidden">
+        <div class="product-info-tabs" data-product-info-tabs>
+          <div class="product-info-tabs__nav" role="tablist" aria-label="Product information">
+            <button class="product-info-tabs__tab is-active" type="button" role="tab" aria-selected="true" aria-controls="product-tab-description" data-product-tab-trigger data-product-tab-id="product-tab-description">Description</button>
+            <button class="product-info-tabs__tab" type="button" role="tab" aria-selected="false" aria-controls="product-tab-size" data-product-tab-trigger data-product-tab-id="product-tab-size">Size &amp; Fit</button>
+            <button class="product-info-tabs__tab" type="button" role="tab" aria-selected="false" aria-controls="product-tab-details" data-product-tab-trigger data-product-tab-id="product-tab-details">Details &amp; Materials</button>
+            <button class="product-info-tabs__tab" type="button" role="tab" aria-selected="false" aria-controls="product-tab-shipping" data-product-tab-trigger data-product-tab-id="product-tab-shipping">Shipping &amp; Returns</button>
+          </div>
+          <div class="product-info-tabs__panels">
+            <div id="product-tab-description" class="product-info-tabs__panel" role="tabpanel" data-product-tab-panel>
+              {% if product.description != blank %}
+                <div class="rte">{{ product.description }}</div>
+              {% else %}
+                <p>Add a product description to help customers understand fit, fabric, and care.</p>
+              {% endif %}
+            </div>
+            <div id="product-tab-size" class="product-info-tabs__panel hidden" role="tabpanel" data-product-tab-panel>
               {% if size_fit != blank %}
                 {{ size_fit | metafield_tag }}
+              {% else %}
+                <p>Add “Size &amp; Fit” content in your product metafields.</p>
               {% endif %}
               {% if size_chart != blank %}
-                <div class="product-size-chart">
-                  <h3 class="heading heading--small">Size chart</h3>
-                  {{ size_chart | metafield_tag }}
-                </div>
+                <button class="button button--secondary" type="button" data-drawer-open="#size-chart-drawer" aria-haspopup="dialog">View size chart</button>
               {% endif %}
             </div>
-          </div>
-          <div class="accordion__item">
-            <button class="accordion__button" data-accordion-button aria-expanded="false">
-              <span>Details &amp; Materials</span>
-              <span class="accordion__icon" aria-hidden="true">+</span>
-            </button>
-            <div class="accordion__panel hidden">
+            <div id="product-tab-details" class="product-info-tabs__panel hidden" role="tabpanel" data-product-tab-panel>
               {% if details_materials != blank %}
                 {{ details_materials | metafield_tag }}
+              {% else %}
+                <p>Add “Details &amp; Materials” content in your product metafields.</p>
               {% endif %}
             </div>
-          </div>
-          <div class="accordion__item">
-            <button class="accordion__button" data-accordion-button aria-expanded="false">
-              <span>Shipping &amp; Returns</span>
-              <span class="accordion__icon" aria-hidden="true">+</span>
-            </button>
-            <div class="accordion__panel hidden">
+            <div id="product-tab-shipping" class="product-info-tabs__panel hidden" role="tabpanel" data-product-tab-panel>
               {% if shipping_returns != blank %}
                 {{ shipping_returns | metafield_tag }}
+              {% else %}
+                <div class="stack">
+                  <p>{{ section.settings.shipping_text }}</p>
+                  <p>{{ section.settings.returns_text }}</p>
+                </div>
               {% endif %}
             </div>
           </div>
@@ -181,8 +202,42 @@
         {% endfor %}
       </div>
     </div>
+
+    <div class="sticky-atc" data-sticky-atc aria-hidden="true">
+      <div class="sticky-atc__inner">
+        <div class="sticky-atc__meta">
+          <div class="sticky-atc__title">{{ product.title }}</div>
+          <div class="sticky-atc__price">{% render 'price', product: product %}</div>
+        </div>
+        <form method="post" action="/cart/add" data-ajax-cart>
+          <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}" data-sticky-atc-variant>
+          <button class="button button--primary" type="submit">Add to cart</button>
+        </form>
+      </div>
+    </div>
   </div>
 </section>
+
+{% if size_chart != blank %}
+  <div id="size-chart-drawer" class="drawer" role="dialog" aria-modal="true" aria-label="Size chart">
+    <div class="drawer__header">
+      <strong>Size chart</strong>
+      <button class="header__icon-button" type="button" data-drawer-close aria-label="Close size chart">{% render 'icon-close' %}</button>
+    </div>
+    <div class="drawer__content">
+      {% if size_chart.type == 'file_reference' %}
+        {% assign chart_file = size_chart.value %}
+        {% if chart_file.preview_image != blank %}
+          {{ chart_file.preview_image | image_url: width: 1400 | image_tag: loading: 'lazy', alt: chart_file.alt | default: 'Size chart' }}
+        {% elsif chart_file.url != blank %}
+          <a class="button button--secondary" href="{{ chart_file.url }}">Download size chart</a>
+        {% endif %}
+      {% else %}
+        {{ size_chart | metafield_tag }}
+      {% endif %}
+    </div>
+  </div>
+{% endif %}
 
 <script type="application/json" data-product-variants>
   {{ product.variants | json }}

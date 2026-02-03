@@ -1,6 +1,35 @@
 const Theme = (() => {
   const body = document.body;
   const overlay = document.querySelector('[data-overlay]');
+  const formatMoney = (cents) => {
+    if (window.Shopify?.formatMoney) return Shopify.formatMoney(cents);
+    return `$${(Number(cents || 0) / 100).toFixed(2)}`;
+  };
+
+  const withWidth = (url, width) => {
+    if (!url) return '';
+    const joiner = url.includes('?') ? '&' : '?';
+    return `${url}${joiner}width=${width}`;
+  };
+
+  const showToast = (message) => {
+    if (!message) return;
+    const existing = document.querySelector('[data-toast]');
+    existing?.remove();
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.setAttribute('data-toast', 'true');
+    toast.setAttribute('role', 'status');
+    toast.setAttribute('aria-live', 'polite');
+    toast.textContent = message;
+    document.body.appendChild(toast);
+    requestAnimationFrame(() => toast.classList.add('is-visible'));
+    window.setTimeout(() => {
+      toast.classList.remove('is-visible');
+      window.setTimeout(() => toast.remove(), 250);
+    }, 2400);
+  };
+
   const openDrawer = (drawer) => {
     drawer?.classList.add('is-open');
     overlay?.classList.add('is-visible');
@@ -190,12 +219,6 @@ const Theme = (() => {
       items.push({ handle, variantId: variantId || null });
       return items;
     };
-    const formatMoney = (cents) => {
-      if (window.Shopify?.formatMoney) {
-        return Shopify.formatMoney(cents);
-      }
-      return `$${(cents / 100).toFixed(2)}`;
-    };
     const renderWishlist = async () => {
       const container = document.querySelector('[data-wishlist-items]');
       if (!container) return;
@@ -226,7 +249,7 @@ const Theme = (() => {
               const variantId = savedItem?.variantId || product.variants?.[0]?.id;
               const price = formatMoney(product.price);
               const image = product.featured_image
-                ? `<img src="${product.featured_image}&width=140" alt="${product.title}">`
+                ? `<img src="${withWidth(product.featured_image, 140)}" alt="${product.title}">`
                 : '';
               return `
                 <div class="wishlist-item">
@@ -515,6 +538,33 @@ const Theme = (() => {
     });
   };
 
+  const initProductInfoTabs = () => {
+    document.querySelectorAll('[data-product-info-tabs]').forEach((tabs) => {
+      const triggers = Array.from(tabs.querySelectorAll('[data-product-tab-trigger]'));
+      const panels = Array.from(tabs.querySelectorAll('[data-product-tab-panel]'));
+      if (!triggers.length || !panels.length) return;
+
+      const activate = (id) => {
+        panels.forEach((panel) => {
+          panel.classList.toggle('hidden', panel.id !== id);
+        });
+        triggers.forEach((trigger) => {
+          const isActive = trigger.dataset.productTabId === id;
+          trigger.classList.toggle('is-active', isActive);
+          trigger.setAttribute('aria-selected', isActive ? 'true' : 'false');
+          trigger.tabIndex = isActive ? 0 : -1;
+        });
+      };
+
+      triggers.forEach((trigger) => {
+        trigger.addEventListener('click', () => activate(trigger.dataset.productTabId));
+      });
+
+      const initial = triggers.find((t) => t.classList.contains('is-active')) || triggers[0];
+      activate(initial.dataset.productTabId);
+    });
+  };
+
   const initCountdown = () => {
     document.querySelectorAll('[data-countdown]').forEach((countdown) => {
       const target = countdown.dataset.countdownTarget;
@@ -575,6 +625,8 @@ const Theme = (() => {
     const galleryThumbs = Array.from(gallery?.querySelectorAll('[data-gallery-thumb]') || []);
     const prevButton = gallery?.querySelector('[data-gallery-prev]');
     const nextButton = gallery?.querySelector('[data-gallery-next]');
+    const stickyAtc = document.querySelector('[data-sticky-atc]');
+    const stickyVariant = stickyAtc?.querySelector('[data-sticky-atc-variant]');
     let galleryIndex = 0;
 
     const showGalleryIndex = (index) => {
@@ -639,6 +691,7 @@ const Theme = (() => {
       );
       if (match && variantIdInput) {
         variantIdInput.value = match.id;
+        if (stickyVariant) stickyVariant.value = match.id;
         const mediaId = match.featured_media?.id || match.featured_media?.media_id;
         showGalleryByMediaId(mediaId);
       }
@@ -674,6 +727,19 @@ const Theme = (() => {
     updateSizeAvailability();
     updateVariant();
     showGalleryIndex(galleryIndex);
+
+    if (stickyAtc) {
+      // Keep the sticky ATC hidden while the main product form is in view.
+      const observer = new IntersectionObserver(
+        ([entry]) => {
+          const shouldShow = !entry.isIntersecting;
+          stickyAtc.classList.toggle('is-visible', shouldShow);
+          stickyAtc.setAttribute('aria-hidden', shouldShow ? 'false' : 'true');
+        },
+        { rootMargin: '-120px 0px 0px 0px', threshold: 0 },
+      );
+      observer.observe(form);
+    }
   };
 
   const initShippingEstimator = () => {
@@ -703,14 +769,53 @@ const Theme = (() => {
   };
 
   const initRecentlyViewedSection = () => {
-    const container = document.querySelector('[data-recently-viewed-items]');
-    if (!container) return;
-    const handles = JSON.parse(localStorage.getItem('recently-viewed') || '[]');
-    if (!handles.length) {
-      container.innerHTML = '<p>No recently viewed products yet.</p>';
-      return;
-    }
-    container.innerHTML = `<ul class="stack">${handles.map((handle) => `<li><a href="/products/${handle}">${handle.replace(/-/g, ' ')}</a></li>`).join('')}</ul>`;
+    document.querySelectorAll('[data-recently-viewed-items]').forEach(async (container) => {
+      const handles = JSON.parse(localStorage.getItem('recently-viewed') || '[]').filter(Boolean);
+      if (!handles.length) {
+        container.innerHTML = '<p>No recently viewed products yet.</p>';
+        return;
+      }
+
+      const uniqueHandles = [...new Set(handles)].slice(0, 6);
+      container.innerHTML = '<p>Loading recently viewed...</p>';
+      const products = await Promise.all(
+        uniqueHandles.map((handle) =>
+          fetch(`/products/${handle}.js`)
+            .then((response) => (response.ok ? response.json() : null))
+            .catch(() => null),
+        ),
+      );
+      const valid = products.filter(Boolean);
+      if (!valid.length) {
+        container.innerHTML = '<p>No recently viewed products yet.</p>';
+        return;
+      }
+
+      container.innerHTML = `
+        <div class="product-grid">
+          ${valid
+            .map((product) => {
+              const img = product.featured_image
+                ? `<img src="${withWidth(product.featured_image, 600)}" alt="${product.title}">`
+                : '';
+              const price = formatMoney(product.price);
+              return `
+                <article class="product-card">
+                  <div class="product-card__media">
+                    <a href="${product.url}">${img}</a>
+                  </div>
+                  <div class="product-card__info">
+                    <strong>${product.title}</strong>
+                    <div>${price}</div>
+                    <a class="button button--secondary" href="${product.url}">View</a>
+                  </div>
+                </article>
+              `;
+            })
+            .join('')}
+        </div>
+      `;
+    });
   };
 
   const initCopyButtons = () => {
@@ -720,6 +825,118 @@ const Theme = (() => {
         navigator.clipboard?.writeText(text);
       });
     });
+  };
+
+  const initAjaxCart = () => {
+    const drawer = document.querySelector('[data-cart-drawer]') || document.querySelector('#cart-drawer');
+    const itemsEl = document.querySelector('[data-cart-drawer-items]');
+    const totalEl = document.querySelector('[data-cart-drawer-total]');
+    const emptyEl = document.querySelector('[data-cart-drawer-empty]');
+    const filledEl = document.querySelector('[data-cart-drawer-filled]');
+
+    const updateCount = (count) => {
+      document.querySelectorAll('[data-cart-count]').forEach((badge) => {
+        badge.textContent = String(count || 0);
+        badge.classList.toggle('hidden', !count);
+      });
+    };
+
+    const renderCartDrawer = (cart) => {
+      updateCount(cart?.item_count || 0);
+      if (emptyEl && filledEl) {
+        const isEmpty = !cart?.item_count;
+        emptyEl.classList.toggle('hidden', !isEmpty);
+        filledEl.classList.toggle('hidden', isEmpty);
+      }
+
+      if (itemsEl && Array.isArray(cart?.items)) {
+        itemsEl.innerHTML = `
+          ${cart.items
+            .map((item) => {
+              const img = item.image
+                ? `<img src="${withWidth(item.image, 120)}" alt="${item.product_title || item.title || ''}">`
+                : '';
+              const price = formatMoney(item.final_price ?? item.price);
+              return `
+                <div class="cart-drawer-item">
+                  ${img}
+                  <div class="cart-drawer-item__details">
+                    <strong>${item.product_title || item.title || ''}</strong>
+                    <div>${price}</div>
+                  </div>
+                  <span class="cart-drawer-item__qty">${item.quantity || 0}</span>
+                </div>
+              `;
+            })
+            .join('')}
+        `;
+      }
+
+      if (totalEl) {
+        totalEl.textContent = formatMoney(cart?.total_price || 0);
+      }
+    };
+
+    const fetchCart = () =>
+      fetch('/cart.js', { headers: { Accept: 'application/json' } })
+        .then((res) => (res.ok ? res.json() : null))
+        .catch(() => null);
+
+    document.querySelectorAll('form[data-ajax-cart]').forEach((form) => {
+      form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const submit = form.querySelector('button[type="submit"], input[type="submit"]');
+        const originalText = submit?.textContent;
+        if (submit) {
+          submit.disabled = true;
+          submit.classList.add('is-loading');
+          if (submit.tagName === 'BUTTON') submit.textContent = 'Adding...';
+        }
+
+        try {
+          const response = await fetch('/cart/add.js', {
+            method: 'POST',
+            headers: { Accept: 'application/json' },
+            body: new FormData(form),
+          });
+
+          if (!response.ok) {
+            const errorJson = await response.json().catch(() => null);
+            showToast(errorJson?.description || 'Unable to add to cart.');
+            return;
+          }
+
+          const cart = await fetchCart();
+          if (cart) renderCartDrawer(cart);
+          showToast('Added to cart.');
+          if (drawer) openDrawer(drawer);
+        } catch {
+          showToast('Unable to add to cart.');
+        } finally {
+          if (submit) {
+            submit.disabled = false;
+            submit.classList.remove('is-loading');
+            if (submit.tagName === 'BUTTON') submit.textContent = originalText || 'Add to cart';
+          }
+        }
+      });
+    });
+  };
+
+  const initBackToTop = () => {
+    const button = document.querySelector('[data-back-to-top]');
+    if (!button) return;
+    const update = () => {
+      const visible = window.scrollY > 700;
+      button.classList.toggle('is-visible', visible);
+      button.setAttribute('aria-hidden', visible ? 'false' : 'true');
+      button.tabIndex = visible ? 0 : -1;
+    };
+    window.addEventListener('scroll', update, { passive: true });
+    button.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+    update();
   };
 
   const init = () => {
@@ -734,12 +951,15 @@ const Theme = (() => {
     initAccordion();
     initRecentlyViewed();
     initTabs();
+    initProductInfoTabs();
     initAnimatedHeadlines();
     initCountdown();
     initBeforeAfter();
     initShippingEstimator();
     initRecentlyViewedSection();
     initCopyButtons();
+    initAjaxCart();
+    initBackToTop();
     initProductPage();
   };
 

@@ -5,7 +5,13 @@
 <section class="section{% if is_full_width %} section--flush section--flush-top{% endif %} section--background" style="{% render 'section-background-style', section: section %}">
   {% render 'section-background-media', section: section %}
   {% if is_full_width %}<div>{% else %}<div class="container">{% endif %}
-    <div class="hero{% if is_full_width %} hero--full{% endif %}" data-slideshow data-autoplay="{{ section.settings.autoplay }}" data-autoplay-speed="{{ section.settings.autoplay_speed }}">
+    <div
+      class="hero{% if is_full_width %} hero--full{% endif %}"
+      style="--hero-height: {{ section.settings.height_desktop }}px; --hero-height-mobile: {{ section.settings.height_mobile }}px;"
+      data-slideshow
+      data-autoplay="{{ section.settings.autoplay }}"
+      data-autoplay-speed="{{ section.settings.autoplay_speed }}"
+    >
       {% for block in section.blocks %}
         <div class="hero__slide{% if forloop.index0 > 0 %} hidden{% endif %}" data-slide>
           {% assign desktop_image = block.settings.image %}
@@ -152,6 +158,26 @@
           "label": "Full width"
         }
       ]
+    },
+    {
+      "type": "range",
+      "id": "height_desktop",
+      "label": "Height (desktop)",
+      "min": 320,
+      "max": 760,
+      "step": 10,
+      "default": 450,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "height_mobile",
+      "label": "Height (mobile)",
+      "min": 280,
+      "max": 760,
+      "step": 10,
+      "default": 450,
+      "unit": "px"
     },
     {
       "type": "checkbox",

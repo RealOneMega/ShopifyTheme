@@ -24,9 +24,24 @@
         "background_size": "cover",
         "background_repeat": "no-repeat"
       }
+    },
+    "recently_viewed": {
+      "type": "feature-recently-viewed",
+      "settings": {
+        "heading": "Recently viewed",
+        "subheading": "Pick up where you left off.",
+        "background_type": "none",
+        "background_color": "#ffffff",
+        "background_gradient": "",
+        "background_position_x": 50,
+        "background_position_y": 50,
+        "background_size": "cover",
+        "background_repeat": "no-repeat"
+      }
     }
   },
   "order": [
-    "main"
+    "main",
+    "recently_viewed"
   ]
 }
