@@ -1,0 +1,37 @@
+# Theme Change History
+
+This file records implementation notes for future troubleshooting. Add a dated entry whenever theme behavior, structure, or performance is changed so prior work is easy to audit before repeating it.
+
+## 2026-05-10
+
+### Hero slideshow media and content safety
+
+- Reworked hero slides so the image/picture layer, overlay layer, and text layer are independently positioned inside the fixed-height hero. This prevents unusually wide or tall images from affecting text placement.
+- Added a per-slide `image_fit` setting with `cover` and `contain` modes. `cover` keeps the traditional full-bleed crop; `contain` shows the entire asset and is useful for very wide banners.
+- Set the current homepage `TerminalVelocityBanner.jpg` slide to `contain` and added explicit desktop/mobile hero heights in `templates/index.json`.
+- Converted focal point values into a CSS custom property so image position is applied consistently with both `cover` and `contain`.
+- Added responsive `srcset`/`sizes` output for hero images and eager loading for the first slide only.
+- Added left, center, and right overlay treatments so text remains readable regardless of placement.
+- Added mobile-safe content bounds so custom text positions cannot push hero copy outside the visible area.
+
+### JavaScript behavior and safety
+
+- Updated slideshow initialization to avoid duplicate event binding, respect reduced-motion preferences, pause autoplay on hover/focus, pause while the tab is hidden, and keep `aria-hidden`/`aria-current` state in sync.
+- Added HTML escaping for client-rendered wishlist, predictive search, recently viewed, cart drawer, and shipping-rate markup before injecting API text through `innerHTML`.
+- Routed AJAX cart, product JSON, predictive search, and shipping-rate fetches through Shopify's route root when available.
+
+### Product card efficiency
+
+- Added responsive image widths for product cards instead of always requesting a single 600px image.
+- Updated quick add to use the selected or first available variant and disable itself for sold-out single-variant products.
+- Marked wishlist card buttons as `type="button"` so they cannot accidentally submit a surrounding form.
+- Replaced hardcoded `/cart/add` form actions in product card and main product forms with `routes.cart_add_url`.
+
+### Theme Check cleanup
+
+- Converted raw feature-section image tags to Shopify `image_tag` output so rendered images include width and height attributes and use better lazy-loading/responsive width hints.
+- Removed an unused header `logo_alignment` assignment.
+
+### Context notes
+
+- The worktree already contained uncommitted product detail accordion changes and partial hero positioning changes before this pass. This pass preserved that direction and did not revert those edits.

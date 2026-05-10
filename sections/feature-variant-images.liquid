@@ -15,7 +15,7 @@
         {% for variant in product.variants %}
           {% if variant.featured_image != blank %}
             <div class="variant-images__item">
-              <img src="{{ variant.featured_image | image_url: width: 300 }}" alt="{{ variant.featured_image.alt | escape }}">
+              {{ variant.featured_image | image_url: width: 450 | image_tag: loading: 'lazy', sizes: '(min-width: 900px) 25vw, 50vw', widths: '200, 300, 450', alt: variant.featured_image.alt }}
               <p>{{ variant.title }}</p>
             </div>
           {% endif %}

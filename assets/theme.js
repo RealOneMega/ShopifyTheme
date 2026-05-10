@@ -12,6 +12,20 @@ const Theme = (() => {
     return `${url}${joiner}width=${width}`;
   };
 
+  const shopifyPath = (path) => {
+    const root = window.Shopify?.routes?.root || '/';
+    return `${root}${String(path).replace(/^\/+/, '')}`;
+  };
+
+  const escapeHTML = (value) =>
+    String(value ?? '').replace(/[&<>"']/g, (char) => ({
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#39;'
+    }[char]));
+
   const showToast = (message) => {
     if (!message) return;
     const existing = document.querySelector('[data-toast]');
@@ -131,51 +145,87 @@ const Theme = (() => {
   };
 
   const initSlideshow = () => {
+    const prefersReducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+
     document.querySelectorAll('[data-slideshow]').forEach((slideshow) => {
+      if (slideshow.dataset.slideshowInitialized === 'true') return;
+      slideshow.dataset.slideshowInitialized = 'true';
+
       const slides = Array.from(slideshow.querySelectorAll('[data-slide]'));
-      if (slides.length < 2) return;
-      const dots = slideshow.querySelectorAll('[data-slide-dot]');
+      if (!slides.length) return;
+
+      const dots = Array.from(slideshow.querySelectorAll('[data-slide-dot]'));
       const prev = slideshow.querySelector('[data-slide-prev]');
       const next = slideshow.querySelector('[data-slide-next]');
-      let index = 0;
-      let timer;
-      const interval = Number(slideshow.dataset.autoplaySpeed || 6000);
-      const autoplay = slideshow.dataset.autoplay === 'true';
+      let index = Math.max(0, slides.findIndex((slide) => !slide.classList.contains('hidden')));
+      let timer = null;
+      const configuredInterval = Number(slideshow.dataset.autoplaySpeed || 6000);
+      const interval = Number.isFinite(configuredInterval) ? Math.max(configuredInterval, 1000) : 6000;
+      const autoplay = slideshow.dataset.autoplay === 'true' && slides.length > 1 && !prefersReducedMotion;
 
-      const showSlide = (next) => {
+      const stop = () => {
+        if (!timer) return;
+        clearInterval(timer);
+        timer = null;
+      };
+
+      const start = () => {
+        if (!autoplay || timer) return;
+        timer = setInterval(() => {
+          showSlide(index + 1);
+        }, interval);
+      };
+
+      const showSlide = (nextIndex, resetTimer = false) => {
+        const normalizedIndex = (nextIndex + slides.length) % slides.length;
         slides.forEach((slide, i) => {
-          slide.classList.toggle('hidden', i !== next);
+          const isActive = i === normalizedIndex;
+          slide.classList.toggle('hidden', !isActive);
+          slide.setAttribute('aria-hidden', isActive ? 'false' : 'true');
         });
         dots.forEach((dot, i) => {
-          dot.classList.toggle('is-active', i === next);
+          const isActive = i === normalizedIndex;
+          dot.classList.toggle('is-active', isActive);
+          dot.setAttribute('aria-current', isActive ? 'true' : 'false');
         });
-        index = next;
+        index = normalizedIndex;
+
+        if (resetTimer) {
+          stop();
+          start();
+        }
       };
 
       const nextSlide = () => {
-        showSlide((index + 1) % slides.length);
+        showSlide(index + 1, true);
       };
 
       const prevSlide = () => {
-        showSlide((index - 1 + slides.length) % slides.length);
+        showSlide(index - 1, true);
       };
 
       dots.forEach((dot, i) => {
-        dot.addEventListener('click', () => showSlide(i));
+        dot.addEventListener('click', () => showSlide(i, true));
       });
 
       prev?.addEventListener('click', prevSlide);
       next?.addEventListener('click', nextSlide);
 
-      if (autoplay) {
-        timer = setInterval(nextSlide, interval);
-        slideshow.addEventListener('mouseenter', () => clearInterval(timer));
-        slideshow.addEventListener('mouseleave', () => {
-          timer = setInterval(nextSlide, interval);
+      slideshow.addEventListener('mouseenter', stop);
+      slideshow.addEventListener('mouseleave', start);
+      slideshow.addEventListener('focusin', stop);
+      slideshow.addEventListener('focusout', (event) => {
+        if (!slideshow.contains(event.relatedTarget)) start();
+      });
+
+      if (slides.length > 1) {
+        document.addEventListener('visibilitychange', () => {
+          document.hidden ? stop() : start();
         });
       }
 
-      showSlide(0);
+      showSlide(index);
+      start();
     });
   };
 
@@ -231,7 +281,7 @@ const Theme = (() => {
       const handles = [...new Set(items.map((item) => item.handle))];
       const products = await Promise.all(
         handles.map((handle) =>
-          fetch(`/products/${handle}.js`)
+          fetch(shopifyPath(`products/${handle}.js`))
             .then((response) => (response.ok ? response.json() : null))
             .catch(() => null),
         ),
@@ -248,18 +298,21 @@ const Theme = (() => {
               const savedItem = findItem(items, product.handle);
               const variantId = savedItem?.variantId || product.variants?.[0]?.id;
               const price = formatMoney(product.price);
+              const title = escapeHTML(product.title);
+              const url = escapeHTML(product.url);
+              const handle = escapeHTML(product.handle);
               const image = product.featured_image
-                ? `<img src="${withWidth(product.featured_image, 140)}" alt="${product.title}">`
+                ? `<img src="${escapeHTML(withWidth(product.featured_image, 140))}" alt="${title}" loading="lazy">`
                 : '';
               return `
                 <div class="wishlist-item">
-                  <a class="wishlist-item__media" href="${product.url}">${image}</a>
+                  <a class="wishlist-item__media" href="${url}">${image}</a>
                   <div class="wishlist-item__details">
-                    <a class="wishlist-item__title" href="${product.url}">${product.title}</a>
+                    <a class="wishlist-item__title" href="${url}">${title}</a>
                     <div class="wishlist-item__price">${price}</div>
                     <div class="wishlist-item__actions">
-                      <button class="button button--secondary" type="button" data-wishlist-move data-variant-id="${variantId}" data-handle="${product.handle}">Move to cart</button>
-                      <button class="button button--tertiary" type="button" data-wishlist-remove data-handle="${product.handle}">Remove</button>
+                      <button class="button button--secondary" type="button" data-wishlist-move data-variant-id="${variantId}" data-handle="${handle}">Move to cart</button>
+                      <button class="button button--tertiary" type="button" data-wishlist-remove data-handle="${handle}">Remove</button>
                     </div>
                   </div>
                 </div>
@@ -350,7 +403,7 @@ const Theme = (() => {
           const variantId = Number(moveButton.dataset.variantId);
           const handle = moveButton.dataset.handle;
           if (!variantId) return;
-          fetch('/cart/add.js', {
+          fetch(shopifyPath('cart/add.js'), {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ id: variantId, quantity: 1 }),
@@ -440,13 +493,13 @@ const Theme = (() => {
         }
         controller?.abort();
         controller = new AbortController();
-        fetch(`/search/suggest.json?q=${encodeURIComponent(query)}&resources[type]=product,collection,page&resources[limit]=4`, {
+        fetch(shopifyPath(`search/suggest.json?q=${encodeURIComponent(query)}&resources[type]=product,collection,page&resources[limit]=4`), {
           signal: controller.signal
         })
           .then((response) => response.json())
           .then((data) => {
             const renderList = (items) =>
-              items.map((item) => `<li><a href="${item.url}">${item.title}</a></li>`).join('');
+              items.map((item) => `<li><a href="${escapeHTML(item.url)}">${escapeHTML(item.title)}</a></li>`).join('');
             const products = data.resources.results.products;
             const collections = data.resources.results.collections;
             const pages = data.resources.results.pages;
@@ -535,33 +588,6 @@ const Theme = (() => {
           });
         });
       });
-    });
-  };
-
-  const initProductInfoTabs = () => {
-    document.querySelectorAll('[data-product-info-tabs]').forEach((tabs) => {
-      const triggers = Array.from(tabs.querySelectorAll('[data-product-tab-trigger]'));
-      const panels = Array.from(tabs.querySelectorAll('[data-product-tab-panel]'));
-      if (!triggers.length || !panels.length) return;
-
-      const activate = (id) => {
-        panels.forEach((panel) => {
-          panel.classList.toggle('hidden', panel.id !== id);
-        });
-        triggers.forEach((trigger) => {
-          const isActive = trigger.dataset.productTabId === id;
-          trigger.classList.toggle('is-active', isActive);
-          trigger.setAttribute('aria-selected', isActive ? 'true' : 'false');
-          trigger.tabIndex = isActive ? 0 : -1;
-        });
-      };
-
-      triggers.forEach((trigger) => {
-        trigger.addEventListener('click', () => activate(trigger.dataset.productTabId));
-      });
-
-      const initial = triggers.find((t) => t.classList.contains('is-active')) || triggers[0];
-      activate(initial.dataset.productTabId);
     });
   };
 
@@ -752,14 +778,14 @@ const Theme = (() => {
         const zip = data.get('zip');
         const country = data.get('country');
         results.textContent = 'Loading...';
-        fetch(`/cart/shipping_rates.json?shipping_address%5Bzip%5D=${encodeURIComponent(zip)}&shipping_address%5Bcountry%5D=${encodeURIComponent(country)}`)
+        fetch(shopifyPath(`cart/shipping_rates.json?shipping_address%5Bzip%5D=${encodeURIComponent(zip)}&shipping_address%5Bcountry%5D=${encodeURIComponent(country)}`))
           .then((response) => response.json())
           .then((json) => {
             if (!json.shipping_rates || !json.shipping_rates.length) {
               results.textContent = 'No rates available.';
               return;
             }
-            results.innerHTML = `<ul>${json.shipping_rates.map((rate) => `<li>${rate.name}: ${rate.price}</li>`).join('')}</ul>`;
+            results.innerHTML = `<ul>${json.shipping_rates.map((rate) => `<li>${escapeHTML(rate.name)}: ${escapeHTML(rate.price)}</li>`).join('')}</ul>`;
           })
           .catch(() => {
             results.textContent = 'Unable to fetch rates.';
@@ -780,7 +806,7 @@ const Theme = (() => {
       container.innerHTML = '<p>Loading recently viewed...</p>';
       const products = await Promise.all(
         uniqueHandles.map((handle) =>
-          fetch(`/products/${handle}.js`)
+          fetch(shopifyPath(`products/${handle}.js`))
             .then((response) => (response.ok ? response.json() : null))
             .catch(() => null),
         ),
@@ -795,19 +821,21 @@ const Theme = (() => {
         <div class="product-grid">
           ${valid
             .map((product) => {
+              const title = escapeHTML(product.title);
+              const url = escapeHTML(product.url);
               const img = product.featured_image
-                ? `<img src="${withWidth(product.featured_image, 600)}" alt="${product.title}">`
+                ? `<img src="${escapeHTML(withWidth(product.featured_image, 600))}" alt="${title}" loading="lazy">`
                 : '';
               const price = formatMoney(product.price);
               return `
                 <article class="product-card">
                   <div class="product-card__media">
-                    <a href="${product.url}">${img}</a>
+                    <a href="${url}">${img}</a>
                   </div>
                   <div class="product-card__info">
-                    <strong>${product.title}</strong>
+                    <strong>${title}</strong>
                     <div>${price}</div>
-                    <a class="button button--secondary" href="${product.url}">View</a>
+                    <a class="button button--secondary" href="${url}">View</a>
                   </div>
                 </article>
               `;
@@ -853,15 +881,16 @@ const Theme = (() => {
         itemsEl.innerHTML = `
           ${cart.items
             .map((item) => {
+              const title = escapeHTML(item.product_title || item.title || '');
               const img = item.image
-                ? `<img src="${withWidth(item.image, 120)}" alt="${item.product_title || item.title || ''}">`
+                ? `<img src="${escapeHTML(withWidth(item.image, 120))}" alt="${title}" loading="lazy">`
                 : '';
               const price = formatMoney(item.final_price ?? item.price);
               return `
                 <div class="cart-drawer-item">
                   ${img}
                   <div class="cart-drawer-item__details">
-                    <strong>${item.product_title || item.title || ''}</strong>
+                    <strong>${title}</strong>
                     <div>${price}</div>
                   </div>
                   <span class="cart-drawer-item__qty">${item.quantity || 0}</span>
@@ -878,7 +907,7 @@ const Theme = (() => {
     };
 
     const fetchCart = () =>
-      fetch('/cart.js', { headers: { Accept: 'application/json' } })
+      fetch(shopifyPath('cart.js'), { headers: { Accept: 'application/json' } })
         .then((res) => (res.ok ? res.json() : null))
         .catch(() => null);
 
@@ -894,7 +923,7 @@ const Theme = (() => {
         }
 
         try {
-          const response = await fetch('/cart/add.js', {
+          const response = await fetch(shopifyPath('cart/add.js'), {
             method: 'POST',
             headers: { Accept: 'application/json' },
             body: new FormData(form),
@@ -951,7 +980,6 @@ const Theme = (() => {
     initAccordion();
     initRecentlyViewed();
     initTabs();
-    initProductInfoTabs();
     initAnimatedHeadlines();
     initCountdown();
     initBeforeAfter();

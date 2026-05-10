@@ -4,96 +4,113 @@
 {% endif %}
 <section class="section{% if is_full_width %} section--flush section--flush-top{% endif %} section--background" style="{% render 'section-background-style', section: section %}">
   {% render 'section-background-media', section: section %}
-  {% if is_full_width %}<div>{% else %}<div class="container">{% endif %}
+  <div{% unless is_full_width %} class="container"{% endunless %}>
     <div
       class="hero{% if is_full_width %} hero--full{% endif %}"
-      style="--hero-height: {{ section.settings.height_desktop }}px; --hero-height-mobile: {{ section.settings.height_mobile }}px;"
+      style="--hero-height: {{ section.settings.height_desktop | default: 450 }}px; --hero-height-mobile: {{ section.settings.height_mobile | default: section.settings.height_desktop | default: 450 }}px;"
       data-slideshow
       data-autoplay="{{ section.settings.autoplay }}"
       data-autoplay-speed="{{ section.settings.autoplay_speed }}"
     >
       {% for block in section.blocks %}
-        <div class="hero__slide{% if forloop.index0 > 0 %} hidden{% endif %}" data-slide>
-          {% assign desktop_image = block.settings.image %}
-          {% assign mobile_image = block.settings.mobile_image | default: block.settings.image %}
-          <picture>
-            {% if mobile_image != blank %}
-              <source media="(max-width: 749px)" srcset="{{ mobile_image | image_url: width: 800 }}">
+        {% assign desktop_image = block.settings.image %}
+        {% assign mobile_image = block.settings.mobile_image | default: block.settings.image %}
+        {% assign display_image = desktop_image | default: mobile_image %}
+        {% assign image_fit = block.settings.image_fit | default: 'cover' %}
+        {% assign image_position = block.settings.focal_point | default: 'object-position: center;' | remove: 'object-position:' | remove: ';' | strip %}
+        {% if image_position == blank %}
+          {% assign image_position = 'center' %}
+        {% endif %}
+        {% assign image_loading = 'lazy' %}
+        {% if forloop.first %}
+          {% assign image_loading = 'eager' %}
+        {% endif %}
+
+        {% assign text_class = 'hero__content' %}
+        {% if block.settings.text_color == 'dark' %}
+          {% assign text_class = text_class | append: ' hero__content--light' %}
+        {% endif %}
+        {% assign text_alignment = 'left' %}
+        {% assign hero_justify = 'start' %}
+        {% assign hero_top = '' %}
+        {% assign hero_bottom = '' %}
+        {% assign hero_left = '' %}
+        {% assign hero_right = '' %}
+        {% assign hero_transform = '' %}
+        {% assign position_fallback = '' %}
+        {% case block.settings.text_position %}
+          {% when 'top:10%;left:10%;' %}
+            {% assign hero_top = '10%' %}
+            {% assign hero_left = '10%' %}
+          {% when 'top:10%;left:50%;transform:translateX(-50%);' %}
+            {% assign hero_top = '10%' %}
+            {% assign hero_left = '50%' %}
+            {% assign hero_transform = 'translateX(-50%)' %}
+            {% assign text_alignment = 'center' %}
+            {% assign hero_justify = 'center' %}
+          {% when 'top:10%;right:10%;' %}
+            {% assign hero_top = '10%' %}
+            {% assign hero_right = '10%' %}
+            {% assign text_alignment = 'right' %}
+            {% assign hero_justify = 'end' %}
+          {% when 'top:40%;left:10%;' %}
+            {% assign hero_top = '50%' %}
+            {% assign hero_left = '10%' %}
+            {% assign hero_transform = 'translateY(-50%)' %}
+          {% when 'top:40%;left:50%;transform:translateX(-50%);' %}
+            {% assign hero_top = '50%' %}
+            {% assign hero_left = '50%' %}
+            {% assign hero_transform = 'translate(-50%, -50%)' %}
+            {% assign text_alignment = 'center' %}
+            {% assign hero_justify = 'center' %}
+          {% when 'top:40%;right:10%;' %}
+            {% assign hero_top = '50%' %}
+            {% assign hero_right = '10%' %}
+            {% assign hero_transform = 'translateY(-50%)' %}
+            {% assign text_alignment = 'right' %}
+            {% assign hero_justify = 'end' %}
+          {% when 'bottom:10%;left:10%;' %}
+            {% assign hero_bottom = '10%' %}
+            {% assign hero_left = '10%' %}
+          {% when 'bottom:10%;left:50%;transform:translateX(-50%);' %}
+            {% assign hero_bottom = '10%' %}
+            {% assign hero_left = '50%' %}
+            {% assign hero_transform = 'translateX(-50%)' %}
+            {% assign text_alignment = 'center' %}
+            {% assign hero_justify = 'center' %}
+          {% when 'bottom:10%;right:10%;' %}
+            {% assign hero_bottom = '10%' %}
+            {% assign hero_right = '10%' %}
+            {% assign text_alignment = 'right' %}
+            {% assign hero_justify = 'end' %}
+          {% else %}
+            {% assign position_fallback = block.settings.text_position %}
+            {% if block.settings.text_position contains 'left:50%' %}
+              {% assign text_alignment = 'center' %}
+              {% assign hero_justify = 'center' %}
+            {% elsif block.settings.text_position contains 'right:' %}
+              {% assign text_alignment = 'right' %}
+              {% assign hero_justify = 'end' %}
             {% endif %}
-            {% if desktop_image != blank %}
-              {{ desktop_image | image_url: width: 1600 | image_tag: class: 'hero__image', loading: 'lazy', style: block.settings.focal_point }}
+        {% endcase %}
+
+        <div class="hero__slide{% if forloop.index0 > 0 %} hidden{% endif %}" data-slide>
+          <picture class="hero__media" style="--hero-image-fit: {{ image_fit }}; --hero-image-position: {{ image_position }};">
+            {% if block.settings.mobile_image != blank %}
+              <source
+                media="(max-width: 749px)"
+                srcset="{{ block.settings.mobile_image | image_url: width: 480 }} 480w, {{ block.settings.mobile_image | image_url: width: 720 }} 720w, {{ block.settings.mobile_image | image_url: width: 960 }} 960w"
+                sizes="100vw"
+              >
+            {% endif %}
+            {% if display_image != blank %}
+              {% assign image_alt = display_image.alt | default: block.settings.title %}
+              {{ display_image | image_url: width: 2200 | image_tag: class: 'hero__image', loading: image_loading, sizes: '(min-width: 1200px) 1200px, 100vw', widths: '750, 1000, 1200, 1600, 2000, 2200', alt: image_alt }}
             {% else %}
-              <div style="min-height:320px;background:#f2f2f2;"></div>
+              <div class="hero__image hero__image--placeholder"></div>
             {% endif %}
           </picture>
-          <div class="hero__overlay" style="--overlay-opacity: {{ block.settings.overlay_opacity | times: 0.01 }};"></div>
-          {% assign text_class = 'hero__content' %}
-          {% if block.settings.text_color == 'dark' %}
-            {% assign text_class = text_class | append: ' hero__content--light' %}
-          {% endif %}
-          {% assign text_alignment = 'left' %}
-          {% assign hero_justify = 'start' %}
-          {% assign hero_top = '' %}
-          {% assign hero_bottom = '' %}
-          {% assign hero_left = '' %}
-          {% assign hero_right = '' %}
-          {% assign hero_transform = '' %}
-          {% assign position_fallback = '' %}
-          {% case block.settings.text_position %}
-            {% when 'top:10%;left:10%;' %}
-              {% assign hero_top = '10%' %}
-              {% assign hero_left = '10%' %}
-            {% when 'top:10%;left:50%;transform:translateX(-50%);' %}
-              {% assign hero_top = '10%' %}
-              {% assign hero_left = '50%' %}
-              {% assign hero_transform = 'translateX(-50%)' %}
-              {% assign text_alignment = 'center' %}
-              {% assign hero_justify = 'center' %}
-            {% when 'top:10%;right:10%;' %}
-              {% assign hero_top = '10%' %}
-              {% assign hero_right = '10%' %}
-              {% assign text_alignment = 'right' %}
-              {% assign hero_justify = 'end' %}
-            {% when 'top:40%;left:10%;' %}
-              {% assign hero_top = '50%' %}
-              {% assign hero_left = '10%' %}
-              {% assign hero_transform = 'translateY(-50%)' %}
-            {% when 'top:40%;left:50%;transform:translateX(-50%);' %}
-              {% assign hero_top = '50%' %}
-              {% assign hero_left = '50%' %}
-              {% assign hero_transform = 'translate(-50%, -50%)' %}
-              {% assign text_alignment = 'center' %}
-              {% assign hero_justify = 'center' %}
-            {% when 'top:40%;right:10%;' %}
-              {% assign hero_top = '50%' %}
-              {% assign hero_right = '10%' %}
-              {% assign hero_transform = 'translateY(-50%)' %}
-              {% assign text_alignment = 'right' %}
-              {% assign hero_justify = 'end' %}
-            {% when 'bottom:10%;left:10%;' %}
-              {% assign hero_bottom = '10%' %}
-              {% assign hero_left = '10%' %}
-            {% when 'bottom:10%;left:50%;transform:translateX(-50%);' %}
-              {% assign hero_bottom = '10%' %}
-              {% assign hero_left = '50%' %}
-              {% assign hero_transform = 'translateX(-50%)' %}
-              {% assign text_alignment = 'center' %}
-              {% assign hero_justify = 'center' %}
-            {% when 'bottom:10%;right:10%;' %}
-              {% assign hero_bottom = '10%' %}
-              {% assign hero_right = '10%' %}
-              {% assign text_alignment = 'right' %}
-              {% assign hero_justify = 'end' %}
-            {% else %}
-              {% assign position_fallback = block.settings.text_position %}
-              {% if block.settings.text_position contains '50%' %}
-                {% assign text_alignment = 'center' %}
-                {% assign hero_justify = 'center' %}
-              {% elsif block.settings.text_position contains 'right' %}
-                {% assign text_alignment = 'right' %}
-                {% assign hero_justify = 'end' %}
-              {% endif %}
-          {% endcase %}
+          <div class="hero__overlay hero__overlay--{{ text_alignment }}" style="--overlay-opacity: {{ block.settings.overlay_opacity | times: 0.01 }};"></div>
           <div class="{{ text_class }}" style="{% if position_fallback != '' %}{{ position_fallback }}{% else %}{% if hero_top != '' %}top:{{ hero_top }};{% endif %}{% if hero_bottom != '' %}bottom:{{ hero_bottom }};{% endif %}{% if hero_left != '' %}left:{{ hero_left }};{% endif %}{% if hero_right != '' %}right:{{ hero_right }};{% endif %}{% if hero_transform != '' %}transform:{{ hero_transform }};{% endif %}{% endif %}text-align:{{ text_alignment }};justify-items:{{ hero_justify }};">
             {% if block.settings.subtitle != blank %}
               <p class="badge">{{ block.settings.subtitle }}</p>
@@ -322,6 +339,22 @@
           "type": "image_picker",
           "id": "mobile_image",
           "label": "Mobile image"
+        },
+        {
+          "type": "select",
+          "id": "image_fit",
+          "label": "Image fit",
+          "default": "cover",
+          "options": [
+            {
+              "value": "cover",
+              "label": "Cover hero area"
+            },
+            {
+              "value": "contain",
+              "label": "Show full image"
+            }
+          ]
         },
         {
           "type": "text",

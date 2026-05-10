@@ -13,7 +13,7 @@
       {% for block in section.blocks %}
         <div class="feature__list-item">
           {% if block.settings.icon != blank %}
-            <img src="{{ block.settings.icon | image_url: width: 80 }}" alt="{{ block.settings.icon.alt | escape }}">
+            {{ block.settings.icon | image_url: width: 160 | image_tag: loading: 'lazy', widths: '80, 160', alt: block.settings.icon.alt }}
           {% endif %}
           <div>
             <strong>{{ block.settings.title }}</strong>

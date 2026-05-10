@@ -12,7 +12,7 @@
     <div class="hotspots">
       {% if section.settings.image != blank %}
         <div class="hotspots__image" style="position: relative;">
-          <img src="{{ section.settings.image | image_url: width: 1000 }}" alt="{{ section.settings.image.alt | escape }}">
+          {{ section.settings.image | image_url: width: 1400 | image_tag: loading: 'lazy', sizes: '100vw', widths: '700, 1000, 1400', alt: section.settings.image.alt }}
           {% for block in section.blocks %}
             <a class="hotspot" href="{{ block.settings.link | default: '#' }}" style="position:absolute; top: {{ block.settings.top }}%; left: {{ block.settings.left }}%;">{{ block.settings.label }}</a>
           {% endfor %}

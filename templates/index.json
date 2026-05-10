@@ -16,6 +16,7 @@
           "type": "slide",
           "settings": {
             "image": "shopify://shop_images/BannerTest.png",
+            "image_fit": "cover",
             "subtitle": "New drop",
             "title": "Everyday layers",
             "text": "Soft fleece, broken-in tees, and easy joggers made for daily wear.",
@@ -38,6 +39,7 @@
           "type": "slide",
           "settings": {
             "image": "shopify://shop_images/TerminalVelocityBanner.jpg",
+            "image_fit": "contain",
             "subtitle": "Performance",
             "title": "Move in comfort",
             "text": "Breathable knits and stretch fabric that keep up with you.",
@@ -63,6 +65,8 @@
       ],
       "settings": {
         "layout": "full",
+        "height_desktop": 520,
+        "height_mobile": 420,
         "autoplay": true,
         "autoplay_speed": 6000,
         "background_type": "none",

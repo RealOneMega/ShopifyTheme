@@ -4,7 +4,7 @@
     <div class="image-with-text">
       <div class="image-with-text__media">
         {% if section.settings.image != blank %}
-          <img src="{{ section.settings.image | image_url: width: 720 }}" alt="{{ section.settings.image.alt | escape }}">
+          {{ section.settings.image | image_url: width: 1000 | image_tag: loading: 'lazy', sizes: '(min-width: 900px) 50vw, 100vw', widths: '500, 720, 1000', alt: section.settings.image.alt }}
         {% endif %}
       </div>
       <div class="image-with-text__content">

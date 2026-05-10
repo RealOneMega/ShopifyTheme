@@ -184,6 +184,12 @@ p {
   transform: translateY(-1px);
 }
 
+.button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+}
+
 .button--primary {
   background: var(--color-button-primary-bg);
   color: var(--color-button-primary-text);
@@ -770,7 +776,9 @@ p {
   overflow: hidden;
   height: var(--hero-height, 450px);
   min-height: var(--hero-height, 450px);
-  display: grid;
+  display: block;
+  background: #111;
+  isolation: isolate;
 }
 
 .section--flush {
@@ -787,23 +795,30 @@ p {
 }
 
 .hero__slide {
-  position: relative;
-  display: grid;
-  place-items: stretch;
-  height: 100%;
+  position: absolute;
+  inset: 0;
+  min-height: 100%;
 }
 
-.hero__slide picture {
+.hero__media {
+  position: absolute;
+  inset: 0;
   display: block;
   width: 100%;
   height: 100%;
+  overflow: hidden;
+  z-index: 0;
 }
 
 .hero__image {
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  min-height: 100%;
+  object-fit: var(--hero-image-fit, cover);
+  object-position: var(--hero-image-position, center);
+}
+
+.hero__image--placeholder {
+  background: #f2f2f2;
 }
 
 .hero__overlay {
@@ -815,6 +830,26 @@ p {
     rgba(0, 0, 0, var(--overlay-opacity, 0.25)) 55%,
     rgba(0, 0, 0, 0) 100%
   );
+  pointer-events: none;
+  z-index: 1;
+}
+
+.hero__overlay--right {
+  background: linear-gradient(
+    270deg,
+    rgba(0, 0, 0, calc(0.35 + var(--overlay-opacity, 0))),
+    rgba(0, 0, 0, var(--overlay-opacity, 0.25)) 55%,
+    rgba(0, 0, 0, 0) 100%
+  );
+}
+
+.hero__overlay--center {
+  background: radial-gradient(
+    circle at center,
+    rgba(0, 0, 0, calc(0.28 + var(--overlay-opacity, 0))) 0%,
+    rgba(0, 0, 0, var(--overlay-opacity, 0.25)) 52%,
+    rgba(0, 0, 0, 0) 100%
+  );
 }
 
 .hero__content {
@@ -822,21 +857,31 @@ p {
   padding: clamp(1.5rem, 3vw, 3rem);
   width: min(600px, calc(100% - 2.5rem));
   max-width: 600px;
+  max-height: calc(100% - 2rem);
+  overflow: auto;
+  overflow-wrap: break-word;
   color: #fff;
   text-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
   display: grid;
   gap: 0.75rem;
+  z-index: 2;
+}
+
+.hero__content > :last-child {
+  margin-bottom: 0;
 }
 
 .hero__content p {
   font-size: 1.05rem;
   max-width: 44ch;
+  margin: 0;
 }
 
 .hero__actions {
   display: flex;
   flex-wrap: wrap;
   gap: 0.75rem;
+  max-width: 100%;
 }
 
 .hero__actions .button {
@@ -853,6 +898,25 @@ p {
     height: var(--hero-height-mobile, var(--hero-height, 450px));
     min-height: var(--hero-height-mobile, var(--hero-height, 450px));
   }
+
+  .hero__content {
+    left: 1rem !important;
+    right: 1rem !important;
+    width: auto;
+    max-width: none;
+    max-height: calc(100% - 2rem);
+    padding: 1rem;
+    transform: none !important;
+  }
+
+  .hero__content .heading {
+    font-size: clamp(1.6rem, 9vw, 2.5rem) !important;
+  }
+
+  .hero__actions .button {
+    flex: 1 1 auto;
+    min-width: min(100%, 11rem);
+  }
 }
 
 .hero__controls {
@@ -862,6 +926,7 @@ p {
   bottom: 1rem;
   left: 50%;
   transform: translateX(-50%);
+  z-index: 3;
 }
 
 .hero__arrow {
@@ -876,6 +941,7 @@ p {
   color: #fff;
   display: grid;
   place-items: center;
+  z-index: 3;
 }
 
 .hero__arrow--prev {
@@ -1559,48 +1625,6 @@ textarea.input {
 .product-size-select,
 .product-option-select {
   border-radius: 999px;
-}
-
-.product-info-tabs {
-  margin-top: 1.25rem;
-  border-top: 1px solid var(--color-border);
-  padding-top: 1.25rem;
-}
-
-.product-info-tabs__nav {
-  display: flex;
-  gap: 0.75rem;
-  flex-wrap: wrap;
-  align-items: center;
-}
-
-.product-info-tabs__tab {
-  appearance: none;
-  background: transparent;
-  border: 1px solid var(--color-border);
-  color: var(--color-text);
-  padding: 0.5rem 1.2rem;
-  border-radius: 999px;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  font-size: 0.72rem;
-  font-weight: 800;
-}
-
-.product-info-tabs__tab.is-active,
-.product-info-tabs__tab:focus-visible {
-  background: var(--color-text);
-  border-color: var(--color-text);
-  color: #fff;
-}
-
-.product-info-tabs__panels {
-  margin-top: 1rem;
-}
-
-.product-info-tabs__panel {
-  display: grid;
-  gap: 1rem;
 }
 
 .rte p:last-child {

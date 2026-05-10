@@ -12,7 +12,7 @@
     <details class="size-chart">
       <summary>{{ section.settings.toggle_label }}</summary>
       {% if section.settings.image != blank %}
-        <img src="{{ section.settings.image | image_url: width: 800 }}" alt="{{ section.settings.image.alt | escape }}">
+        {{ section.settings.image | image_url: width: 1200 | image_tag: loading: 'lazy', sizes: '100vw', widths: '600, 800, 1200', alt: section.settings.image.alt }}
       {% endif %}
       {{ section.settings.body }}
     </details>

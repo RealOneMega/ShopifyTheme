@@ -5,7 +5,7 @@
     {% if selected_collection != blank %}
       <div class="collection-banner">
         {% if section.settings.image != blank %}
-          <img src="{{ section.settings.image | image_url: width: 1200 }}" alt="{{ section.settings.image.alt | escape }}">
+          {{ section.settings.image | image_url: width: 1600 | image_tag: loading: 'lazy', sizes: '100vw', widths: '800, 1200, 1600', alt: section.settings.image.alt }}
         {% endif %}
         <div class="collection-banner__content">
           <h2>{{ selected_collection.title }}</h2>
