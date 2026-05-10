@@ -90,6 +90,16 @@
 
     {% section 'newsletter-popup' %}
 
+    <div id="quick-view-drawer" class="drawer drawer--wide" role="dialog" aria-modal="true" aria-label="Quick view" data-quick-view-drawer>
+      <div class="drawer__header">
+        <strong>Quick view</strong>
+        <button class="header__icon-button" type="button" data-drawer-close aria-label="Close quick view">{% render 'icon-close' %}</button>
+      </div>
+      <div class="drawer__content" data-quick-view-content>
+        <p>Select a product to preview.</p>
+      </div>
+    </div>
+
     <button class="back-to-top" type="button" data-back-to-top aria-label="Back to top" aria-hidden="true" tabindex="-1">Back to top</button>
 
     <script src="{{ 'theme.js' | asset_url }}" defer></script>

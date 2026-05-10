@@ -35,3 +35,29 @@ This file records implementation notes for future troubleshooting. Add a dated e
 ### Context notes
 
 - The worktree already contained uncommitted product detail accordion changes and partial hero positioning changes before this pass. This pass preserved that direction and did not revert those edits.
+
+## 2026-05-10 Product card competitiveness pass
+
+### Compact product cards
+
+- Moved card actions from the content area into an overlay dock on the product image so quick actions no longer increase card height.
+- Changed mobile product grids to two columns and collection grids to four columns on desktop, scaling down to three/two columns responsively. This fixes the one-product-per-screen feel on smaller resolutions.
+- Tightened card padding, title sizing, price display, hover movement, and badge spacing for a denser merchandising layout.
+- Changed the default global `show_vendor` setting to `false` because the vendor row is redundant on a single-brand store and makes cards taller.
+
+### Merchandising features
+
+- Added sale percentage badges on product cards using compare-at price math.
+- Added color swatches from product color/colour options, capped at five visible swatches with a `+N` overflow marker.
+- Added a media-level wishlist icon so wishlist state is accessible without taking a full text row.
+- Added an optional global `enable_quick_view` setting, enabled by default.
+
+### Quick view drawer
+
+- Added a global quick-view drawer in `layout/theme.liquid`.
+- Added `initQuickView()` in `assets/theme.js` to fetch product JSON, render image/title/vendor/price/description, and show add-to-cart or choose-options actions.
+- Updated AJAX cart submit handling to use delegated form submission so dynamically injected quick-view add-to-cart forms work.
+
+### Collection merchandising
+
+- Added a collection toolbar with product count and removable active filter chips above collection grids.

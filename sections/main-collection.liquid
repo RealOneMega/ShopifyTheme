@@ -2,6 +2,26 @@
   {% render 'section-background-media', section: section %}
   <div class="container">
     <h1 class="heading">{{ collection.title }}</h1>
+    <div class="collection-toolbar">
+      <span>{{ collection.products_count }} products</span>
+      <div class="collection-active-filters" aria-label="Active filters">
+        {% for filter in collection.filters %}
+          {% for value in filter.active_values %}
+            <a class="filter-chip" href="{{ value.url_to_remove }}">{{ value.label }} <span aria-hidden="true">×</span></a>
+          {% endfor %}
+          {% if filter.type == 'price_range' %}
+            {% if filter.min_value.value != blank or filter.max_value.value != blank %}
+              <a class="filter-chip" href="{{ filter.url_to_remove }}">
+                {% if filter.min_value.value != blank %}{{ filter.min_value.value | money }}{% else %}{{ 0 | money }}{% endif %}
+                –
+                {% if filter.max_value.value != blank %}{{ filter.max_value.value | money }}{% else %}{{ filter.range_max | money }}{% endif %}
+                <span aria-hidden="true">×</span>
+              </a>
+            {% endif %}
+          {% endif %}
+        {% endfor %}
+      </div>
+    </div>
     <div class="collection-layout">
       <aside class="collection-filters">
         <form id="CollectionFilters" class="stack" method="get">

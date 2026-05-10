@@ -26,6 +26,12 @@ const Theme = (() => {
       "'": '&#39;'
     }[char]));
 
+  const stripHTML = (value) => {
+    const container = document.createElement('div');
+    container.innerHTML = String(value ?? '');
+    return container.textContent || '';
+  };
+
   const showToast = (message) => {
     if (!message) return;
     const existing = document.querySelector('[data-toast]');
@@ -45,6 +51,9 @@ const Theme = (() => {
   };
 
   const openDrawer = (drawer) => {
+    document.querySelectorAll('.drawer.is-open').forEach((openDrawerEl) => {
+      if (openDrawerEl !== drawer) openDrawerEl.classList.remove('is-open');
+    });
     drawer?.classList.add('is-open');
     overlay?.classList.add('is-visible');
     body.classList.add('no-scroll');
@@ -855,6 +864,77 @@ const Theme = (() => {
     });
   };
 
+  const initQuickView = () => {
+    const drawer = document.querySelector('[data-quick-view-drawer]');
+    const content = drawer?.querySelector('[data-quick-view-content]');
+    if (!drawer || !content) return;
+
+    const renderQuickView = (product, fallbackUrl = '#') => {
+      const variant = product.variants?.find((item) => item.available) || product.variants?.[0];
+      const productUrl = product.url || fallbackUrl;
+      const image = product.featured_image || product.images?.[0];
+      const description = stripHTML(product.description).trim();
+      const hasSingleVariant = product.variants?.length === 1;
+      const comparePrice = product.compare_at_price && product.compare_at_price > product.price
+        ? `<span class="price__compare"><s>${formatMoney(product.compare_at_price)}</s></span>`
+        : '';
+      const imageMarkup = image
+        ? `<img src="${escapeHTML(withWidth(image, 900))}" alt="${escapeHTML(product.title)}" loading="lazy">`
+        : '';
+      const actionMarkup = hasSingleVariant && variant
+        ? `
+          <form method="post" action="${escapeHTML(shopifyPath('cart/add'))}" data-ajax-cart>
+            <input type="hidden" name="id" value="${variant.id}">
+            <button class="button button--primary" type="submit" ${variant.available ? '' : 'disabled'}>
+              ${variant.available ? 'Add to cart' : 'Sold out'}
+            </button>
+          </form>
+        `
+        : `<a class="button button--primary" href="${escapeHTML(productUrl)}">Choose options</a>`;
+
+      content.innerHTML = `
+        <div class="quick-view-product">
+          <a class="quick-view-product__media" href="${escapeHTML(productUrl)}">${imageMarkup}</a>
+          <div class="quick-view-product__details">
+            <div class="quick-view-product__meta">
+              ${product.vendor ? `<span class="quick-view-product__vendor">${escapeHTML(product.vendor)}</span>` : ''}
+              <h2 class="heading">${escapeHTML(product.title)}</h2>
+              <div class="product-card__price">${comparePrice}<span class="price__current">${formatMoney(product.price)}</span></div>
+            </div>
+            ${description ? `<p class="quick-view-product__description">${escapeHTML(description.slice(0, 220))}</p>` : ''}
+            <div class="quick-view-product__actions">
+              ${actionMarkup}
+              <a class="button button--secondary" href="${escapeHTML(productUrl)}">View full details</a>
+            </div>
+          </div>
+        </div>
+      `;
+    };
+
+    document.addEventListener('click', async (event) => {
+      const trigger = event.target.closest('[data-quick-view]');
+      if (!trigger) return;
+      event.preventDefault();
+
+      const handle = trigger.dataset.quickView;
+      if (!handle) return;
+
+      content.innerHTML = '<p>Loading product...</p>';
+      openDrawer(drawer);
+
+      try {
+        const response = await fetch(shopifyPath(`products/${handle}.js`), {
+          headers: { Accept: 'application/json' },
+        });
+        if (!response.ok) throw new Error('Quick view failed.');
+        const product = await response.json();
+        renderQuickView(product, trigger.dataset.productUrl);
+      } catch {
+        content.innerHTML = '<p>Unable to load this product right now.</p>';
+      }
+    });
+  };
+
   const initAjaxCart = () => {
     const drawer = document.querySelector('[data-cart-drawer]') || document.querySelector('#cart-drawer');
     const itemsEl = document.querySelector('[data-cart-drawer-items]');
@@ -911,44 +991,45 @@ const Theme = (() => {
         .then((res) => (res.ok ? res.json() : null))
         .catch(() => null);
 
-    document.querySelectorAll('form[data-ajax-cart]').forEach((form) => {
-      form.addEventListener('submit', async (event) => {
-        event.preventDefault();
-        const submit = form.querySelector('button[type="submit"], input[type="submit"]');
-        const originalText = submit?.textContent;
+    document.addEventListener('submit', async (event) => {
+      const form = event.target.closest('form[data-ajax-cart]');
+      if (!form) return;
+      event.preventDefault();
+
+      const submit = form.querySelector('button[type="submit"], input[type="submit"]');
+      const originalText = submit?.textContent;
+      if (submit) {
+        submit.disabled = true;
+        submit.classList.add('is-loading');
+        if (submit.tagName === 'BUTTON') submit.textContent = 'Adding...';
+      }
+
+      try {
+        const response = await fetch(shopifyPath('cart/add.js'), {
+          method: 'POST',
+          headers: { Accept: 'application/json' },
+          body: new FormData(form),
+        });
+
+        if (!response.ok) {
+          const errorJson = await response.json().catch(() => null);
+          showToast(errorJson?.description || 'Unable to add to cart.');
+          return;
+        }
+
+        const cart = await fetchCart();
+        if (cart) renderCartDrawer(cart);
+        showToast('Added to cart.');
+        if (drawer) openDrawer(drawer);
+      } catch {
+        showToast('Unable to add to cart.');
+      } finally {
         if (submit) {
-          submit.disabled = true;
-          submit.classList.add('is-loading');
-          if (submit.tagName === 'BUTTON') submit.textContent = 'Adding...';
+          submit.disabled = false;
+          submit.classList.remove('is-loading');
+          if (submit.tagName === 'BUTTON') submit.textContent = originalText || 'Add to cart';
         }
-
-        try {
-          const response = await fetch(shopifyPath('cart/add.js'), {
-            method: 'POST',
-            headers: { Accept: 'application/json' },
-            body: new FormData(form),
-          });
-
-          if (!response.ok) {
-            const errorJson = await response.json().catch(() => null);
-            showToast(errorJson?.description || 'Unable to add to cart.');
-            return;
-          }
-
-          const cart = await fetchCart();
-          if (cart) renderCartDrawer(cart);
-          showToast('Added to cart.');
-          if (drawer) openDrawer(drawer);
-        } catch {
-          showToast('Unable to add to cart.');
-        } finally {
-          if (submit) {
-            submit.disabled = false;
-            submit.classList.remove('is-loading');
-            if (submit.tagName === 'BUTTON') submit.textContent = originalText || 'Add to cart';
-          }
-        }
-      });
+      }
     });
   };
 
@@ -986,6 +1067,7 @@ const Theme = (() => {
     initShippingEstimator();
     initRecentlyViewedSection();
     initCopyButtons();
+    initQuickView();
     initAjaxCart();
     initBackToTop();
     initProductPage();
