@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "type": "footer",
   "name": "Footer group",
@@ -5,18 +14,31 @@
     "footer": {
       "type": "footer",
       "blocks": {
-        "shop": {"type": "menu", "settings": {"heading": "Shop", "menu": "footer"}},
-        "policies": {"type": "menu", "settings": {"heading": "Policies", "menu": "policies"}}
+        "shop": {
+          "type": "menu",
+          "settings": {
+            "heading": "Shop",
+            "menu": "footer"
+          }
+        },
+        "policies": {
+          "type": "menu",
+          "settings": {
+            "heading": "Policies",
+            "menu": "policies"
+          }
+        }
       },
-      "block_order": ["shop", "policies"],
+      "block_order": [
+        "shop",
+        "policies"
+      ],
       "settings": {
         "text": "Push Limits. Define Risk.",
         "newsletter_heading": "Enter the limit",
         "copyright": "Risky Limits. All rights reserved.",
         "show_payments": true,
         "show_back_to_top": false,
-        "show_country_selector": true,
-        "show_language_selector": true,
         "background_type": "color",
         "background_color": "#08090B",
         "background_gradient": "",
@@ -27,5 +49,7 @@
       }
     }
   },
-  "order": ["footer"]
+  "order": [
+    "footer"
+  ]
 }

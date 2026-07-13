@@ -18,15 +18,17 @@
           "type": "promo",
           "settings": {
             "text": "Push Limits. Define Risk.",
-            "background": "#0060FF",
-            "text_color": "#FFFFFF",
+            "background": "#0060ff",
+            "text_color": "#ffffff",
             "icon": "none",
             "link": "",
             "dismissible": false
           }
         }
       },
-      "block_order": ["brand_motto"],
+      "block_order": [
+        "brand_motto"
+      ],
       "settings": {
         "autoplay": false,
         "autoplay_speed": 5000,
@@ -41,8 +43,6 @@
     },
     "header": {
       "type": "header",
-      "blocks": {},
-      "block_order": [],
       "settings": {
         "layout": "logo_left",
         "menu_position": "center",
@@ -55,7 +55,7 @@
         "show_localization": true,
         "show_language": true,
         "background_type": "color",
-        "background_color": "#08090B",
+        "background_color": "#08090b",
         "background_gradient": "",
         "background_position_x": 50,
         "background_position_y": 50,
