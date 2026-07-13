@@ -10,13 +10,15 @@ Validation date: 2026-07-13.
 | JSON templates/settings parsing | Pass |
 | Section and theme-block schema parsing | Pass |
 | Shopify Theme Check 4.4.0 | Pass: 153 files, 0 offenses |
-| Shopify theme package | Pass: `Risky Limits-2.0.0.zip` |
+| Shopify theme package | Pass: `Risky Limits-2.0.1.zip` |
 | Placeholder/fabricated commerce scan | Pass for active storefront defaults; provider features are app-backed |
-| Live Shopify render | Not run; preview store not supplied |
+| Live Shopify render | Pre-fix home/product diagnosis run at `dev.riskylimits.com`; post-fix upload and responsive matrix still required |
 | Lighthouse / Core Web Vitals | Not run; deployable URL not supplied |
 | Real checkout and payment authorization | Not run; store/admin configuration required |
 
 ## Required preview-store matrix
+
+The 2.0.1 visual calibration specifically needs a post-upload pass for announcement-bar full width, hero copy bounds, product-page contrast, product buy-column width, footer contrast/type hierarchy, and the home-section transitions. The code package cannot prove those store-rendered results until it is uploaded to a Shopify preview theme.
 
 Test at 320, 375, 768, 1024, 1440, and 1920 CSS pixels. Use current Chrome, Safari/WebKit, Firefox, and Edge where available.
 

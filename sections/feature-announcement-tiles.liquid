@@ -11,15 +11,17 @@
   {% endif %}
     <div class="tiles">
       {% for block in section.blocks %}
-        <div class="tile">
+        <div class="tile{% if block.settings.image == blank %} tile--placeholder{% endif %}" {{ block.shopify_attributes }}>
           {% if block.settings.image != blank %}
             {{ block.settings.image | image_url: width: 900 | image_tag: loading: 'lazy', sizes: '(min-width: 990px) 33vw, 100vw', widths: '450, 600, 900', alt: block.settings.image.alt }}
+          {% else %}
+            <span class="tile__index" aria-hidden="true">0{{ forloop.index }}</span>
           {% endif %}
           <div class="tile__content">
             <h3>{{ block.settings.title }}</h3>
             <p>{{ block.settings.text }}</p>
-            {% if block.settings.button_label != blank %}
-              <a class="button" href="{{ block.settings.button_link | default: '#' }}">{{ block.settings.button_label }}</a>
+            {% if block.settings.button_label != blank and block.settings.button_link != blank %}
+              <a class="button" href="{{ block.settings.button_link }}">{{ block.settings.button_label }}</a>
             {% endif %}
           </div>
         </div>

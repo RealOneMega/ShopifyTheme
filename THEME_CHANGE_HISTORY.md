@@ -2,6 +2,13 @@
 
 This file records implementation notes for future troubleshooting. Add a dated entry whenever theme behavior, structure, or performance is changed so prior work is easy to audit before repeating it.
 
+## 2026-07-13 — Risky Limits 2.0.1 visual calibration
+
+- Measured the connected development storefront before editing and confirmed mixed saved color tokens, a dark product-section background with dark text, a 104px hero heading in a 520px hero, and 56px footer/menu headings.
+- Shifted the default system to warm light commerce surfaces, dark editorial sections, electric blue, Barlow body copy, and Barlow Condensed headings.
+- Rebuilt the default homepage rhythm, branded the empty hero/category/story media states, rebalanced product content, and isolated the promo/footer color systems from conflicting global values.
+- Shopify Theme Check inspected 153 files with zero offenses and Shopify CLI built `Risky Limits-2.0.1.zip`. Post-upload visual and responsive validation remains required.
+
 ## 2026-07-13 — Risky Limits 2.0 production rebuild
 
 - Rebuilt the global design system, header/footer groups, product, collection, search, cart, localization, accounts, content templates, flexible theme blocks, metadata, and storefront JavaScript lifecycle.

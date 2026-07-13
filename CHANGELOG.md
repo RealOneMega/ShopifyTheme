@@ -1,5 +1,30 @@
 # Changelog
 
+## 2.0.1 — 2026-07-13
+
+### Changed
+
+- Rebalanced the storefront around warm light commerce surfaces, dark editorial bands, and the Risky Limits electric-blue accent.
+- Replaced the oversized Helvetica presentation with Barlow and Barlow Condensed defaults plus a tighter responsive type scale.
+- Increased the default hero height while reducing headline size and replacing the empty gray state with a brand-specific graphic treatment.
+- Simplified the default homepage flow to hero, categories, latest drop, brand story, store benefits, and email capture.
+- Rebuilt the footer hierarchy, spacing, form contrast, link contrast, and mobile layout.
+- Rebalanced the product gallery and buy column and enforced readable light-surface controls on product pages.
+
+### Fixed
+
+- Removed the black gutter around the blue announcement bar.
+- Fixed dark-on-dark product text caused by the product template background.
+- Prevented global color settings from washing the footer into a white, low-contrast panel.
+- Added intentional visual treatments for homepage sections before merchant photography is uploaded.
+
+### Validation
+
+- Live pre-fix storefront measured at desktop width to identify the active color and type conflicts.
+- JavaScript and edited JSON parsing: pass.
+- Shopify Theme Check: 153 files, zero offenses.
+- Shopify CLI package: `Risky Limits-2.0.1.zip`.
+
 ## 2.0.0 — 2026-07-13
 
 ### Added

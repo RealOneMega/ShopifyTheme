@@ -1,9 +1,9 @@
-<section class="section section--background" style="{% render 'section-background-style', section: section %}">
+<section class="section usp-row section--background" style="{% render 'section-background-style', section: section %}">
   {% render 'section-background-media', section: section %}
   <div class="container">
     <div class="product-grid">
       {% for block in section.blocks %}
-        <div class="stack" style="align-items:flex-start;">
+        <div class="usp-row__item stack" {{ block.shopify_attributes }}>
           {% case block.settings.icon %}
             {% when 'truck' %}{% render 'icon-truck' %}
             {% when 'shield' %}{% render 'icon-shield' %}
