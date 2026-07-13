@@ -1,9 +1,58 @@
 const Theme = (() => {
   const body = document.body;
   const overlay = document.querySelector('[data-overlay]');
+  const config = window.RiskyLimitsTheme || {};
+  const drawerTriggers = new WeakMap();
+  let activeDrawer = null;
+  let globalListenersInitialized = false;
+
+  const safeStorage = {
+    get(key, fallback = null) {
+      try {
+        const value = window.localStorage.getItem(key);
+        return value === null ? fallback : value;
+      } catch {
+        return fallback;
+      }
+    },
+    set(key, value) {
+      try {
+        window.localStorage.setItem(key, value);
+        return true;
+      } catch {
+        return false;
+      }
+    },
+    remove(key) {
+      try {
+        window.localStorage.removeItem(key);
+      } catch {
+        // Storage can be unavailable in private browsing or strict privacy modes.
+      }
+    },
+  };
+
+  const announce = (message) => {
+    const status = document.querySelector('[data-theme-status]');
+    if (!status || !message) return;
+    status.textContent = '';
+    window.requestAnimationFrame(() => {
+      status.textContent = message;
+    });
+  };
+
   const formatMoney = (cents) => {
-    if (window.Shopify?.formatMoney) return Shopify.formatMoney(cents);
-    return `$${(Number(cents || 0) / 100).toFixed(2)}`;
+    if (window.Shopify?.formatMoney && window.Shopify.money_format) {
+      return window.Shopify.formatMoney(cents, window.Shopify.money_format);
+    }
+    try {
+      return new Intl.NumberFormat(config.locale || document.documentElement.lang || 'en', {
+        style: 'currency',
+        currency: config.currency || 'USD',
+      }).format(Number(cents || 0) / 100);
+    } catch {
+      return (Number(cents || 0) / 100).toFixed(2);
+    }
   };
 
   const withWidth = (url, width) => {
@@ -13,7 +62,7 @@ const Theme = (() => {
   };
 
   const shopifyPath = (path) => {
-    const root = window.Shopify?.routes?.root || '/';
+    const root = config.routes?.root || window.Shopify?.routes?.root || '/';
     return `${root}${String(path).replace(/^\/+/, '')}`;
   };
 
@@ -43,6 +92,7 @@ const Theme = (() => {
     toast.setAttribute('aria-live', 'polite');
     toast.textContent = message;
     document.body.appendChild(toast);
+    announce(message);
     requestAnimationFrame(() => toast.classList.add('is-visible'));
     window.setTimeout(() => {
       toast.classList.remove('is-visible');
@@ -50,50 +100,113 @@ const Theme = (() => {
     }, 2400);
   };
 
-  const openDrawer = (drawer) => {
+  const focusableElements = (container) => Array.from(container?.querySelectorAll(
+    'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), details > summary, [tabindex]:not([tabindex="-1"])',
+  ) || []).filter((element) => !element.closest('[hidden], [aria-hidden="true"]'));
+
+  const openDrawer = (drawer, trigger = document.activeElement) => {
+    if (!drawer) return;
     document.querySelectorAll('.drawer.is-open').forEach((openDrawerEl) => {
-      if (openDrawerEl !== drawer) openDrawerEl.classList.remove('is-open');
+      if (openDrawerEl !== drawer) closeDrawer(openDrawerEl, false);
     });
-    drawer?.classList.add('is-open');
+    drawerTriggers.set(drawer, trigger instanceof HTMLElement ? trigger : null);
+    drawer.classList.add('is-open');
+    drawer.setAttribute('aria-hidden', 'false');
+    drawer.removeAttribute('inert');
+    if (trigger instanceof HTMLElement) trigger.setAttribute('aria-expanded', 'true');
     overlay?.classList.add('is-visible');
+    overlay?.setAttribute('aria-hidden', 'false');
     body.classList.add('no-scroll');
+    activeDrawer = drawer;
+    window.requestAnimationFrame(() => {
+      const preferred = drawer.querySelector('[autofocus], [data-drawer-close]');
+      (preferred || focusableElements(drawer)[0] || drawer).focus?.({ preventScroll: true });
+    });
   };
 
-  const closeDrawer = (drawer) => {
-    drawer?.classList.remove('is-open');
-    overlay?.classList.remove('is-visible');
-    body.classList.remove('no-scroll');
+  const closeDrawer = (drawer, restoreFocus = true) => {
+    if (!drawer) return;
+    const trigger = drawerTriggers.get(drawer);
+    drawer.classList.remove('is-open');
+    drawer.setAttribute('aria-hidden', 'true');
+    drawer.setAttribute('inert', '');
+    if (trigger instanceof HTMLElement) trigger.setAttribute('aria-expanded', 'false');
+    if (!document.querySelector('.drawer.is-open')) {
+      overlay?.classList.remove('is-visible');
+      overlay?.setAttribute('aria-hidden', 'true');
+      body.classList.remove('no-scroll');
+      activeDrawer = null;
+    }
+    if (restoreFocus && trigger instanceof HTMLElement && trigger.isConnected) {
+      trigger.focus({ preventScroll: true });
+    }
   };
 
-  const initDrawers = () => {
-    document.querySelectorAll('[data-drawer-open]').forEach((button) => {
-      const target = document.querySelector(button.dataset.drawerOpen);
-      button.addEventListener('click', () => openDrawer(target));
+  const initDrawers = (root = document) => {
+    root.querySelectorAll?.('.drawer').forEach((drawer) => {
+      if (!drawer.classList.contains('is-open')) {
+        drawer.setAttribute('aria-hidden', 'true');
+        drawer.setAttribute('inert', '');
+      }
+    });
+    if (globalListenersInitialized) return;
+    globalListenersInitialized = true;
+
+    document.addEventListener('click', (event) => {
+      const opener = event.target.closest('[data-drawer-open]');
+      if (opener) {
+        const target = document.querySelector(opener.dataset.drawerOpen);
+        if (target) {
+          event.preventDefault();
+          openDrawer(target, opener);
+        }
+        return;
+      }
+      const closer = event.target.closest('[data-drawer-close]');
+      if (closer) {
+        event.preventDefault();
+        closeDrawer(closer.closest('.drawer'));
+      }
     });
 
-    document.querySelectorAll('[data-drawer-close]').forEach((button) => {
-      const target = button.closest('.drawer');
-      button.addEventListener('click', () => closeDrawer(target));
-    });
-
-    overlay?.addEventListener('click', () => {
-      document.querySelectorAll('.drawer.is-open').forEach(closeDrawer);
-    });
+    overlay?.addEventListener('click', () => closeDrawer(activeDrawer));
     document.addEventListener('keydown', (event) => {
-      if (event.key === 'Escape') {
-        document.querySelectorAll('.drawer.is-open').forEach(closeDrawer);
+      if (event.key === 'Escape' && activeDrawer) {
+        event.preventDefault();
+        closeDrawer(activeDrawer);
+      }
+      if (event.key !== 'Tab' || !activeDrawer) return;
+      const focusables = focusableElements(activeDrawer);
+      if (!focusables.length) {
+        event.preventDefault();
+        activeDrawer.focus?.();
+        return;
+      }
+      const first = focusables[0];
+      const last = focusables[focusables.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
       }
     });
   };
 
-  const initMegaMenu = () => {
-    document.querySelectorAll('[data-mega-trigger]').forEach((trigger) => {
+  const initMegaMenu = (root = document) => {
+    root.querySelectorAll?.('[data-mega-trigger]').forEach((trigger) => {
+      if (trigger.dataset.themeInitialized === 'true') return;
+      trigger.dataset.themeInitialized = 'true';
       const item = trigger.closest('.nav__item');
       const panel = trigger.nextElementSibling;
       if (!panel || !item) return;
-      const getFocusable = () =>
-        panel.querySelectorAll('a, button, [tabindex=\"0\"], input, select, textarea');
       const open = () => {
+        document.querySelectorAll('.nav__dropdown[aria-hidden="false"]').forEach((otherPanel) => {
+          if (otherPanel === panel) return;
+          otherPanel.setAttribute('aria-hidden', 'true');
+          otherPanel.previousElementSibling?.setAttribute('aria-expanded', 'false');
+        });
         panel.setAttribute('aria-hidden', 'false');
         trigger.setAttribute('aria-expanded', 'true');
       };
@@ -111,37 +224,34 @@ const Theme = (() => {
         }
       });
       trigger.addEventListener('click', (event) => {
-        event.preventDefault();
-        panel.getAttribute('aria-hidden') === 'true' ? open() : close();
+        if (panel.getAttribute('aria-hidden') === 'true') {
+          event.preventDefault();
+          open();
+        }
       });
       trigger.addEventListener('keydown', (event) => {
-        if (event.key === 'Enter' || event.key === ' ') {
+        if ((event.key === 'Enter' || event.key === ' ') && panel.getAttribute('aria-hidden') === 'true') {
           event.preventDefault();
-          panel.getAttribute('aria-hidden') === 'true' ? open() : close();
+          open();
         }
         if (event.key === 'Escape') {
           close();
+          trigger.focus();
         }
       });
       panel.addEventListener('keydown', (event) => {
-        if (event.key !== 'Tab') return;
-        const focusables = Array.from(getFocusable());
-        if (focusables.length === 0) return;
-        const first = focusables[0];
-        const last = focusables[focusables.length - 1];
-        if (event.shiftKey && document.activeElement === first) {
-          event.preventDefault();
-          last.focus();
-        } else if (!event.shiftKey && document.activeElement === last) {
-          event.preventDefault();
-          first.focus();
+        if (event.key === 'Escape') {
+          close();
+          trigger.focus();
         }
       });
     });
   };
 
-  const initMobileMenu = () => {
-    document.querySelectorAll('[data-mobile-menu-toggle]').forEach((button) => {
+  const initMobileMenu = (root = document) => {
+    root.querySelectorAll?.('[data-mobile-menu-toggle]').forEach((button) => {
+      if (button.dataset.themeInitialized === 'true') return;
+      button.dataset.themeInitialized = 'true';
       button.addEventListener('click', () => {
         const item = button.closest('.mobile-menu__item');
         const submenu = item?.querySelector(':scope > .mobile-menu__submenu');
@@ -153,10 +263,10 @@ const Theme = (() => {
     });
   };
 
-  const initSlideshow = () => {
+  const initSlideshow = (root = document) => {
     const prefersReducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 
-    document.querySelectorAll('[data-slideshow]').forEach((slideshow) => {
+    root.querySelectorAll?.('[data-slideshow]').forEach((slideshow) => {
       if (slideshow.dataset.slideshowInitialized === 'true') return;
       slideshow.dataset.slideshowInitialized = 'true';
 
@@ -177,6 +287,7 @@ const Theme = (() => {
         clearInterval(timer);
         timer = null;
       };
+      slideshow.themeCleanup = stop;
 
       const start = () => {
         if (!autoplay || timer) return;
@@ -191,6 +302,13 @@ const Theme = (() => {
           const isActive = i === normalizedIndex;
           slide.classList.toggle('hidden', !isActive);
           slide.setAttribute('aria-hidden', isActive ? 'false' : 'true');
+          slide.querySelectorAll('video').forEach((video) => {
+            if (!isActive) {
+              video.pause();
+            } else if (!prefersReducedMotion && slide.querySelector('[data-hero-video]')?.dataset.autoplay === 'true') {
+              video.play().catch(() => {});
+            }
+          });
         });
         dots.forEach((dot, i) => {
           const isActive = i === normalizedIndex;
@@ -238,21 +356,23 @@ const Theme = (() => {
     });
   };
 
-  const initPromoDismiss = () => {
-    document.querySelectorAll('[data-promo-dismiss]').forEach((button) => {
+  const initPromoDismiss = (root = document) => {
+    root.querySelectorAll?.('[data-promo-dismiss]').forEach((button) => {
+      if (button.dataset.themeInitialized === 'true') return;
+      button.dataset.themeInitialized = 'true';
       const key = button.dataset.promoDismiss;
-      if (localStorage.getItem(key) === 'true') {
+      if (safeStorage.get(key) === 'true') {
         button.closest('[data-promo-item]')?.remove();
         return;
       }
       button.addEventListener('click', () => {
-        localStorage.setItem(key, 'true');
+        safeStorage.set(key, 'true');
         button.closest('[data-promo-item]')?.remove();
       });
     });
   };
 
-  const initWishlist = () => {
+  const initWishlist = (root = document) => {
     const storageKey = 'wishlist-items';
     const normalizeItems = (items) =>
       items
@@ -266,8 +386,23 @@ const Theme = (() => {
           return null;
         })
         .filter(Boolean);
-    const getItems = () => normalizeItems(JSON.parse(localStorage.getItem(storageKey) || '[]'));
-    const setItems = (items) => localStorage.setItem(storageKey, JSON.stringify(items));
+    const getItems = () => {
+      try {
+        return normalizeItems(JSON.parse(safeStorage.get(storageKey, '[]')));
+      } catch {
+        return [];
+      }
+    };
+    const updateCount = (items = getItems()) => {
+      document.querySelectorAll('[data-wishlist-count]').forEach((badge) => {
+        badge.textContent = String(items.length);
+        badge.classList.toggle('hidden', items.length === 0);
+      });
+    };
+    const setItems = (items) => {
+      safeStorage.set(storageKey, JSON.stringify(items));
+      updateCount(items);
+    };
     const findItem = (items, handle) => items.find((item) => item.handle === handle);
     const upsertItem = (items, handle, variantId) => {
       const existing = findItem(items, handle);
@@ -332,41 +467,37 @@ const Theme = (() => {
       `;
     };
 
-    document.querySelectorAll('[data-wishlist-toggle]').forEach((button) => {
+    root.querySelectorAll?.('[data-wishlist-toggle]').forEach((button) => {
+      if (button.dataset.themeInitialized === 'true') return;
+      button.dataset.themeInitialized = 'true';
       const handle = button.dataset.wishlistToggle;
-      const key = `wishlist:${handle}`;
-      const updateList = () => {
-        const items = getItems();
-        if (localStorage.getItem(key) === 'true') {
-          upsertItem(items, handle, button.dataset.variantId ? Number(button.dataset.variantId) : null);
-        } else {
-          const nextItems = items.filter((item) => item.handle !== handle);
-          setItems(nextItems);
-          renderWishlist();
-          return;
-        }
-        setItems(items);
-        renderWishlist();
-      };
       const update = () => {
-        const active = localStorage.getItem(key) === 'true';
+        const active = !!findItem(getItems(), handle);
         button.setAttribute('aria-pressed', active);
         button.classList.toggle('is-active', active);
       };
       button.addEventListener('click', () => {
-        const next = localStorage.getItem(key) !== 'true';
-        localStorage.setItem(key, next);
+        const items = getItems();
+        const next = !findItem(items, handle);
+        if (next) {
+          upsertItem(items, handle, button.dataset.variantId ? Number(button.dataset.variantId) : null);
+          setItems(items);
+        } else {
+          setItems(items.filter((item) => item.handle !== handle));
+        }
         update();
-        updateList();
+        renderWishlist();
+        showToast(next ? config.strings?.wishlistAdded : config.strings?.wishlistRemoved);
       });
       update();
     });
-    document.querySelectorAll('[data-wishlist-add]').forEach((button) => {
+    root.querySelectorAll?.('[data-wishlist-add]').forEach((button) => {
+      if (button.dataset.themeInitialized === 'true') return;
+      button.dataset.themeInitialized = 'true';
       const form = button.closest('[data-product-form]');
       if (!form) return;
       const handle = form.dataset.productHandle;
       const variantInput = form.querySelector('[data-variant-id]');
-      const key = `wishlist:${handle}`;
       const updateButton = () => {
         const items = getItems();
         const active = !!findItem(items, handle);
@@ -380,31 +511,31 @@ const Theme = (() => {
         if (existing) {
           const nextItems = items.filter((item) => item.handle !== handle);
           setItems(nextItems);
-          localStorage.setItem(key, 'false');
           renderWishlist();
           updateButton();
+          showToast(config.strings?.wishlistRemoved || 'Removed from wishlist.');
           return;
         }
         const variantId = variantInput ? Number(variantInput.value) : null;
         upsertItem(items, handle, variantId);
         setItems(items);
-        localStorage.setItem(key, 'true');
         renderWishlist();
         updateButton();
+        showToast(config.strings?.wishlistAdded || 'Added to wishlist.');
       });
       updateButton();
     });
     const container = document.querySelector('[data-wishlist-items]');
-    if (container) {
+    if (container && container.dataset.themeInitialized !== 'true') {
+      container.dataset.themeInitialized = 'true';
       container.addEventListener('click', (event) => {
         const removeButton = event.target.closest('[data-wishlist-remove]');
         if (removeButton) {
           const handle = removeButton.dataset.handle;
-          const key = `wishlist:${handle}`;
           const items = getItems().filter((item) => item.handle !== handle);
           setItems(items);
-          localStorage.setItem(key, 'false');
           renderWishlist();
+          showToast(config.strings?.wishlistRemoved || 'Removed from wishlist.');
           return;
         }
         const moveButton = event.target.closest('[data-wishlist-move]');
@@ -419,31 +550,40 @@ const Theme = (() => {
           })
             .then((response) => {
               if (!response.ok) throw new Error('Add to cart failed.');
-              const key = `wishlist:${handle}`;
               const items = getItems().filter((item) => item.handle !== handle);
               setItems(items);
-              localStorage.setItem(key, 'false');
               renderWishlist();
+              showToast(config.strings?.addedToCart || 'Added to cart.');
             })
-            .catch(() => {});
+            .catch(() => showToast(config.strings?.cartError || 'Unable to add to cart.'));
         }
       });
     }
+    updateCount();
     renderWishlist();
   };
 
-  const initPopup = () => {
-    document.querySelectorAll('[data-popup]').forEach((popup) => {
-      const config = JSON.parse(popup.dataset.popup || '{}');
-      const key = `popup:${config.id}`;
-      if (localStorage.getItem(key) === 'true') return;
+  const initPopup = (root = document) => {
+    root.querySelectorAll?.('[data-popup]').forEach((popup) => {
+      if (popup.dataset.themeInitialized === 'true') return;
+      popup.dataset.themeInitialized = 'true';
+      let popupConfig = {};
+      try {
+        popupConfig = JSON.parse(popup.dataset.popup || '{}');
+      } catch {
+        return;
+      }
+      const key = `popup:${popupConfig.id}`;
+      if (safeStorage.get(key) === 'true') return;
       const open = () => {
         popup.classList.add('is-visible');
+        popup.setAttribute('aria-hidden', 'false');
         popup.querySelector('[data-popup-close]')?.focus();
       };
       const close = () => {
         popup.classList.remove('is-visible');
-        localStorage.setItem(key, 'true');
+        popup.setAttribute('aria-hidden', 'true');
+        safeStorage.set(key, 'true');
       };
       const closeButton = popup.querySelector('[data-popup-close]');
       closeButton?.addEventListener('click', close);
@@ -453,20 +593,20 @@ const Theme = (() => {
       document.addEventListener('keydown', (event) => {
         if (event.key === 'Escape') close();
       });
-      if (config.trigger === 'delay') {
-        setTimeout(open, config.delay * 1000);
+      if (popupConfig.trigger === 'delay') {
+        popup.themeTimer = setTimeout(open, popupConfig.delay * 1000);
       }
-      if (config.trigger === 'scroll') {
+      if (popupConfig.trigger === 'scroll') {
         const onScroll = () => {
           const scrolled = (window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100;
-          if (scrolled >= config.scroll) {
+          if (scrolled >= popupConfig.scroll) {
             open();
             window.removeEventListener('scroll', onScroll);
           }
         };
         window.addEventListener('scroll', onScroll);
       }
-      if (config.trigger === 'exit') {
+      if (popupConfig.trigger === 'exit') {
         document.addEventListener('mouseleave', (event) => {
           if (event.clientY <= 0) open();
         }, { once: true });
@@ -488,57 +628,132 @@ const Theme = (() => {
     });
   };
 
-  const initPredictiveSearch = () => {
-    document.querySelectorAll('[data-predictive-search]').forEach((form) => {
+  const initPredictiveSearch = (root = document) => {
+    if (config.settings?.predictiveSearch === false) return;
+    root.querySelectorAll?.('[data-predictive-search]').forEach((form) => {
+      if (form.dataset.themeInitialized === 'true') return;
+      form.dataset.themeInitialized = 'true';
       const input = form.querySelector('input[type="search"]');
       const results = form.querySelector('[data-predictive-results]');
       if (!input || !results) return;
       let controller;
-      input.addEventListener('input', () => {
+      let timer;
+      let activeIndex = -1;
+
+      if (!results.id) results.id = `PredictiveResults-${Math.random().toString(36).slice(2, 9)}`;
+      input.setAttribute('role', 'combobox');
+      input.setAttribute('aria-autocomplete', 'list');
+      input.setAttribute('aria-controls', results.id);
+      input.setAttribute('aria-expanded', 'false');
+
+      const close = () => {
+        results.replaceChildren();
+        results.hidden = true;
+        input.setAttribute('aria-expanded', 'false');
+        input.removeAttribute('aria-activedescendant');
+        activeIndex = -1;
+      };
+
+      const options = () => Array.from(results.querySelectorAll('[data-predictive-option]'));
+      const setActive = (nextIndex) => {
+        const items = options();
+        if (!items.length) return;
+        activeIndex = (nextIndex + items.length) % items.length;
+        items.forEach((item, index) => item.classList.toggle('is-active', index === activeIndex));
+        input.setAttribute('aria-activedescendant', items[activeIndex].id);
+        items[activeIndex].scrollIntoView({ block: 'nearest' });
+      };
+
+      const renderGroup = (label, items, groupIndex) => {
+        if (!Array.isArray(items) || !items.length) return '';
+        return `
+          <section class="predictive-search__group" aria-labelledby="PredictiveGroup-${groupIndex}-${results.id}">
+            <h2 class="predictive-search__heading" id="PredictiveGroup-${groupIndex}-${results.id}">${escapeHTML(label)}</h2>
+            <ul role="listbox">
+              ${items.map((item, itemIndex) => `
+                <li role="presentation">
+                  <a id="PredictiveOption-${groupIndex}-${itemIndex}-${results.id}" role="option" data-predictive-option href="${escapeHTML(item.url)}">${escapeHTML(item.title)}</a>
+                </li>
+              `).join('')}
+            </ul>
+          </section>
+        `;
+      };
+
+      const search = async () => {
         const query = input.value.trim();
         if (query.length < 2) {
-          results.innerHTML = '';
+          close();
           return;
         }
         controller?.abort();
         controller = new AbortController();
-        fetch(shopifyPath(`search/suggest.json?q=${encodeURIComponent(query)}&resources[type]=product,collection,page&resources[limit]=4`), {
-          signal: controller.signal
-        })
-          .then((response) => response.json())
-          .then((data) => {
-            const renderList = (items) =>
-              items.map((item) => `<li><a href="${escapeHTML(item.url)}">${escapeHTML(item.title)}</a></li>`).join('');
-            const products = data.resources.results.products;
-            const collections = data.resources.results.collections;
-            const pages = data.resources.results.pages;
-            results.innerHTML = `
-              <div class="stack">
-                <div>
-                  <strong>Products</strong>
-                  <ul>${renderList(products)}</ul>
-                </div>
-                <div>
-                  <strong>Collections</strong>
-                  <ul>${renderList(collections)}</ul>
-                </div>
-                <div>
-                  <strong>Pages</strong>
-                  <ul>${renderList(pages)}</ul>
-                </div>
-              </div>
-            `;
-          })
-          .catch(() => {});
+        results.hidden = false;
+        results.innerHTML = `<p class="predictive-search__status">${escapeHTML(config.strings?.loading || 'Loading…')}</p>`;
+        input.setAttribute('aria-expanded', 'true');
+        const limit = Number(config.settings?.predictiveSearchLimit || 4);
+        const endpoint = config.routes?.predictiveSearch || shopifyPath('search/suggest');
+        try {
+          const url = `${endpoint}.json?q=${encodeURIComponent(query)}&resources[type]=product,collection,page,article&resources[limit]=${limit}`;
+          const response = await fetch(url, { signal: controller.signal, headers: { Accept: 'application/json' } });
+          if (!response.ok) throw new Error('Predictive search failed.');
+          const data = await response.json();
+          const found = data.resources?.results || {};
+          const markup = [
+            renderGroup('Products', found.products, 0),
+            renderGroup('Collections', found.collections, 1),
+            renderGroup('Pages', found.pages, 2),
+            renderGroup('Articles', found.articles, 3),
+          ].join('');
+          results.innerHTML = markup || '<p class="predictive-search__status">No results found.</p>';
+          results.hidden = false;
+          input.setAttribute('aria-expanded', 'true');
+          announce(config.strings?.searchResults || 'Search results updated.');
+        } catch (error) {
+          if (error.name === 'AbortError') return;
+          results.innerHTML = '<p class="predictive-search__status">Search is temporarily unavailable.</p>';
+        }
+      };
+
+      input.addEventListener('input', () => {
+        window.clearTimeout(timer);
+        timer = window.setTimeout(search, 180);
+      });
+      input.addEventListener('keydown', (event) => {
+        if (event.key === 'ArrowDown') {
+          event.preventDefault();
+          setActive(activeIndex + 1);
+        } else if (event.key === 'ArrowUp') {
+          event.preventDefault();
+          setActive(activeIndex - 1);
+        } else if (event.key === 'Enter' && activeIndex >= 0) {
+          event.preventDefault();
+          options()[activeIndex]?.click();
+        } else if (event.key === 'Escape') {
+          close();
+        }
+      });
+      form.addEventListener('focusout', (event) => {
+        if (!form.contains(event.relatedTarget)) window.setTimeout(close, 100);
       });
     });
   };
 
-  const initAccordion = () => {
-    document.querySelectorAll('[data-accordion]').forEach((accordion) => {
+  const initAccordion = (root = document) => {
+    root.querySelectorAll?.('[data-accordion]').forEach((accordion, accordionIndex) => {
       accordion.querySelectorAll('[data-accordion-button]').forEach((button) => {
+        if (button.dataset.themeInitialized === 'true') return;
+        button.dataset.themeInitialized = 'true';
+        button.type = 'button';
+        const panel = button.nextElementSibling;
+        if (panel) {
+          if (!button.id) button.id = `AccordionButton-${accordionIndex}-${Math.random().toString(36).slice(2, 8)}`;
+          if (!panel.id) panel.id = `AccordionPanel-${accordionIndex}-${Math.random().toString(36).slice(2, 8)}`;
+          button.setAttribute('aria-controls', panel.id);
+          panel.setAttribute('role', 'region');
+          panel.setAttribute('aria-labelledby', button.id);
+        }
         button.addEventListener('click', () => {
-          const panel = button.nextElementSibling;
           const item = button.closest('.accordion__item');
           const icon = button.querySelector('.accordion__icon');
           const expanded = button.getAttribute('aria-expanded') === 'true';
@@ -553,24 +768,36 @@ const Theme = (() => {
     });
   };
 
-  const initRecentlyViewed = () => {
-    const productHandle = document.querySelector('[data-product-handle]')?.dataset.productHandle;
+  const initRecentlyViewed = (root = document) => {
+    const productHandle = root.querySelector?.('[data-product-handle]')?.dataset.productHandle;
     if (productHandle) {
       const key = 'recently-viewed';
-      const list = JSON.parse(localStorage.getItem(key) || '[]');
+      let list = [];
+      try {
+        list = JSON.parse(safeStorage.get(key, '[]'));
+      } catch {
+        list = [];
+      }
       if (!list.includes(productHandle)) list.unshift(productHandle);
-      localStorage.setItem(key, JSON.stringify(list.slice(0, 10)));
+      safeStorage.set(key, JSON.stringify(list.slice(0, 10)));
     }
   };
 
-  const initAnimatedHeadlines = () => {
+  const initAnimatedHeadlines = (root = document) => {
     const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    document.querySelectorAll('[data-animated-headline]').forEach((headline) => {
-      const words = JSON.parse(headline.dataset.words || '[]').filter(Boolean);
+    root.querySelectorAll?.('[data-animated-headline]').forEach((headline) => {
+      if (headline.dataset.themeInitialized === 'true') return;
+      headline.dataset.themeInitialized = 'true';
+      let words = [];
+      try {
+        words = JSON.parse(headline.dataset.words || '[]').filter(Boolean);
+      } catch {
+        return;
+      }
       if (words.length < 2 || prefersReduced) return;
       const wordEl = headline.querySelector('.animated-headline__word');
       let index = 0;
-      setInterval(() => {
+      headline.themeTimer = setInterval(() => {
         index = (index + 1) % words.length;
         wordEl.classList.remove('is-visible');
         setTimeout(() => {
@@ -582,30 +809,59 @@ const Theme = (() => {
     });
   };
 
-  const initTabs = () => {
-    document.querySelectorAll('[data-collection-tabs]').forEach((tabs) => {
+  const initTabs = (root = document) => {
+    root.querySelectorAll?.('[data-collection-tabs]').forEach((tabs) => {
+      if (tabs.dataset.themeInitialized === 'true') return;
+      tabs.dataset.themeInitialized = 'true';
       const triggers = tabs.querySelectorAll('[data-tab-trigger]');
       const panels = tabs.querySelectorAll('[data-tab-panel]');
+      const activate = (trigger, focus = false) => {
+        const id = trigger.dataset.tabId;
+        panels.forEach((panel) => {
+          const active = panel.id === id;
+          panel.classList.toggle('hidden', !active);
+          panel.hidden = !active;
+        });
+        triggers.forEach((item) => {
+          const active = item === trigger;
+          item.classList.toggle('is-active', active);
+          item.setAttribute('aria-selected', active ? 'true' : 'false');
+          item.tabIndex = active ? 0 : -1;
+        });
+        if (focus) trigger.focus();
+      };
       triggers.forEach((trigger) => {
-        trigger.addEventListener('click', () => {
-          const id = trigger.dataset.tabId;
-          panels.forEach((panel) => {
-            panel.classList.toggle('hidden', panel.id !== id);
-          });
-          triggers.forEach((item) => {
-            item.classList.toggle('is-active', item === trigger);
-          });
+        trigger.addEventListener('click', () => activate(trigger));
+        trigger.addEventListener('keydown', (event) => {
+          const items = Array.from(triggers);
+          const index = items.indexOf(trigger);
+          let next = null;
+          if (event.key === 'ArrowRight' || event.key === 'ArrowDown') next = items[(index + 1) % items.length];
+          if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') next = items[(index - 1 + items.length) % items.length];
+          if (event.key === 'Home') next = items[0];
+          if (event.key === 'End') next = items[items.length - 1];
+          if (!next) return;
+          event.preventDefault();
+          activate(next, true);
         });
       });
+      const selected = Array.from(triggers).find((trigger) => trigger.getAttribute('aria-selected') === 'true') || triggers[0];
+      if (selected) activate(selected);
     });
   };
 
-  const initCountdown = () => {
-    document.querySelectorAll('[data-countdown]').forEach((countdown) => {
+  const initCountdown = (root = document) => {
+    root.querySelectorAll?.('[data-countdown]').forEach((countdown) => {
+      if (countdown.dataset.themeInitialized === 'true') return;
+      countdown.dataset.themeInitialized = 'true';
       const target = countdown.dataset.countdownTarget;
       const timer = countdown.querySelector('[data-countdown-timer]');
       if (!target || !timer) return;
       const targetDate = new Date(target);
+      if (Number.isNaN(targetDate.getTime())) {
+        countdown.hidden = true;
+        return;
+      }
       const update = () => {
         const now = new Date();
         const diff = Math.max(0, targetDate - now);
@@ -616,12 +872,14 @@ const Theme = (() => {
         timer.textContent = `${days}d ${hours}h ${minutes}m ${seconds}s`;
       };
       update();
-      setInterval(update, 1000);
+      countdown.themeTimer = setInterval(update, 1000);
     });
   };
 
-  const initBeforeAfter = () => {
-    document.querySelectorAll('[data-before-after]').forEach((wrapper) => {
+  const initBeforeAfter = (root = document) => {
+    root.querySelectorAll?.('[data-before-after]').forEach((wrapper) => {
+      if (wrapper.dataset.themeInitialized === 'true') return;
+      wrapper.dataset.themeInitialized = 'true';
       const range = wrapper.querySelector('[data-before-after-range]');
       const images = wrapper.querySelector('[data-before-after-images]');
       const after = wrapper.querySelector('.before-after__after');
@@ -641,11 +899,103 @@ const Theme = (() => {
     });
   };
 
-  const initProductPage = () => {
-    const form = document.querySelector('[data-product-form]');
-    const variantsData = document.querySelector('[data-product-variants]');
+  const initProductPage = (root = document) => {
+    const form = root.querySelector?.('[data-product-form]');
+    const productSection = form?.closest('[data-product-section]') || form?.closest('.section') || document;
+    if (form && productSection.matches?.('[data-product-section]')) {
+      if (form.dataset.themeInitialized === 'true') return;
+      form.dataset.themeInitialized = 'true';
+
+      const gallery = productSection.querySelector('[data-product-gallery]');
+      const galleryItems = Array.from(gallery?.querySelectorAll('[data-gallery-item]') || []);
+      const galleryThumbs = Array.from(gallery?.querySelectorAll('[data-gallery-thumb]') || []);
+      const prevButton = gallery?.querySelector('[data-gallery-prev]');
+      const nextButton = gallery?.querySelector('[data-gallery-next]');
+      let galleryIndex = Math.max(0, galleryItems.findIndex((item) => item.classList.contains('is-active')));
+
+      const showGalleryIndex = (index) => {
+        if (!galleryItems.length) return;
+        galleryIndex = (index + galleryItems.length) % galleryItems.length;
+        galleryItems.forEach((item, itemIndex) => {
+          const active = itemIndex === galleryIndex;
+          item.classList.toggle('is-active', active);
+          item.setAttribute('aria-hidden', active ? 'false' : 'true');
+          if (!active) item.querySelectorAll('video').forEach((video) => video.pause());
+        });
+        galleryThumbs.forEach((thumb, thumbIndex) => {
+          const active = thumbIndex === galleryIndex;
+          thumb.classList.toggle('is-selected', active);
+          thumb.setAttribute('aria-current', active ? 'true' : 'false');
+        });
+      };
+
+      galleryThumbs.forEach((thumb, index) => thumb.addEventListener('click', () => showGalleryIndex(index)));
+      prevButton?.addEventListener('click', () => showGalleryIndex(galleryIndex - 1));
+      nextButton?.addEventListener('click', () => showGalleryIndex(galleryIndex + 1));
+      showGalleryIndex(galleryIndex);
+
+      const stickyAtc = productSection.querySelector('[data-sticky-atc]');
+      if (stickyAtc && 'IntersectionObserver' in window) {
+        const observer = new IntersectionObserver(([entry]) => {
+          const shouldShow = !entry.isIntersecting;
+          stickyAtc.classList.toggle('is-visible', shouldShow);
+          stickyAtc.setAttribute('aria-hidden', shouldShow ? 'false' : 'true');
+        }, { rootMargin: '-120px 0px 0px 0px', threshold: 0 });
+        observer.observe(form);
+        productSection.themeObserver = observer;
+      }
+
+      const picker = form.querySelector('[data-variant-picker]');
+      if (!picker) return;
+      let variantController;
+      picker.addEventListener('change', async (event) => {
+        const changedInput = event.target.closest('[data-option-value-id]');
+        if (!changedInput) return;
+        const fieldset = changedInput.closest('[data-option-position]');
+        const selectedLabel = fieldset?.querySelector('[data-selected-option]');
+        if (selectedLabel) selectedLabel.textContent = changedInput.value;
+
+        const selectedInputs = Array.from(picker.querySelectorAll('[data-option-value-id]:checked'));
+        const optionValueIds = selectedInputs.map((input) => input.dataset.optionValueId).filter(Boolean);
+        if (!optionValueIds.length) return;
+
+        variantController?.abort();
+        variantController = new AbortController();
+        const publicUrl = new URL(changedInput.dataset.productUrl || productSection.dataset.productUrl || window.location.pathname, window.location.origin);
+        publicUrl.searchParams.set('option_values', optionValueIds.join(','));
+        const requestUrl = new URL(publicUrl);
+        requestUrl.searchParams.set('section_id', productSection.dataset.sectionId);
+        productSection.setAttribute('aria-busy', 'true');
+
+        try {
+          const response = await fetch(requestUrl, { signal: variantController.signal, headers: { Accept: 'text/html' } });
+          if (!response.ok) throw new Error('Variant update failed.');
+          const html = new DOMParser().parseFromString(await response.text(), 'text/html');
+          const replacement = html.querySelector('[data-product-section]');
+          if (!replacement) throw new Error('Product section missing from response.');
+          productSection.themeObserver?.disconnect();
+          productSection.replaceWith(replacement);
+          window.history.replaceState({}, '', publicUrl);
+          Theme.init(replacement);
+          announce('Product options updated.');
+        } catch (error) {
+          if (error.name !== 'AbortError') showToast('Unable to update this product option. Please try again.');
+          productSection.removeAttribute('aria-busy');
+        }
+      });
+      return;
+    }
+
+    const variantsData = productSection.querySelector?.('[data-product-variants]');
     if (!form || !variantsData) return;
-    const variants = JSON.parse(variantsData.textContent || '[]');
+    if (form.dataset.themeInitialized === 'true') return;
+    form.dataset.themeInitialized = 'true';
+    let variants = [];
+    try {
+      variants = JSON.parse(variantsData.textContent || '[]');
+    } catch {
+      return;
+    }
     if (!variants.length) return;
 
     const colorPosition = Number(form.dataset.colorPosition || 0);
@@ -655,12 +1005,12 @@ const Theme = (() => {
     const colorSwatches = Array.from(form.querySelectorAll('[data-color-swatches] .product-color-swatch'));
     const sizeSelect = form.querySelector('.product-size-select');
     const optionSelects = Array.from(form.querySelectorAll('.product-option-select'));
-    const gallery = document.querySelector('[data-product-gallery]');
+    const gallery = productSection.querySelector('[data-product-gallery]');
     const galleryItems = Array.from(gallery?.querySelectorAll('[data-gallery-item]') || []);
     const galleryThumbs = Array.from(gallery?.querySelectorAll('[data-gallery-thumb]') || []);
     const prevButton = gallery?.querySelector('[data-gallery-prev]');
     const nextButton = gallery?.querySelector('[data-gallery-next]');
-    const stickyAtc = document.querySelector('[data-sticky-atc]');
+    const stickyAtc = productSection.querySelector('[data-sticky-atc]');
     const stickyVariant = stickyAtc?.querySelector('[data-sticky-atc-variant]');
     let galleryIndex = 0;
 
@@ -777,8 +1127,10 @@ const Theme = (() => {
     }
   };
 
-  const initShippingEstimator = () => {
-    document.querySelectorAll('[data-shipping-estimator]').forEach((form) => {
+  const initShippingEstimator = (root = document) => {
+    root.querySelectorAll?.('[data-shipping-estimator]').forEach((form) => {
+      if (form.dataset.themeInitialized === 'true') return;
+      form.dataset.themeInitialized = 'true';
       const results = form.querySelector('[data-shipping-results]');
       if (!results) return;
       form.addEventListener('submit', (event) => {
@@ -803,9 +1155,16 @@ const Theme = (() => {
     });
   };
 
-  const initRecentlyViewedSection = () => {
-    document.querySelectorAll('[data-recently-viewed-items]').forEach(async (container) => {
-      const handles = JSON.parse(localStorage.getItem('recently-viewed') || '[]').filter(Boolean);
+  const initRecentlyViewedSection = (root = document) => {
+    root.querySelectorAll?.('[data-recently-viewed-items]').forEach(async (container) => {
+      if (container.dataset.themeInitialized === 'true') return;
+      container.dataset.themeInitialized = 'true';
+      let handles = [];
+      try {
+        handles = JSON.parse(safeStorage.get('recently-viewed', '[]')).filter(Boolean);
+      } catch {
+        handles = [];
+      }
       if (!handles.length) {
         container.innerHTML = '<p>No recently viewed products yet.</p>';
         return;
@@ -855,11 +1214,40 @@ const Theme = (() => {
     });
   };
 
-  const initCopyButtons = () => {
-    document.querySelectorAll('[data-copy-button]').forEach((button) => {
+  const initCopyButtons = (root = document) => {
+    root.querySelectorAll?.('[data-copy-button]').forEach((button) => {
+      if (button.dataset.themeInitialized === 'true') return;
+      button.dataset.themeInitialized = 'true';
       const text = button.dataset.copyText || '';
-      button.addEventListener('click', () => {
-        navigator.clipboard?.writeText(text);
+      button.addEventListener('click', async () => {
+        try {
+          await navigator.clipboard?.writeText(text);
+          announce('Copied to clipboard.');
+        } catch {
+          announce('Unable to copy.');
+        }
+      });
+    });
+  };
+
+  const initPrintButtons = (root = document) => {
+    root.querySelectorAll?.('[data-print-button]').forEach((button) => {
+      if (button.dataset.themeInitialized === 'true') return;
+      button.dataset.themeInitialized = 'true';
+      button.addEventListener('click', () => window.print());
+    });
+  };
+
+  const initGiftCardQrCode = (root = document) => {
+    root.querySelectorAll?.('[data-gift-card-qr]').forEach((target) => {
+      if (target.dataset.themeInitialized === 'true') return;
+      if (!target.dataset.giftCardQr || typeof window.QRCode !== 'function') return;
+      target.dataset.themeInitialized = 'true';
+      new window.QRCode(target, {
+        text: target.dataset.giftCardQr,
+        width: 160,
+        height: 160,
+        correctLevel: window.QRCode.CorrectLevel?.H,
       });
     });
   };
@@ -868,6 +1256,8 @@ const Theme = (() => {
     const drawer = document.querySelector('[data-quick-view-drawer]');
     const content = drawer?.querySelector('[data-quick-view-content]');
     if (!drawer || !content) return;
+    if (drawer.dataset.themeInitialized === 'true') return;
+    drawer.dataset.themeInitialized = 'true';
 
     const renderQuickView = (product, fallbackUrl = '#') => {
       const variant = product.variants?.find((item) => item.available) || product.variants?.[0];
@@ -920,7 +1310,7 @@ const Theme = (() => {
       if (!handle) return;
 
       content.innerHTML = '<p>Loading product...</p>';
-      openDrawer(drawer);
+      openDrawer(drawer, trigger);
 
       try {
         const response = await fetch(shopifyPath(`products/${handle}.js`), {
@@ -936,6 +1326,8 @@ const Theme = (() => {
   };
 
   const initAjaxCart = () => {
+    if (document.documentElement.dataset.ajaxCartInitialized === 'true') return;
+    document.documentElement.dataset.ajaxCartInitialized = 'true';
     const drawer = document.querySelector('[data-cart-drawer]') || document.querySelector('#cart-drawer');
     const itemsEl = document.querySelector('[data-cart-drawer-items]');
     const totalEl = document.querySelector('[data-cart-drawer-total]');
@@ -962,18 +1354,33 @@ const Theme = (() => {
           ${cart.items
             .map((item) => {
               const title = escapeHTML(item.product_title || item.title || '');
+              const variantTitle = item.variant_title && item.variant_title !== 'Default Title'
+                ? `<span class="cart-drawer-item__variant">${escapeHTML(item.variant_title)}</span>`
+                : '';
               const img = item.image
                 ? `<img src="${escapeHTML(withWidth(item.image, 120))}" alt="${title}" loading="lazy">`
                 : '';
-              const price = formatMoney(item.final_price ?? item.price);
+              const linePrice = formatMoney(item.final_line_price ?? item.line_price);
+              const properties = Object.entries(item.properties || {})
+                .filter(([name, value]) => value && !name.startsWith('_'))
+                .map(([name, value]) => `<span>${escapeHTML(name)}: ${escapeHTML(value)}</span>`)
+                .join('');
               return `
-                <div class="cart-drawer-item">
-                  ${img}
+                <div class="cart-drawer-item" data-cart-line-key="${escapeHTML(item.key)}">
+                  <a href="${escapeHTML(item.url)}">${img}</a>
                   <div class="cart-drawer-item__details">
-                    <strong>${title}</strong>
-                    <div>${price}</div>
+                    <a href="${escapeHTML(item.url)}"><strong>${title}</strong></a>
+                    ${variantTitle}
+                    ${item.selling_plan_allocation?.selling_plan?.name ? `<span>${escapeHTML(item.selling_plan_allocation.selling_plan.name)}</span>` : ''}
+                    ${properties ? `<span class="cart-drawer-item__properties">${properties}</span>` : ''}
+                    <div>${linePrice}</div>
+                    <div class="quantity-control" aria-label="Quantity for ${title}">
+                      <button type="button" data-cart-quantity="${Math.max(0, item.quantity - 1)}" aria-label="Decrease quantity">−</button>
+                      <span aria-live="polite">${item.quantity || 0}</span>
+                      <button type="button" data-cart-quantity="${item.quantity + 1}" aria-label="Increase quantity">+</button>
+                    </div>
+                    <button class="button button--tertiary" type="button" data-cart-remove>Remove</button>
                   </div>
-                  <span class="cart-drawer-item__qty">${item.quantity || 0}</span>
                 </div>
               `;
             })
@@ -984,12 +1391,57 @@ const Theme = (() => {
       if (totalEl) {
         totalEl.textContent = formatMoney(cart?.total_price || 0);
       }
+      document.querySelectorAll('[data-free-shipping-progress]').forEach((progress) => {
+        const goal = Number(config.settings?.freeShippingThreshold || 0);
+        if (!goal) {
+          progress.hidden = true;
+          return;
+        }
+        progress.hidden = false;
+        const remaining = Math.max(0, goal - Number(cart?.total_price || 0));
+        const percent = Math.min(100, Math.round((Number(cart?.total_price || 0) / goal) * 100));
+        progress.querySelector('[data-free-shipping-message]').textContent = remaining > 0
+          ? `Add ${formatMoney(remaining)} for free shipping.`
+          : 'You reached the free-shipping goal.';
+        const bar = progress.querySelector('[data-free-shipping-bar]');
+        bar?.setAttribute('aria-valuenow', String(percent));
+        if (bar) bar.style.setProperty('--progress', `${percent}%`);
+      });
     };
 
     const fetchCart = () =>
       fetch(shopifyPath('cart.js'), { headers: { Accept: 'application/json' } })
         .then((res) => (res.ok ? res.json() : null))
         .catch(() => null);
+
+    const changeLine = async (key, quantity) => {
+      if (!key) return;
+      itemsEl?.setAttribute('aria-busy', 'true');
+      try {
+        const endpoint = `${config.routes?.cartChange || shopifyPath('cart/change')}.js`;
+        const response = await fetch(endpoint, {
+          method: 'POST',
+          headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id: key, quantity }),
+        });
+        if (!response.ok) throw new Error('Cart update failed.');
+        renderCartDrawer(await response.json());
+        announce('Cart updated.');
+      } catch {
+        showToast(config.strings?.cartError || 'We could not update your cart.');
+      } finally {
+        itemsEl?.removeAttribute('aria-busy');
+      }
+    };
+
+    itemsEl?.addEventListener('click', (event) => {
+      const line = event.target.closest('[data-cart-line-key]');
+      if (!line) return;
+      const quantityButton = event.target.closest('[data-cart-quantity]');
+      const removeButton = event.target.closest('[data-cart-remove]');
+      if (!quantityButton && !removeButton) return;
+      changeLine(line.dataset.cartLineKey, removeButton ? 0 : Number(quantityButton.dataset.cartQuantity));
+    });
 
     document.addEventListener('submit', async (event) => {
       const form = event.target.closest('form[data-ajax-cart]');
@@ -1001,7 +1453,7 @@ const Theme = (() => {
       if (submit) {
         submit.disabled = true;
         submit.classList.add('is-loading');
-        if (submit.tagName === 'BUTTON') submit.textContent = 'Adding...';
+        if (submit.tagName === 'BUTTON') submit.textContent = config.strings?.adding || 'Adding…';
       }
 
       try {
@@ -1013,29 +1465,40 @@ const Theme = (() => {
 
         if (!response.ok) {
           const errorJson = await response.json().catch(() => null);
-          showToast(errorJson?.description || 'Unable to add to cart.');
+          showToast(errorJson?.description || config.strings?.cartError || 'Unable to add to cart.');
           return;
         }
 
         const cart = await fetchCart();
         if (cart) renderCartDrawer(cart);
-        showToast('Added to cart.');
-        if (drawer) openDrawer(drawer);
+        showToast(config.strings?.addedToCart || 'Added to cart.');
+        const cartBehavior = document.body.dataset.cartBehavior || 'drawer';
+        if (cartBehavior === 'page') {
+          window.location.assign(config.routes?.cart || shopifyPath('cart'));
+        } else if (cartBehavior === 'drawer' && drawer) {
+          openDrawer(drawer, form.querySelector('[type="submit"]'));
+        }
       } catch {
-        showToast('Unable to add to cart.');
+        showToast(config.strings?.cartError || 'Unable to add to cart.');
       } finally {
         if (submit) {
           submit.disabled = false;
           submit.classList.remove('is-loading');
-          if (submit.tagName === 'BUTTON') submit.textContent = originalText || 'Add to cart';
+          if (submit.tagName === 'BUTTON') submit.textContent = originalText || config.strings?.addToCart || 'Add to cart';
         }
       }
+    });
+
+    fetchCart().then((cart) => {
+      if (cart) renderCartDrawer(cart);
     });
   };
 
   const initBackToTop = () => {
     const button = document.querySelector('[data-back-to-top]');
     if (!button) return;
+    if (button.dataset.themeInitialized === 'true') return;
+    button.dataset.themeInitialized = 'true';
     const update = () => {
       const visible = window.scrollY > 700;
       button.classList.toggle('is-visible', visible);
@@ -1044,36 +1507,101 @@ const Theme = (() => {
     };
     window.addEventListener('scroll', update, { passive: true });
     button.addEventListener('click', () => {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      window.scrollTo({ top: 0, behavior: reduced ? 'auto' : 'smooth' });
     });
     update();
   };
 
-  const init = () => {
-    initDrawers();
-    initMegaMenu();
-    initMobileMenu();
-    initSlideshow();
-    initPromoDismiss();
-    initWishlist();
-    initPopup();
-    initPredictiveSearch();
-    initAccordion();
-    initRecentlyViewed();
-    initTabs();
-    initAnimatedHeadlines();
-    initCountdown();
-    initBeforeAfter();
-    initShippingEstimator();
-    initRecentlyViewedSection();
-    initCopyButtons();
+  const initGridDensity = (root = document) => {
+    root.querySelectorAll?.('[data-collection-section]').forEach((section) => {
+      if (section.dataset.gridInitialized === 'true') return;
+      section.dataset.gridInitialized = 'true';
+      const grid = section.querySelector('[data-product-grid]');
+      const buttons = Array.from(section.querySelectorAll('[data-grid-columns]'));
+      if (!grid || !buttons.length) return;
+      const storageKey = 'riskylimits:grid-density';
+      const apply = (value) => {
+        const columns = Math.max(2, Math.min(5, Number(value) || 4));
+        grid.style.setProperty('--desktop-columns', String(columns));
+        if (columns <= 2) grid.style.setProperty('--mobile-columns', String(columns));
+        buttons.forEach((button) => button.setAttribute('aria-pressed', button.dataset.gridColumns === String(columns) ? 'true' : 'false'));
+        safeStorage.set(storageKey, String(columns));
+      };
+      buttons.forEach((button) => button.addEventListener('click', () => apply(button.dataset.gridColumns)));
+      apply(safeStorage.get(storageKey, grid.style.getPropertyValue('--desktop-columns') || '4'));
+    });
+  };
+
+  const initRecommendations = (root = document) => {
+    root.querySelectorAll?.('[data-product-recommendations]').forEach(async (section) => {
+      if (section.dataset.themeInitialized === 'true') return;
+      section.dataset.themeInitialized = 'true';
+      if (section.querySelector('.product-grid')) return;
+      const productId = section.dataset.productId;
+      const sectionId = section.dataset.sectionId;
+      if (!productId || !sectionId) return;
+      const endpoint = config.routes?.productRecommendations || shopifyPath('recommendations/products');
+      const params = new URLSearchParams({
+        section_id: sectionId,
+        product_id: productId,
+        limit: section.dataset.limit || '4',
+        intent: section.dataset.intent || 'related',
+      });
+      try {
+        const response = await fetch(`${endpoint}?${params}`, { headers: { Accept: 'text/html' } });
+        if (!response.ok) return;
+        const html = new DOMParser().parseFromString(await response.text(), 'text/html');
+        const replacement = html.querySelector('[data-product-recommendations]');
+        if (!replacement?.querySelector('.product-grid')) return;
+        section.replaceWith(replacement);
+        Theme.init(replacement);
+      } catch {
+        // Recommendations are optional and remain hidden when the endpoint is unavailable.
+      }
+    });
+  };
+
+  const init = (root = document) => {
+    initDrawers(root);
+    initMegaMenu(root);
+    initMobileMenu(root);
+    initSlideshow(root);
+    initPromoDismiss(root);
+    initWishlist(root);
+    initPopup(root);
+    initPredictiveSearch(root);
+    initAccordion(root);
+    initRecentlyViewed(root);
+    initTabs(root);
+    initAnimatedHeadlines(root);
+    initCountdown(root);
+    initBeforeAfter(root);
+    initShippingEstimator(root);
+    initRecentlyViewedSection(root);
+    initCopyButtons(root);
+    initGiftCardQrCode(root);
+    initPrintButtons(root);
     initQuickView();
     initAjaxCart();
     initBackToTop();
-    initProductPage();
+    initGridDensity(root);
+    initRecommendations(root);
+    initProductPage(root);
   };
 
-  return { init };
+  const unload = (root) => {
+    root.querySelectorAll?.('[data-slideshow], [data-countdown], [data-animated-headline]').forEach((element) => {
+      element.themeCleanup?.();
+      window.clearInterval(element.themeTimer);
+      window.clearTimeout(element.themeTimer);
+    });
+    root.querySelectorAll?.('[data-popup]').forEach((element) => window.clearTimeout(element.themeTimer));
+  };
+
+  return { init, unload, openDrawer, closeDrawer, formatMoney, announce };
 })();
 
-document.addEventListener('DOMContentLoaded', Theme.init);
+document.addEventListener('DOMContentLoaded', () => Theme.init(document));
+document.addEventListener('shopify:section:load', (event) => Theme.init(event.target));
+document.addEventListener('shopify:section:unload', (event) => Theme.unload(event.target));

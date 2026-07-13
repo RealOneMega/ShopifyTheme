@@ -2,6 +2,15 @@
 
 This file records implementation notes for future troubleshooting. Add a dated entry whenever theme behavior, structure, or performance is changed so prior work is easy to audit before repeating it.
 
+## 2026-07-13 — Risky Limits 2.0 production rebuild
+
+- Rebuilt the global design system, header/footer groups, product, collection, search, cart, localization, accounts, content templates, flexible theme blocks, metadata, and storefront JavaScript lifecycle.
+- Adopted Shopify's high-variant product option architecture and native product media, selling-plan, recommendation, filter, customer-form, and checkout surfaces.
+- Replaced simulated reviews, purchases, loyalty, quantity pricing, SMS, and back-in-stock behavior with app-block hosts that render no fake live data.
+- Added audit, setup, features, QA, README, and changelog documentation.
+- Validated 153 files with Shopify Theme Check 4.4.0 at zero offenses and built `Risky Limits-2.0.0.zip`.
+- Live Shopify rendering, real checkout, installed apps, Markets, and Lighthouse remain release gates documented in `THEME_QA.md`.
+
 ## 2026-05-10
 
 ### Hero slideshow media and content safety

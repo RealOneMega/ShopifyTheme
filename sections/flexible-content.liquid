@@ -1,0 +1,6 @@
+<section class="section flexible-content" style="--flex-columns: {{ section.settings.columns }}; text-align: {{ section.settings.alignment }};">
+  <div class="container{% if section.settings.narrow %} container--narrow{% endif %}"><div class="flexible-content__blocks">{% content_for 'blocks' %}</div></div>
+</section>
+{% schema %}
+{"name":"Flexible content","settings":[{"type":"range","id":"columns","label":"Desktop columns","min":1,"max":4,"step":1,"default":1},{"type":"select","id":"alignment","label":"Text alignment","default":"left","options":[{"value":"left","label":"Left"},{"value":"center","label":"Center"},{"value":"right","label":"Right"}]},{"type":"checkbox","id":"narrow","label":"Use narrow content width","default":false}],"blocks":[{"type":"@theme"},{"type":"@app"}],"presets":[{"name":"Flexible content","blocks":[{"type":"heading"},{"type":"text"},{"type":"button"}]}]}
+{% endschema %}

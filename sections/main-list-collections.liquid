@@ -1,0 +1,24 @@
+<section class="section">
+  <div class="container">
+    <header class="section__header"><p class="eyebrow">All divisions</p><h1 class="heading">Collections</h1></header>
+    {% paginate collections by section.settings.collections_per_page %}
+      <div class="collection-list-grid">
+        {% for collection in collections %}
+          {% unless collection.handle == 'frontpage' %}
+            <article class="collection-card">
+              <a href="{{ collection.url }}">
+                {% if collection.featured_image != blank %}{{ collection.featured_image | image_url: width: 1200 | image_tag: loading: 'lazy', widths: '360, 540, 720, 960, 1200', sizes: '(min-width: 990px) 33vw, 100vw', alt: collection.featured_image.alt | default: collection.title }}{% else %}{{ 'collection-1' | placeholder_svg_tag: 'placeholder-svg' }}{% endif %}
+                <div class="collection-card__content"><h2 class="h3">{{ collection.title }}</h2><span>{{ collection.products_count }} products</span></div>
+              </a>
+            </article>
+          {% endunless %}
+        {% endfor %}
+      </div>
+      {% render 'pagination', paginate: paginate %}
+    {% endpaginate %}
+  </div>
+</section>
+{% schema %}
+{"name":"Collection list","settings":[{"type":"range","id":"collections_per_page","label":"Collections per page","min":6,"max":24,"step":3,"default":12}]}
+{% endschema %}
+

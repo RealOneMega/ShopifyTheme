@@ -1,13 +1,17 @@
-<section class="popup feature feature--newsletter-popup section--background" data-feature="newsletter-popup" data-popup='{"id":"newsletter-newsletter-popup-{{ section.id }}","trigger":"delay","delay":{{ section.settings.delay }} }' style="{% render 'section-background-style', section: section %}">
+<section class="popup feature feature--newsletter-popup section--background" data-feature="newsletter-popup" data-popup='{"id":"feature-newsletter-popup-{{ section.id }}","trigger":"delay","delay":{{ section.settings.delay }} }' style="{% render 'section-background-style', section: section %}" aria-hidden="true">
   {% render 'section-background-media', section: section %}
-  <div class="popup__content">
+  <div class="popup__content" role="dialog" aria-modal="true" aria-labelledby="FeaturePopupTitle-{{ section.id }}">
     <button class="popup__close" type="button" data-popup-close aria-label="Close">×</button>
-    <h2>{{ section.settings.heading }}</h2>
+    <h2 id="FeaturePopupTitle-{{ section.id }}">{{ section.settings.heading }}</h2>
     <p>{{ section.settings.text }}</p>
-    <form class="newsletter">
-      <input class="input" type="email" placeholder="you@example.com" required>
+    {% form 'customer', class: 'newsletter' %}
+      {% if form.posted_successfully? %}<p role="status">Thanks for subscribing!</p>{% endif %}
+      {% if form.errors %}<div role="alert">{{ form.errors | default_errors }}</div>{% endif %}
+      <input type="hidden" name="contact[tags]" value="newsletter">
+      <label class="visually-hidden" for="FeaturePopupEmail-{{ section.id }}">Email address</label>
+      <input class="input" id="FeaturePopupEmail-{{ section.id }}" type="email" name="contact[email]" autocomplete="email" required>
       <button class="button" type="submit">{{ section.settings.button_label }}</button>
-    </form>
+    {% endform %}
   </div>
 </section>
 

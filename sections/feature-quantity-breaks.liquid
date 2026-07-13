@@ -1,33 +1,16 @@
 <section class="section feature feature--quantity-breaks section--background" data-feature="quantity-breaks" style="{% render 'section-background-style', section: section %}">
   {% render 'section-background-media', section: section %}
   <div class="container">
-  {% if section.settings.heading != blank %}
-    <header class="section__header">
-      <h2 class="section__heading">{{ section.settings.heading }}</h2>
-      {% if section.settings.subheading != blank %}
-        <p class="section__description">{{ section.settings.subheading }}</p>
-      {% endif %}
-    </header>
-  {% endif %}
-    <table class="quantity-breaks">
-      <thead>
-        <tr><th>Qty</th><th>Price</th></tr>
-      </thead>
-      <tbody>
-        {% for block in section.blocks %}
-          <tr>
-            <td>{{ block.settings.quantity }}</td>
-            <td>{{ block.settings.price }}</td>
-          </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+    {% if section.settings.heading != blank %}<h2 class="section__heading">{{ section.settings.heading }}</h2>{% endif %}
+    {% if section.settings.subheading != blank %}<p class="section__description">{{ section.settings.subheading }}</p>{% endif %}
+    {% for block in section.blocks %}{% render block %}{% endfor %}
+    {% if section.blocks.size == 0 and request.design_mode %}<div class="editor-note">Add a pricing or bundles app block. Displayed discounts must be enforced by Shopify or the configured app.</div>{% endif %}
   </div>
 </section>
 
 {% schema %}
 {
-  "name": "Quantity breaks",
+  "name": "Quantity pricing app",
   "settings": [
     {
       "type": "text",
@@ -154,29 +137,11 @@
       ]
     }
   ],
-  "blocks": [
-    {
-      "type": "tier",
-      "name": "Tier",
-      "settings": [
-        {
-          "type": "number",
-          "id": "quantity",
-          "label": "Quantity",
-          "default": 5
-        },
-        {
-          "type": "text",
-          "id": "price",
-          "label": "Price",
-          "default": "$10.00"
-        }
-      ]
-    }
-  ],
+  "blocks": [{"type": "@app"}],
+  "max_blocks": 4,
   "presets": [
     {
-      "name": "Quantity breaks",
+      "name": "Quantity pricing app",
       "category": "Pricing"
     }
   ]

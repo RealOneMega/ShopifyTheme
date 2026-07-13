@@ -9,11 +9,8 @@
       {% endif %}
     </header>
   {% endif %}
-    <form class="feature__form" data-feature-form>
-      <label class="label">Email</label>
-      <input class="input" type="email" placeholder="Email" required>
-      <button class="button" type="submit">{{ section.settings.button_label }}</button>
-    </form>
+    {% for block in section.blocks %}{% render block %}{% endfor %}
+    {% if section.blocks.size == 0 and request.design_mode %}<div class="editor-note">Add a back-in-stock app block. Shopify does not provide native restock subscriptions to themes.</div>{% endif %}
   </div>
 </section>
 
@@ -31,12 +28,6 @@
       "type": "text",
       "id": "subheading",
       "label": "Subheading"
-    },
-    {
-      "type": "text",
-      "id": "button_label",
-      "label": "Button label",
-      "default": "Notify me"
     },
     {
       "type": "header",
@@ -152,6 +143,8 @@
       ]
     }
   ],
+  "blocks": [{"type": "@app"}],
+  "max_blocks": 4,
   "presets": [
     {
       "name": "Back-in-stock alerts",

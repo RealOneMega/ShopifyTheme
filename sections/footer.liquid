@@ -7,19 +7,20 @@
           {{ section.settings.logo | image_url: width: 220 | image_tag: loading: 'lazy' }}
         {% endif %}
         {% if section.settings.text != blank %}
-          <p>{{ section.settings.text }}</p>
+          <p class="footer__motto">{{ section.settings.text }}</p>
         {% endif %}
         <div class="footer__newsletter">
-          <strong>{{ section.settings.newsletter_heading }}</strong>
+          <h2 class="footer__heading">{{ section.settings.newsletter_heading }}</h2>
           {% form 'customer', id: 'ContactFooter' %}
             {% if form.posted_successfully? %}
-              <p>Thanks for subscribing!</p>
+              <p role="status">Thanks for subscribing!</p>
             {% elsif form.errors %}
               <p role="alert">{{ form.errors | default_errors }}</p>
             {% endif %}
             <input type="hidden" name="contact[tags]" value="newsletter">
             <div class="footer__newsletter-form">
-              <input class="field" type="email" name="contact[email]" placeholder="Email address" aria-label="Email address" required>
+              <label class="visually-hidden" for="FooterEmail-{{ section.id }}">Email address</label>
+              <input class="field" id="FooterEmail-{{ section.id }}" type="email" name="contact[email]" placeholder="Email address" autocomplete="email" required>
               <button class="button button--primary" type="submit">Subscribe</button>
             </div>
           {% endform %}
@@ -34,10 +35,10 @@
       <div class="footer__menus">
         {% for block in section.blocks %}
           {% if block.type == 'menu' %}
-            <div>
-              <strong>{{ block.settings.heading }}</strong>
+            <div {{ block.shopify_attributes }}>
+              <h2 class="footer__heading">{{ block.settings.heading }}</h2>
               <div class="stack" style="margin-top:0.75rem;">
-                {% for link in linklists[block.settings.menu].links %}
+                {% for link in block.settings.menu.links %}
                   <a href="{{ link.url }}">{{ link.title }}</a>
                 {% endfor %}
               </div>
@@ -46,6 +47,9 @@
         {% endfor %}
       </div>
     </div>
+    {% if section.settings.show_country_selector or section.settings.show_language_selector %}
+      {% render 'localization-form', id: section.id | append: '-footer', show_country: section.settings.show_country_selector, show_language: section.settings.show_language_selector %}
+    {% endif %}
     <div class="footer__bottom">
       <span>&copy; {{ 'now' | date: '%Y' }} {{ section.settings.copyright }}</span>
       {% if section.settings.show_payments %}
@@ -96,6 +100,18 @@
       "type": "checkbox",
       "id": "show_back_to_top",
       "label": "Show back to top",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_country_selector",
+      "label": "Show country/region selector",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_language_selector",
+      "label": "Show language selector",
       "default": true
     },
     {

@@ -13,16 +13,28 @@
       "type": "main-product",
       "settings": {
         "show_inventory": true,
-        "shipping_text": "Fast shipping worldwide.",
-        "returns_text": "30-day returns on unused items.",
-        "review_placeholder": "Install your preferred review app to display reviews here.",
-        "background_type": "none",
-        "background_color": "#ffffff",
+        "low_inventory_threshold": 5,
+        "show_vendor": false,
+        "show_sku": false,
+        "show_dynamic_checkout": true,
+        "enable_sticky_atc": true,
+        "shipping_text": "",
+        "returns_text": "",
+        "background_type": "color",
+        "background_color": "#08090B",
         "background_gradient": "",
         "background_position_x": 50,
         "background_position_y": 50,
         "background_size": "cover",
         "background_repeat": "no-repeat"
+      }
+    },
+    "recommendations": {
+      "type": "product-recommendations",
+      "settings": {
+        "heading": "Recommended for you",
+        "limit": 4,
+        "intent": "related"
       }
     },
     "recently_viewed": {
@@ -31,7 +43,7 @@
         "heading": "Recently viewed",
         "subheading": "Pick up where you left off.",
         "background_type": "none",
-        "background_color": "#ffffff",
+        "background_color": "#101318",
         "background_gradient": "",
         "background_position_x": 50,
         "background_position_y": 50,
@@ -42,6 +54,7 @@
   },
   "order": [
     "main",
+    "recommendations",
     "recently_viewed"
   ]
 }

@@ -9,11 +9,14 @@
       {% endif %}
     </header>
   {% endif %}
-    <form class="feature__form" data-feature-form>
-      <label class="label">Email</label>
-      <input class="input" type="email" placeholder="Email" required>
-      <button class="button" type="submit">{{ section.settings.button_label }}</button>
-    </form>
+    {% form 'customer', class: 'feature__form' %}
+      {% if form.posted_successfully? %}<p class="form-message form-message--success" role="status">Thanks for joining Risky Limits.</p>{% endif %}
+      {% if form.errors %}<div class="form-message form-message--error" role="alert">{{ form.errors | default_errors }}</div>{% endif %}
+      <input type="hidden" name="contact[tags]" value="newsletter">
+      <label class="label" for="NewsletterEmail-{{ section.id }}">Email</label>
+      <input class="field" id="NewsletterEmail-{{ section.id }}" type="email" name="contact[email]" value="{% if customer %}{{ customer.email }}{% endif %}" autocomplete="email" autocapitalize="off" required>
+      <button class="button button--primary" type="submit">{{ section.settings.button_label }}</button>
+    {% endform %}
   </div>
 </section>
 
@@ -25,7 +28,7 @@
       "type": "text",
       "id": "heading",
       "label": "Heading",
-      "default": "Email capture"
+      "default": "Enter the limit"
     },
     {
       "type": "text",
@@ -36,7 +39,7 @@
       "type": "text",
       "id": "button_label",
       "label": "Button label",
-      "default": "Notify me"
+      "default": "Join the list"
     },
     {
       "type": "header",
@@ -74,7 +77,7 @@
       "type": "color",
       "id": "background_color",
       "label": "Background color",
-      "default": "#ffffff"
+      "default": "#101318"
     },
     {
       "type": "color_background",

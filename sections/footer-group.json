@@ -1,0 +1,31 @@
+{
+  "type": "footer",
+  "name": "Footer group",
+  "sections": {
+    "footer": {
+      "type": "footer",
+      "blocks": {
+        "shop": {"type": "menu", "settings": {"heading": "Shop", "menu": "footer"}},
+        "policies": {"type": "menu", "settings": {"heading": "Policies", "menu": "policies"}}
+      },
+      "block_order": ["shop", "policies"],
+      "settings": {
+        "text": "Push Limits. Define Risk.",
+        "newsletter_heading": "Enter the limit",
+        "copyright": "Risky Limits. All rights reserved.",
+        "show_payments": true,
+        "show_back_to_top": false,
+        "show_country_selector": true,
+        "show_language_selector": true,
+        "background_type": "color",
+        "background_color": "#08090B",
+        "background_gradient": "",
+        "background_position_x": 50,
+        "background_position_y": 50,
+        "background_size": "cover",
+        "background_repeat": "no-repeat"
+      }
+    }
+  },
+  "order": ["footer"]
+}

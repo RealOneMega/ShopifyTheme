@@ -1,0 +1,10 @@
+<section class="section">
+  <div class="container">
+    <header class="section__header"><p class="eyebrow">Saved locally</p><h1 class="heading">{{ page.title | default: 'Wishlist' }}</h1><p>This wishlist is stored in this browser and does not sync between devices or customer accounts.</p></header>
+    <div data-wishlist-items><div class="empty-state"><p>{{ 'wishlist.empty' | t }}</p><a class="button button--primary" href="{{ routes.all_products_collection_url }}">Explore products</a></div></div>
+  </div>
+</section>
+{% schema %}
+{"name":"Wishlist","settings":[]}
+{% endschema %}
+

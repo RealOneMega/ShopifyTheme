@@ -1,52 +1,27 @@
 <section class="section feature feature--rewards-ui section--background" data-feature="rewards-ui" style="{% render 'section-background-style', section: section %}">
   {% render 'section-background-media', section: section %}
   <div class="container">
-  {% if section.settings.heading != blank %}
-    <header class="section__header">
-      <h2 class="section__heading">{{ section.settings.heading }}</h2>
-      {% if section.settings.subheading != blank %}
-        <p class="section__description">{{ section.settings.subheading }}</p>
-      {% endif %}
-    </header>
-  {% endif %}
-    <div class="rewards">
-      <p>Points: {{ section.settings.points }}</p>
-      <p>Tier: {{ section.settings.tier }}</p>
-      <ul>
-        {% for block in section.blocks %}
-          <li>{{ block.settings.reward }}</li>
-        {% endfor %}
-      </ul>
-    </div>
+    {% if section.settings.heading != blank %}<h2 class="section__heading">{{ section.settings.heading }}</h2>{% endif %}
+    {% if section.settings.subheading != blank %}<p class="section__description">{{ section.settings.subheading }}</p>{% endif %}
+    {% for block in section.blocks %}{% render block %}{% endfor %}
+    {% if section.blocks.size == 0 and request.design_mode %}<div class="editor-note">Add a loyalty provider app block. Points, tiers, and redemptions must come from the configured provider.</div>{% endif %}
   </div>
 </section>
 
 {% schema %}
 {
-  "name": "Rewards UI",
+  "name": "Loyalty app",
   "settings": [
     {
       "type": "text",
       "id": "heading",
       "label": "Heading",
-      "default": "Rewards UI"
+      "default": "Rewards"
     },
     {
       "type": "text",
       "id": "subheading",
       "label": "Subheading"
-    },
-    {
-      "type": "number",
-      "id": "points",
-      "label": "Points",
-      "default": 1200
-    },
-    {
-      "type": "text",
-      "id": "tier",
-      "label": "Tier",
-      "default": "Gold"
     },
     {
       "type": "header",
@@ -162,23 +137,11 @@
       ]
     }
   ],
-  "blocks": [
-    {
-      "type": "reward",
-      "name": "Reward",
-      "settings": [
-        {
-          "type": "text",
-          "id": "reward",
-          "label": "Reward",
-          "default": "Free shipping"
-        }
-      ]
-    }
-  ],
+  "blocks": [{"type": "@app"}],
+  "max_blocks": 4,
   "presets": [
     {
-      "name": "Rewards UI",
+      "name": "Loyalty app",
       "category": "Marketing"
     }
   ]

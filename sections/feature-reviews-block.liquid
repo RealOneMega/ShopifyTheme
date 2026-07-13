@@ -1,35 +1,22 @@
 <section class="section feature feature--reviews-block section--background" data-feature="reviews-block" style="{% render 'section-background-style', section: section %}">
   {% render 'section-background-media', section: section %}
   <div class="container">
-  {% if section.settings.heading != blank %}
-    <header class="section__header">
-      <h2 class="section__heading">{{ section.settings.heading }}</h2>
-      {% if section.settings.subheading != blank %}
-        <p class="section__description">{{ section.settings.subheading }}</p>
-      {% endif %}
-    </header>
-  {% endif %}
-    <div class="reviews">
-      {% for block in section.blocks %}
-        <div class="review">
-          <strong>{{ block.settings.author }}</strong>
-          <span>{{ block.settings.rating }}★</span>
-          <p>{{ block.settings.text }}</p>
-        </div>
-      {% endfor %}
-    </div>
+    {% if section.settings.heading != blank %}<h2 class="section__heading">{{ section.settings.heading }}</h2>{% endif %}
+    {% if section.settings.subheading != blank %}<p class="section__description">{{ section.settings.subheading }}</p>{% endif %}
+    {% for block in section.blocks %}{% render block %}{% endfor %}
+    {% if section.blocks.size == 0 and request.design_mode %}<div class="editor-note">Add a verified reviews app block. The theme does not create or label merchant-entered copy as customer reviews.</div>{% endif %}
   </div>
 </section>
 
 {% schema %}
 {
-  "name": "Reviews block",
+  "name": "Reviews app",
   "settings": [
     {
       "type": "text",
       "id": "heading",
       "label": "Heading",
-      "default": "Reviews block"
+      "default": "Customer reviews"
     },
     {
       "type": "text",
@@ -150,38 +137,11 @@
       ]
     }
   ],
-  "blocks": [
-    {
-      "type": "review",
-      "name": "Review",
-      "settings": [
-        {
-          "type": "text",
-          "id": "author",
-          "label": "Author",
-          "default": "Customer"
-        },
-        {
-          "type": "range",
-          "id": "rating",
-          "label": "Rating",
-          "min": 1,
-          "max": 5,
-          "step": 1,
-          "default": 5
-        },
-        {
-          "type": "textarea",
-          "id": "text",
-          "label": "Review",
-          "default": "Great quality!"
-        }
-      ]
-    }
-  ],
+  "blocks": [{"type": "@app"}],
+  "max_blocks": 6,
   "presets": [
     {
-      "name": "Reviews block",
+      "name": "Reviews app",
       "category": "Testimonials"
     }
   ]

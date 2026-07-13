@@ -15,20 +15,20 @@
         "slide_FreEJr": {
           "type": "slide",
           "settings": {
-            "image": "shopify://shop_images/BannerTest.png",
+            "image": "",
             "image_fit": "cover",
-            "subtitle": "New drop",
-            "title": "Everyday layers",
-            "text": "Soft fleece, broken-in tees, and easy joggers made for daily wear.",
+            "subtitle": "Risky Limits",
+            "title": "Push limits. Define risk.",
+            "text": "Independent apparel for people who choose their own line.",
             "text_color": "light",
             "text_position": "top:12%;left:8%;",
             "focal_point": "object-position: center;",
             "overlay_opacity": 25,
-            "button_label_1": "Shop women",
-            "button_link_1": "/collections/all",
+            "button_label_1": "Shop the collection",
+            "button_link_1": "shopify://collections/all",
             "button_style_1": "primary",
-            "button_label_2": "Shop men",
-            "button_link_2": "/collections/all",
+            "button_label_2": "",
+            "button_link_2": "",
             "button_style_2": "secondary",
             "button_label_3": "",
             "button_link_3": "",
@@ -38,20 +38,20 @@
         "slide_jpdCQx": {
           "type": "slide",
           "settings": {
-            "image": "shopify://shop_images/TerminalVelocityBanner.jpg",
+            "image": "",
             "image_fit": "contain",
-            "subtitle": "Performance",
-            "title": "Move in comfort",
-            "text": "Breathable knits and stretch fabric that keep up with you.",
+            "subtitle": "Latest release",
+            "title": "Made beyond the comfort zone.",
+            "text": "Explore the latest Risky Limits release and available core pieces.",
             "text_color": "light",
             "text_position": "top:12%;left:8%;",
             "focal_point": "object-position: center;",
             "overlay_opacity": 25,
-            "button_label_1": "Shop new arrivals",
-            "button_link_1": "/collections/all",
+            "button_label_1": "Explore all products",
+            "button_link_1": "shopify://collections/all",
             "button_style_1": "primary",
-            "button_label_2": "Shop accessories",
-            "button_link_2": "/collections/all",
+            "button_label_2": "",
+            "button_link_2": "",
             "button_style_2": "secondary",
             "button_label_3": "",
             "button_link_3": "",
@@ -85,20 +85,20 @@
           "type": "tile",
           "settings": {
             "image": "",
-            "title": "Women",
-            "text": "Essentials, denim, and elevated basics.",
-            "button_label": "Shop women",
-            "button_link": "/collections/all"
+            "title": "Latest releases",
+            "text": "See what is currently available.",
+            "button_label": "Explore",
+            "button_link": "shopify://collections/all"
           }
         },
         "tile_men": {
           "type": "tile",
           "settings": {
             "image": "",
-            "title": "Men",
-            "text": "Soft layers, tees, and everyday sets.",
-            "button_label": "Shop men",
-            "button_link": "/collections/all"
+            "title": "Core collection",
+            "text": "The essential Risky Limits lineup.",
+            "button_label": "Shop all",
+            "button_link": "shopify://collections/all"
           }
         },
         "tile_accessories": {
@@ -106,9 +106,9 @@
           "settings": {
             "image": "",
             "title": "Accessories",
-            "text": "Hats, bags, and finishing touches.",
-            "button_label": "Shop accessories",
-            "button_link": "/collections/all"
+            "text": "Complete the fit with available accessories.",
+            "button_label": "Explore",
+            "button_link": "shopify://collections/all"
           }
         }
       },
@@ -119,7 +119,7 @@
       ],
       "settings": {
         "heading": "Shop by category",
-        "subheading": "Build the look with curated essentials.",
+        "subheading": "Find the pieces that define your line.",
         "background_type": "none",
         "background_color": "#ffffff",
         "background_gradient": "",
@@ -160,7 +160,7 @@
         "tab_performance"
       ],
       "settings": {
-        "heading": "Trending now",
+        "heading": "Shop Risky Limits",
         "limit": 4,
         "card_style": "below",
         "background_type": "none",
@@ -191,12 +191,12 @@
     "image_with_text": {
       "type": "feature-image-with-text",
       "settings": {
-        "heading": "Built for movement",
-        "subheading": "Performance details",
+        "heading": "Choose your own line",
+        "subheading": "The Risky Limits standard",
         "image": "",
-        "body": "<p>From breathable knits to four-way stretch, every piece is made to move with you. Layer it, lounge in it, live in it.</p>",
-        "button_label": "Learn more",
-        "button_link": "/pages/about",
+        "body": "<p>Risky Limits is built around one idea: progress starts where comfort ends. Explore the current collection and decide what the next limit looks like.</p>",
+        "button_label": "Shop the collection",
+        "button_link": "shopify://collections/all",
         "background_type": "none",
         "background_color": "#ffffff",
         "background_gradient": "",
@@ -213,24 +213,24 @@
           "type": "usp",
           "settings": {
             "icon": "truck",
-            "heading": "Free shipping",
-            "text": "On orders over $75."
+            "heading": "Secure checkout",
+            "text": "Checkout is processed by Shopify."
           }
         },
         "usp_returns": {
           "type": "usp",
           "settings": {
             "icon": "shield",
-            "heading": "Easy returns",
-            "text": "30-day returns on all items."
+            "heading": "Order access",
+            "text": "Sign in to review your order history."
           }
         },
         "usp_rewards": {
           "type": "usp",
           "settings": {
             "icon": "star",
-            "heading": "Member perks",
-            "text": "Early access to drops and rewards."
+            "heading": "Stay connected",
+            "text": "Opt in for release and store updates."
           }
         }
       },
@@ -249,52 +249,11 @@
         "background_repeat": "no-repeat"
       }
     },
-    "testimonials": {
-      "type": "testimonials",
-      "blocks": {
-        "testimonial_1": {
-          "type": "testimonial",
-          "settings": {
-            "quote": "Best-fitting joggers I've owned.",
-            "author": "Taylor M."
-          }
-        },
-        "testimonial_2": {
-          "type": "testimonial",
-          "settings": {
-            "quote": "The fleece is soft but still holds shape.",
-            "author": "Jordan P."
-          }
-        },
-        "testimonial_3": {
-          "type": "testimonial",
-          "settings": {
-            "quote": "Fast shipping and the quality is unreal.",
-            "author": "Alex R."
-          }
-        }
-      },
-      "block_order": [
-        "testimonial_1",
-        "testimonial_2",
-        "testimonial_3"
-      ],
-      "settings": {
-        "heading": "Loved by customers",
-        "background_type": "none",
-        "background_color": "#ffffff",
-        "background_gradient": "",
-        "background_position_x": 50,
-        "background_position_y": 50,
-        "background_size": "cover",
-        "background_repeat": "no-repeat"
-      }
-    },
     "email_capture": {
       "type": "feature-email-capture",
       "settings": {
-        "heading": "Join the club",
-        "subheading": "Get first access to new drops and member-only offers.",
+        "heading": "Enter the limit",
+        "subheading": "Opt in for Risky Limits releases and store updates.",
         "button_label": "Sign up",
         "background_type": "none",
         "background_color": "#ffffff",
@@ -313,7 +272,6 @@
     "featured_collection",
     "image_with_text",
     "usp",
-    "testimonials",
     "email_capture"
   ]
 }

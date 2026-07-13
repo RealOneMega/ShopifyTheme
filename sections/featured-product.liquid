@@ -2,9 +2,9 @@
   {% render 'section-background-media', section: section %}
   <div class="container">
     {% if section.settings.product != blank %}
-      {% render 'product-card', product: all_products[section.settings.product], style: section.settings.card_style %}
-    {% else %}
-      <p>Select a product.</p>
+      {% render 'product-card', product: section.settings.product, style: section.settings.card_style %}
+    {% elsif request.design_mode %}
+      <div class="empty-state">Select a product to feature.</div>
     {% endif %}
   </div>
 </section>
@@ -70,7 +70,7 @@
       "type": "color",
       "id": "background_color",
       "label": "Background color",
-      "default": "#ffffff"
+      "default": "#101318"
     },
     {
       "type": "color_background",

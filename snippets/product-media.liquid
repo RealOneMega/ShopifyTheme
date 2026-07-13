@@ -1,0 +1,17 @@
+{%- liquid
+  assign media_loading = loading | default: 'lazy'
+  assign media_priority = fetchpriority | default: 'auto'
+-%}
+{%- case media.media_type -%}
+  {%- when 'image' -%}
+    {%- assign media_alt = media.alt | default: product.title -%}
+    {{ media | image_url: width: 2400 | image_tag: loading: media_loading, fetchpriority: media_priority, widths: '480, 720, 960, 1200, 1600, 2000, 2400', sizes: '(min-width: 990px) 58vw, 100vw', alt: media_alt }}
+  {%- when 'video' -%}
+    {{ media | video_tag: controls: true, autoplay: false, loop: false, muted: false, preload: 'metadata', image_size: '1200x' }}
+  {%- when 'external_video' -%}
+    {{ media | external_video_tag }}
+  {%- when 'model' -%}
+    {{ media | model_viewer_tag: reveal: 'interaction', toggleable: true, image_size: '1200x' }}
+  {%- else -%}
+    {{ media | media_tag }}
+{%- endcase -%}

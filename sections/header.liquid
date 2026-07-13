@@ -1,4 +1,4 @@
-<section class="header section--background" style="{% render 'section-background-style', section: section %}">
+<section class="header section--background" data-header-section="{{ section.id }}" style="{% render 'section-background-style', section: section %}">
   {% render 'section-background-media', section: section %}
   {% if section.settings.show_utility_row %}
     {% assign utility_alignment = section.settings.utility_alignment | default: 'center' %}
@@ -7,7 +7,7 @@
         <div class="header__utility-slot header__utility-slot--left">
           {% if section.settings.utility_menu != blank and utility_alignment == 'left' %}
             <nav aria-label="Utility" class="header__utility-links">
-              {% for link in linklists[section.settings.utility_menu].links %}
+              {% for link in section.settings.utility_menu.links %}
                 <a href="{{ link.url }}">{{ link.title }}</a>
               {% endfor %}
             </nav>
@@ -16,7 +16,7 @@
         <div class="header__utility-slot header__utility-slot--center">
           {% if section.settings.utility_menu != blank and utility_alignment == 'center' %}
             <nav aria-label="Utility" class="header__utility-links">
-              {% for link in linklists[section.settings.utility_menu].links %}
+              {% for link in section.settings.utility_menu.links %}
                 <a href="{{ link.url }}">{{ link.title }}</a>
               {% endfor %}
             </nav>
@@ -25,21 +25,13 @@
         <div class="header__utility-slot header__utility-slot--right">
           {% if section.settings.utility_menu != blank and utility_alignment == 'right' %}
             <nav aria-label="Utility" class="header__utility-links">
-              {% for link in linklists[section.settings.utility_menu].links %}
+              {% for link in section.settings.utility_menu.links %}
                 <a href="{{ link.url }}">{{ link.title }}</a>
               {% endfor %}
             </nav>
           {% endif %}
           {% if section.settings.show_localization %}
-            {% form 'localization' %}
-              <select class="field field--select" name="country_code" aria-label="{{ 'localization.country_label' | t }}">
-                {% for country in localization.available_countries %}
-                  <option value="{{ country.iso_code }}" {% if country.iso_code == localization.country.iso_code %}selected{% endif %}>
-                    {{ country.name }} ({{ country.currency.iso_code }})
-                  </option>
-                {% endfor %}
-              </select>
-            {% endform %}
+            {% render 'localization-form', id: section.id, show_country: true, show_language: section.settings.show_language %}
           {% endif %}
         </div>
       </div>
@@ -53,11 +45,12 @@
   {% capture nav_markup %}
     <nav class="{{ nav_class }}" aria-label="Primary">
       <div class="nav__list">
-        {% for link in linklists[section.settings.main_menu].links %}
+        {% for link in section.settings.main_menu.links %}
           <div class="nav__item">
           {% if link.links != blank %}
-            <a class="nav__link" href="{{ link.url }}" data-mega-trigger aria-haspopup="true" aria-expanded="false">{{ link.title }}</a>
-            <div class="nav__dropdown" aria-hidden="true">
+            {%- assign link_key = link.title | handle -%}
+            <a class="nav__link" href="{{ link.url }}" data-mega-trigger aria-haspopup="true" aria-expanded="false" aria-controls="MegaMenu-{{ section.id }}-{{ link_key }}">{{ link.title }}</a>
+            <div class="nav__dropdown" id="MegaMenu-{{ section.id }}-{{ link_key }}" aria-hidden="true">
               {% for child in link.links %}
                 <div>
                   <a href="{{ child.url }}"><strong>{{ child.title }}</strong></a>
@@ -71,11 +64,39 @@
                 </div>
               {% endfor %}
               {% for block in section.blocks %}
-                {% if block.type == 'promo' and block.settings.parent_link == link.title %}
-                  <a href="{{ block.settings.link }}" style="display:block;">
-                    {{ block.settings.image | image_url: width: 320 | image_tag: loading: 'lazy' }}
-                    <p>{{ block.settings.heading }}</p>
-                  </a>
+                {%- assign block_parent = block.settings.parent_link | handle -%}
+                {% if block_parent == link_key %}
+                  {% case block.type %}
+                    {% when 'promo' %}
+                      <a class="mega-menu__feature" href="{{ block.settings.link | default: link.url }}" {{ block.shopify_attributes }}>
+                        {% if block.settings.image != blank %}
+                          {{ block.settings.image | image_url: width: 640 | image_tag: loading: 'lazy', widths: '240, 360, 480, 640', sizes: '280px', alt: block.settings.heading }}
+                        {% endif %}
+                        {% if block.settings.heading != blank %}<strong>{{ block.settings.heading }}</strong>{% endif %}
+                        {% if block.settings.text != blank %}<span>{{ block.settings.text }}</span>{% endif %}
+                      </a>
+                    {% when 'featured_collection' %}
+                      {% assign featured_collection = block.settings.collection %}
+                      {% if featured_collection != blank %}
+                        <a class="mega-menu__feature" href="{{ featured_collection.url }}" {{ block.shopify_attributes }}>
+                          {% if featured_collection.featured_image != blank %}
+                            {{ featured_collection.featured_image | image_url: width: 640 | image_tag: loading: 'lazy', widths: '240, 360, 480, 640', sizes: '280px', alt: featured_collection.title }}
+                          {% endif %}
+                          <strong>{{ block.settings.heading | default: featured_collection.title }}</strong>
+                        </a>
+                      {% endif %}
+                    {% when 'featured_product' %}
+                      {% assign featured_product = block.settings.product %}
+                      {% if featured_product != blank %}
+                        <a class="mega-menu__feature" href="{{ featured_product.url }}" {{ block.shopify_attributes }}>
+                          {% if featured_product.featured_image != blank %}
+                            {{ featured_product.featured_image | image_url: width: 640 | image_tag: loading: 'lazy', widths: '240, 360, 480, 640', sizes: '280px', alt: featured_product.title }}
+                          {% endif %}
+                          <strong>{{ block.settings.heading | default: featured_product.title }}</strong>
+                          <span>{{ featured_product.price | money }}</span>
+                        </a>
+                      {% endif %}
+                  {% endcase %}
                 {% endif %}
               {% endfor %}
             </div>
@@ -90,14 +111,17 @@
 
   <div class="header__sticky {% if section.settings.sticky %}header__sticky--enabled{% endif %}">
     <div class="header__main {% if section.settings.layout == 'logo_center' %}header__main--center{% endif %}">
-      <button class="header__icon-button header__menu-toggle" type="button" data-drawer-open="#mobile-menu" aria-label="Open menu">
+      <button class="header__icon-button header__menu-toggle" type="button" data-drawer-open="#mobile-menu" aria-controls="mobile-menu" aria-expanded="false" aria-label="{{ 'accessibility.open_menu' | t }}">
         {% render 'icon-menu' %}
       </button>
 
       <div class="header__logo {% if section.settings.layout == 'logo_center' %}header__logo--center{% else %}header__logo--left{% endif %}" style="max-width:{{ section.settings.logo_width }}px;">
         <a href="{{ routes.root_url }}" aria-label="{{ shop.name }}">
           {% if settings.logo != blank %}
-            {{ settings.logo | image_url: width: 320 | image_tag: loading: 'lazy', alt: shop.name, class: 'header__logo-image' }}
+            <picture>
+              {% if settings.logo_mobile != blank %}<source media="(max-width: 749px)" srcset="{{ settings.logo_mobile | image_url: width: 480 }}">{% endif %}
+              {{ settings.logo | image_url: width: 560 | image_tag: loading: 'eager', fetchpriority: 'high', widths: '160, 240, 320, 480, 560', sizes: '(max-width: 749px) 150px, 220px', alt: shop.name, class: 'header__logo-image' }}
+            </picture>
           {% else %}
             <strong>{{ shop.name }}</strong>
           {% endif %}
@@ -115,19 +139,23 @@
       {% endif %}
 
       <div class="header__icons header__icons--desktop" style="justify-self:end;">
-        <button class="header__icon-button" type="button" data-drawer-open="#search-drawer" aria-label="Search">
+        <button class="header__icon-button" type="button" data-drawer-open="#search-drawer" aria-controls="search-drawer" aria-expanded="false" aria-label="{{ 'accessibility.open_search' | t }}">
           {% render 'icon-search' %}
         </button>
         <a class="header__icon-button" href="{{ routes.account_url }}" aria-label="Account">
           {% render 'icon-account' %}
         </a>
-        <button class="header__icon-button" type="button" data-drawer-open="#wishlist-drawer" aria-label="Wishlist">
-          {% render 'icon-heart' %}
-        </button>
-        <button class="header__icon-button" type="button" data-drawer-open="#cart-drawer" aria-label="Cart">
+        {% if settings.enable_wishlist %}
+          <button class="header__icon-button" type="button" data-drawer-open="#wishlist-drawer" aria-controls="wishlist-drawer" aria-expanded="false" aria-label="{{ 'wishlist.title' | t }}">
+            {% render 'icon-heart' %}
+            <span class="header__badge hidden" data-wishlist-count aria-live="polite">0</span>
+          </button>
+        {% endif %}
+        <button class="header__icon-button" type="button" data-drawer-open="#cart-drawer" aria-controls="cart-drawer" aria-expanded="false" aria-label="{{ 'accessibility.open_cart' | t }}">
           {% render 'icon-cart' %}
           <span class="header__badge{% if cart.item_count == 0 %} hidden{% endif %}" data-cart-count aria-live="polite">{{ cart.item_count }}</span>
         </button>
+        <a class="header__icon-button no-js-cart-link" href="{{ routes.cart_url }}" aria-label="{{ 'cart.title' | t }}">{% render 'icon-cart' %}</a>
       </div>
     </div>
 
@@ -137,29 +165,33 @@
   </div>
 </section>
 
-<div id="mobile-menu" class="drawer" role="dialog" aria-modal="true" aria-label="Mobile menu">
+<div id="mobile-menu" class="drawer" role="dialog" aria-modal="true" aria-labelledby="MobileMenuTitle" aria-hidden="true">
   <div class="drawer__header">
-    <strong>Menu</strong>
-    <button class="header__icon-button" type="button" data-drawer-close aria-label="Close menu">{% render 'icon-close' %}</button>
+    <strong id="MobileMenuTitle">Menu</strong>
+    <button class="header__icon-button" type="button" data-drawer-close aria-label="{{ 'accessibility.close' | t }}">{% render 'icon-close' %}</button>
   </div>
   <div class="drawer__content">
     <div class="mobile-menu__icons">
-      <button class="header__icon-button" type="button" data-drawer-open="#search-drawer" aria-label="Search">
+      <button class="header__icon-button" type="button" data-drawer-open="#search-drawer" aria-controls="search-drawer" aria-expanded="false" aria-label="{{ 'accessibility.open_search' | t }}">
         {% render 'icon-search' %}
       </button>
       <a class="header__icon-button" href="{{ routes.account_url }}" aria-label="Account">
         {% render 'icon-account' %}
       </a>
-      <button class="header__icon-button" type="button" data-drawer-open="#wishlist-drawer" aria-label="Wishlist">
-        {% render 'icon-heart' %}
-      </button>
-      <button class="header__icon-button" type="button" data-drawer-open="#cart-drawer" aria-label="Cart">
+      {% if settings.enable_wishlist %}
+        <button class="header__icon-button" type="button" data-drawer-open="#wishlist-drawer" aria-controls="wishlist-drawer" aria-expanded="false" aria-label="{{ 'wishlist.title' | t }}">
+          {% render 'icon-heart' %}
+          <span class="header__badge hidden" data-wishlist-count aria-live="polite">0</span>
+        </button>
+      {% endif %}
+      <button class="header__icon-button" type="button" data-drawer-open="#cart-drawer" aria-controls="cart-drawer" aria-expanded="false" aria-label="{{ 'accessibility.open_cart' | t }}">
         {% render 'icon-cart' %}
         <span class="header__badge{% if cart.item_count == 0 %} hidden{% endif %}" data-cart-count aria-live="polite">{{ cart.item_count }}</span>
       </button>
+      <a class="header__icon-button no-js-cart-link" href="{{ routes.cart_url }}" aria-label="{{ 'cart.title' | t }}">{% render 'icon-cart' %}</a>
     </div>
     <nav aria-label="Mobile">
-      {% for link in linklists[section.settings.main_menu].links %}
+      {% for link in section.settings.main_menu.links %}
         <div class="mobile-menu__item">
           <div class="mobile-menu__row">
             <a class="mobile-menu__link" href="{{ link.url }}">{{ link.title }}</a>
@@ -198,60 +230,79 @@
   </div>
 </div>
 
-<div id="search-drawer" class="drawer" role="dialog" aria-modal="true" aria-label="Search">
+<div id="search-drawer" class="drawer" role="dialog" aria-modal="true" aria-labelledby="SearchDrawerTitle" aria-hidden="true">
   <div class="drawer__header">
-    <strong>Search</strong>
-    <button class="header__icon-button" type="button" data-drawer-close aria-label="Close search">{% render 'icon-close' %}</button>
+    <strong id="SearchDrawerTitle">{{ 'search.title' | t }}</strong>
+    <button class="header__icon-button" type="button" data-drawer-close aria-label="{{ 'accessibility.close' | t }}">{% render 'icon-close' %}</button>
   </div>
   <div class="drawer__content">
     <form action="{{ routes.search_url }}" method="get" role="search" data-predictive-search>
-      <label class="visually-hidden" for="SearchInput">Search</label>
-      <input class="field" id="SearchInput" type="search" name="q" placeholder="Search products" autocomplete="off">
-      <div data-predictive-results></div>
+      <label for="SearchInput-{{ section.id }}">{{ 'general.search' | t }}</label>
+      <input class="field" id="SearchInput-{{ section.id }}" type="search" name="q" placeholder="Search products" autocomplete="off" autofocus>
+      <div class="predictive-search" id="PredictiveResults-{{ section.id }}" data-predictive-results hidden></div>
+      <button class="button button--primary" type="submit">{{ 'general.search' | t }}</button>
     </form>
   </div>
 </div>
 
-<div id="wishlist-drawer" class="drawer" role="dialog" aria-modal="true" aria-label="Wishlist">
+{% if settings.enable_wishlist %}
+<div id="wishlist-drawer" class="drawer" role="dialog" aria-modal="true" aria-labelledby="WishlistDrawerTitle" aria-hidden="true">
   <div class="drawer__header">
-    <strong>Wishlist</strong>
-    <button class="header__icon-button" type="button" data-drawer-close aria-label="Close wishlist">{% render 'icon-close' %}</button>
+    <strong id="WishlistDrawerTitle">{{ 'wishlist.title' | t }}</strong>
+    <button class="header__icon-button" type="button" data-drawer-close aria-label="{{ 'accessibility.close' | t }}">{% render 'icon-close' %}</button>
   </div>
   <div class="drawer__content">
     <div data-wishlist-items>
-      <p>Your wishlist is empty.</p>
+      <p>{{ 'wishlist.empty' | t }}</p>
     </div>
   </div>
 </div>
+{% endif %}
 
-<div id="cart-drawer" class="drawer" role="dialog" aria-modal="true" aria-label="Cart" data-cart-drawer>
+<div id="cart-drawer" class="drawer" role="dialog" aria-modal="true" aria-labelledby="CartDrawerTitle" aria-hidden="true" data-cart-drawer>
   <div class="drawer__header">
-    <strong>Cart</strong>
-    <button class="header__icon-button" type="button" data-drawer-close aria-label="Close cart">{% render 'icon-close' %}</button>
+    <strong id="CartDrawerTitle">{{ 'cart.title' | t }}</strong>
+    <button class="header__icon-button" type="button" data-drawer-close aria-label="{{ 'accessibility.close' | t }}">{% render 'icon-close' %}</button>
   </div>
   <div class="drawer__content" data-cart-drawer-content>
     <div data-cart-drawer-empty{% unless cart.item_count == 0 %} class="hidden"{% endunless %}>
-      <p>Your cart is empty.</p>
-      <a class="button button--primary" href="{{ routes.all_products_collection_url }}">Shop now</a>
+      <p>{{ 'cart.empty' | t }}</p>
+      <a class="button button--primary" href="{{ routes.all_products_collection_url }}">{{ 'cart.continue_shopping' | t }}</a>
     </div>
     <div data-cart-drawer-filled{% if cart.item_count == 0 %} class="hidden"{% endif %}>
       <div class="stack" data-cart-drawer-items>
         {% for item in cart.items %}
-          <div class="cart-drawer-item">
-            {{ item.image | image_url: width: 120 | image_tag: loading: 'lazy', alt: item.product.title }}
+          <div class="cart-drawer-item" data-cart-line-key="{{ item.key }}">
+            <a href="{{ item.url }}">{{ item.image | image_url: width: 160 | image_tag: loading: 'lazy', alt: item.image.alt | default: item.product.title }}</a>
             <div class="cart-drawer-item__details">
-              <strong>{{ item.product.title }}</strong>
-              <div>{{ item.final_price | money }}</div>
+              <a href="{{ item.url }}"><strong>{{ item.product.title }}</strong></a>
+              {% unless item.variant.title == 'Default Title' %}<span class="cart-drawer-item__variant">{{ item.variant.title }}</span>{% endunless %}
+              {% if item.selling_plan_allocation != blank %}<span>{{ item.selling_plan_allocation.selling_plan.name }}</span>{% endif %}
+              <div>{{ item.final_line_price | money }}</div>
+              <div class="quantity-control" aria-label="Quantity for {{ item.product.title | escape }}">
+                <button type="button" data-cart-quantity="{{ item.quantity | minus: 1 | at_least: 0 }}" aria-label="Decrease quantity">−</button>
+                <span aria-live="polite">{{ item.quantity }}</span>
+                <button type="button" data-cart-quantity="{{ item.quantity | plus: 1 }}" aria-label="Increase quantity">+</button>
+              </div>
+              <button class="button button--tertiary" type="button" data-cart-remove>{{ 'cart.remove' | t: title: item.product.title }}</button>
             </div>
-            <span class="cart-drawer-item__qty">{{ item.quantity }}</span>
           </div>
         {% endfor %}
       </div>
       <div class="cart-drawer-summary">
-        <strong>Total: <span data-cart-drawer-total>{{ cart.total_price | money }}</span></strong>
+        {% if settings.free_shipping_threshold > 0 %}
+          {% assign shipping_goal = settings.free_shipping_threshold | times: 100 %}
+          {% assign shipping_percent = cart.total_price | times: 100 | divided_by: shipping_goal | at_most: 100 %}
+          {% assign shipping_remaining = shipping_goal | minus: cart.total_price | at_least: 0 %}
+          <div class="free-shipping-progress" data-free-shipping-progress>
+            <p data-free-shipping-message>{% if shipping_remaining > 0 %}Add {{ shipping_remaining | money }} for free shipping.{% else %}You reached the free-shipping goal.{% endif %}</p>
+            <div class="free-shipping-progress__bar" role="progressbar" aria-label="Free-shipping progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{ shipping_percent }}" data-free-shipping-bar style="--progress: {{ shipping_percent }}%;"></div>
+          </div>
+        {% endif %}
+        <strong>{{ 'cart.subtotal' | t }}: <span data-cart-drawer-total>{{ cart.total_price | money }}</span></strong>
         <a class="button button--secondary" href="{{ routes.cart_url }}">View cart</a>
         <form action="{{ routes.cart_url }}" method="post">
-          <button class="button button--primary" type="submit" name="checkout">Checkout</button>
+          <button class="button button--primary" type="submit" name="checkout">{{ 'cart.checkout' | t }}</button>
         </form>
       </div>
     </div>
@@ -353,6 +404,12 @@
       "default": true
     },
     {
+      "type": "checkbox",
+      "id": "show_language",
+      "label": "Show language selector",
+      "default": true
+    },
+    {
       "type": "header",
       "content": "Background"
     },
@@ -388,7 +445,7 @@
       "type": "color",
       "id": "background_color",
       "label": "Background color",
-      "default": "#ffffff"
+      "default": "#08090b"
     },
     {
       "type": "color_background",
@@ -487,10 +544,33 @@
           "label": "Heading"
         },
         {
+          "type": "text",
+          "id": "text",
+          "label": "Description"
+        },
+        {
           "type": "url",
           "id": "link",
           "label": "Link"
         }
+      ]
+    },
+    {
+      "type": "featured_collection",
+      "name": "Mega menu collection",
+      "settings": [
+        {"type": "text", "id": "parent_link", "label": "Parent link title"},
+        {"type": "collection", "id": "collection", "label": "Collection"},
+        {"type": "text", "id": "heading", "label": "Custom heading"}
+      ]
+    },
+    {
+      "type": "featured_product",
+      "name": "Mega menu product",
+      "settings": [
+        {"type": "text", "id": "parent_link", "label": "Parent link title"},
+        {"type": "product", "id": "product", "label": "Product"},
+        {"type": "text", "id": "heading", "label": "Custom heading"}
       ]
     }
   ]

@@ -1,0 +1,39 @@
+<form class="facets" id="Facets-{{ id }}" action="{{ collection.url }}" method="get" data-facet-form>
+  {%- if collection.sort_by != blank -%}<input type="hidden" name="sort_by" value="{{ collection.sort_by }}">{%- endif -%}
+  {%- for filter in collection.filters -%}
+    <details class="facet" open>
+      <summary>
+        <span>{{ filter.label }}</span>
+        {%- if filter.active_values.size > 0 -%}<span class="facet__count">{{ filter.active_values.size }}</span>{%- endif -%}
+      </summary>
+      <div class="facet__panel">
+        {%- case filter.type -%}
+          {%- when 'boolean', 'list' -%}
+            <ul class="facet__values" role="list">
+              {%- for value in filter.values -%}
+                <li>
+                  <label class="facet__value{% if value.count == 0 and value.active == false %} is-disabled{% endif %}">
+                    <input type="checkbox" name="{{ value.param_name }}" value="{{ value.value }}"{% if value.active %} checked{% endif %}{% if value.count == 0 and value.active == false %} disabled{% endif %}>
+                    <span>{{ value.label }}</span>
+                    <span aria-hidden="true">{{ value.count }}</span>
+                  </label>
+                </li>
+              {%- endfor -%}
+            </ul>
+          {%- when 'price_range' -%}
+            <div class="facet__price">
+              <label for="Filter-{{ id }}-{{ filter.label | handle }}-Min">Minimum {{ cart.currency.symbol }}</label>
+              <input class="field" id="Filter-{{ id }}-{{ filter.label | handle }}-Min" type="number" name="{{ filter.min_value.param_name }}" value="{{ filter.min_value.value | money_without_currency | replace: ',', '' }}" min="0" max="{{ filter.range_max | money_without_currency | replace: ',', '' }}" inputmode="decimal">
+              <label for="Filter-{{ id }}-{{ filter.label | handle }}-Max">Maximum {{ cart.currency.symbol }}</label>
+              <input class="field" id="Filter-{{ id }}-{{ filter.label | handle }}-Max" type="number" name="{{ filter.max_value.param_name }}" value="{{ filter.max_value.value | money_without_currency | replace: ',', '' }}" min="0" max="{{ filter.range_max | money_without_currency | replace: ',', '' }}" inputmode="decimal">
+            </div>
+        {%- endcase -%}
+      </div>
+    </details>
+  {%- endfor -%}
+  <div class="facets__actions">
+    <button class="button button--primary" type="submit">Apply filters</button>
+    <a class="button button--tertiary" href="{{ collection.url }}{% if collection.sort_by != blank %}?sort_by={{ collection.sort_by | url_encode }}{% endif %}">Clear all</a>
+  </div>
+</form>
+

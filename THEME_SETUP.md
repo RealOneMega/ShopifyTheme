@@ -1,44 +1,59 @@
-# Theme setup guide
+# Risky Limits 2.0 setup guide
 
-## Header layouts
-1. Open **Header** section in the Theme Editor.
-2. Choose **Layout**:
-   - **Logo left**: choose **Menu position** center or right.
-   - **Logo center**: logo centers with menu below.
-3. Toggle **Sticky header** and optional **Utility row** + **country selector** as needed.
+## 1. Install as an unpublished theme
 
-## Promo bar slideshow
-1. Add multiple blocks in **Promo bar** section.
-2. Enable **Autoplay** and adjust the autoplay speed.
-3. Toggle **Dismissible** per promo to allow the customer to hide it.
+Upload `Risky Limits-2.0.0.zip` in Shopify Admin. Keep it unpublished while completing this guide and `THEME_QA.md`.
 
-## Marketing popup
-1. Open **Newsletter popup** and enable it.
-2. Select a trigger:
-   - **Delay** (seconds), **Scroll** (%), **Exit intent**, or **Manual**.
-3. Add copy, image, GDPR note, and button style.
+## 2. Brand and global settings
 
-## Rewards integration
-- The **Rewards program** section reads `customer.metafields.rewards.points` when present.
-- Redemption options are configured in Theme Editor.
-- For a secure in-house rewards system, plan a private Shopify app + Functions to validate balances and issue codes.
-- Use the data attributes for integration hooks: `data-reward-option`, `data-reward-redeem`, `data-rewards-ledger`.
+- Upload desktop/mobile white logos for the dark header and a square favicon.
+- Review all color, typography, layout, radius, button, input, product-card, cart, search, wishlist, social, and motion settings.
+- Replace `theme_support_email` in `config/settings_schema.json` with a monitored business address before launch.
+- Set the free-shipping goal only when it exactly matches the active Shopify shipping configuration for every relevant Market; otherwise leave it at 0.
 
-## Reviews integration
-- Reviews display only on the product page (inside **Main product** section).
-- Install your preferred reviews app (Shopify Product Reviews, Judge.me, Yotpo) and target the `data-review-app` container.
+## 3. Navigation and section groups
 
-## QA checklist
-- Theme Editor:
-  - Verify all sections render and settings update properly.
-  - Check promo bar and header group order.
-- Lighthouse:
-  - Verify optimized images and no layout shift in hero.
-  - Confirm JS is deferred and CSS is minimal.
-- Mobile navigation:
-  - Ensure menu drawer opens/closes and is keyboard accessible.
-- Keyboard navigation:
-  - Test mega menu open/close via Enter/Space and Escape.
-  - Check focus states on buttons and links.
-- Modals:
-  - Newsletter popup closes on ESC or overlay click.
+- Create the main, footer, policy, and optional utility menus in Shopify Admin.
+- Assign those menus in the Header and Footer groups.
+- Build mega-menu blocks by matching each block's menu item text exactly to the top-level link title.
+- Configure announcement text and links. Do not publish discount, delivery, inventory, or urgency claims unless the underlying configuration makes them true.
+- Enable country and language selectors after Shopify Markets and translated languages are configured.
+
+## 4. Catalog and homepage
+
+- Create intentional automated/manual collections and replace the default `all` collection assignments.
+- Upload final hero, editorial, product, collection, and social-sharing media with useful alt text and focal points.
+- Review every homepage section; remove unused sections and replace all default copy with approved brand content.
+- Add policy pages, contact information, shipping details, returns details, privacy/terms, and accessibility information.
+
+## 5. Product data
+
+Supported custom metafields:
+
+- `custom.product_subtitle`
+- `custom.badge`
+- `custom.size_fit` or `custom.size_and_fit`
+- `custom.size_chart` or `custom.size_chart_image`
+- `custom.details_materials` or `custom.details_and_materials`
+- `custom.shipping_returns` or `custom.shipping_and_returns`
+
+Populate product media, variants, prices, compare-at prices, inventory policies, unit pricing, and selling plans in Shopify Admin. The theme reads these values; it does not create them.
+
+## 6. App integrations
+
+Install and configure provider app blocks for reviews, purchase activity, loyalty/rewards, quantity pricing/bundles, back-in-stock, or SMS. Add the provider's app block to the matching theme section or Main product section. Empty app hosts show guidance only in the Theme Editor and do not simulate shopper-facing data.
+
+Product-card ratings can be enabled globally when the reviews provider writes Shopify's `reviews.rating` and `reviews.rating_count` metafields.
+
+Referral content renders only when its provider URL is configured. The wishlist and recently viewed lists are browser-local and should not be marketed as account-synchronized.
+
+## 7. Accounts, Markets, checkout, and consent
+
+- Choose classic or new customer accounts and test all routes applicable to that choice.
+- Configure Markets, currencies, domains/subfolders, languages, duties/taxes, and market-specific shipping.
+- Configure payment methods, accelerated checkout, gift cards, subscriptions, and store credit in Shopify Admin where applicable.
+- Configure a consent-management solution before adding non-essential analytics, advertising, or tracking scripts.
+
+## 8. Launch
+
+Run Theme Check and package the release, then complete every applicable live-preview case in `THEME_QA.md`. Duplicate the current live theme for rollback immediately before publishing.

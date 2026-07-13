@@ -10,14 +10,14 @@
     </header>
   {% endif %}
     <div class="tabs">
-      <div class="tabs__triggers">
+      <div class="tabs__triggers" role="tablist" aria-label="{{ section.settings.heading | escape }}">
         {% for block in section.blocks %}
-          <button class="tabs__trigger" data-tab-trigger data-tab-id="tab-{{ block.id }}">{{ block.settings.title }}</button>
+          <button class="tabs__trigger{% if forloop.first %} is-active{% endif %}" type="button" id="tab-trigger-{{ block.id }}" role="tab" data-tab-trigger data-tab-id="tab-{{ block.id }}" aria-controls="tab-{{ block.id }}" aria-selected="{% if forloop.first %}true{% else %}false{% endif %}" tabindex="{% if forloop.first %}0{% else %}-1{% endif %}" {{ block.shopify_attributes }}>{{ block.settings.title }}</button>
         {% endfor %}
       </div>
       <div class="tabs__panels">
         {% for block in section.blocks %}
-          <div class="tabs__panel{% if forloop.first %} is-active{% endif %}" id="tab-{{ block.id }}" data-tab-panel>
+          <div class="tabs__panel{% unless forloop.first %} hidden{% endunless %}" id="tab-{{ block.id }}" role="tabpanel" aria-labelledby="tab-trigger-{{ block.id }}" data-tab-panel{% unless forloop.first %} hidden{% endunless %}>
             {{ block.settings.content }}
           </div>
         {% endfor %}

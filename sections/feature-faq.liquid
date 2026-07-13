@@ -11,8 +11,8 @@
   {% endif %}
     <div class="accordion" data-accordion>
       {% for block in section.blocks %}
-        <div class="accordion__item">
-          <button class="accordion__button" data-accordion-button aria-expanded="false">{{ block.settings.question }}</button>
+        <div class="accordion__item" {{ block.shopify_attributes }}>
+          <button class="accordion__button" type="button" data-accordion-button aria-expanded="false">{{ block.settings.question }}</button>
           <div class="accordion__panel hidden">{{ block.settings.answer }}</div>
         </div>
       {% endfor %}

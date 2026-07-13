@@ -1,0 +1,5 @@
+<{{ block.settings.level }} class="heading theme-block-heading" {{ block.shopify_attributes }}>{{ block.settings.text | escape }}</{{ block.settings.level }}>
+{% schema %}
+{"name":"Heading","settings":[{"type":"text","id":"text","label":"Text","default":"Push past ordinary"},{"type":"select","id":"level","label":"Heading level","default":"h2","options":[{"value":"h2","label":"H2"},{"value":"h3","label":"H3"},{"value":"h4","label":"H4"}]}],"presets":[{"name":"Heading"}]}
+{% endschema %}
+

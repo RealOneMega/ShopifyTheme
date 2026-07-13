@@ -1,5 +1,52 @@
 {
+  "accessibility": {
+    "back_to_top": "Back to top",
+    "breadcrumbs": "Breadcrumbs",
+    "close": "Close",
+    "open_cart": "Open cart",
+    "open_menu": "Open menu",
+    "open_search": "Open search",
+    "skip_to_content": "Skip to content"
+  },
+  "cart": {
+    "added": "Added to cart.",
+    "adding": "Adding…",
+    "checkout": "Checkout",
+    "continue_shopping": "Continue shopping",
+    "empty": "Your cart is empty.",
+    "error": "We could not update your cart. Please try again.",
+    "remove": "Remove {{ title }}",
+    "subtotal": "Subtotal",
+    "title": "Your cart",
+    "update": "Update cart"
+  },
+  "general": {
+    "home": "Home",
+    "loading": "Loading…",
+    "search": "Search"
+  },
   "localization": {
-    "country_label": "Country"
+    "country_label": "Country/region",
+    "language_label": "Language",
+    "update": "Update preferences"
+  },
+  "products": {
+    "add_to_cart": "Add to cart",
+    "choose_options": "Choose options",
+    "quick_add": "Quick add",
+    "quick_view": "Quick view",
+    "save_to_wishlist": "Save to wishlist",
+    "sold_out": "Sold out",
+    "unavailable": "Unavailable"
+  },
+  "search": {
+    "results_count": "Search results updated.",
+    "title": "Search"
+  },
+  "wishlist": {
+    "added": "Added to wishlist.",
+    "empty": "Your wishlist is empty.",
+    "removed": "Removed from wishlist.",
+    "title": "Wishlist"
   }
 }

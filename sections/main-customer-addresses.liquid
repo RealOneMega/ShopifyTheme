@@ -1,0 +1,8 @@
+<section class="section customer-page">
+  <div class="container">
+    <header class="customer-page__header"><div><p class="eyebrow">Member profile</p><h1 class="heading">Addresses</h1></div><a class="button button--secondary" href="{{ routes.account_url }}">Back to account</a></header>
+    <details class="address-form-panel"><summary class="button button--primary">Add a new address</summary>{% form 'customer_address', customer.new_address, class: 'customer-form' %}{% render 'customer-address-fields', form: form, id: 'New' %}<button class="button button--primary" type="submit">Add address</button>{% endform %}</details>
+    {% paginate customer.addresses by 12 %}<div class="address-grid">{% for address in customer.addresses %}<article class="address-card">{% if address == customer.default_address %}<span class="badge">Default</span>{% endif %}{{ address | format_address }}<details><summary class="button button--secondary">Edit</summary>{% form 'customer_address', address, class: 'customer-form' %}{% render 'customer-address-fields', form: form, id: address.id %}<button class="button button--primary" type="submit">Update address</button>{% endform %}</details><form method="post" action="{{ routes.account_addresses_url }}/{{ address.id }}"><input type="hidden" name="_method" value="delete"><button class="button button--tertiary" type="submit">Delete</button></form></article>{% endfor %}</div>{% render 'pagination', paginate: paginate %}{% endpaginate %}
+  </div>
+</section>
+{% schema %}{"name":"Customer addresses","settings":[]}{% endschema %}

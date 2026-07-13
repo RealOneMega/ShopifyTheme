@@ -1,22 +1,51 @@
 <section class="section section--background" style="{% render 'section-background-style', section: section %}">
   {% render 'section-background-media', section: section %}
   <div class="container">
-    <h1 class="heading">Search</h1>
-    <form action="{{ routes.search_url }}" method="get" role="search">
-      <input type="search" name="q" value="{{ search.terms }}" placeholder="Search" aria-label="Search">
+    <header class="section__header">
+      <p class="eyebrow">Discover Risky Limits</p>
+      <h1 class="heading">{{ 'search.title' | t }}</h1>
+      {% if search.performed %}<p>{{ search.results_count }} results for “{{ search.terms | escape }}”</p>{% endif %}
+    </header>
+    <form class="search-page__form" action="{{ routes.search_url }}" method="get" role="search">
+      <label for="SearchPageInput-{{ section.id }}">{{ 'general.search' | t }}</label>
+      <div class="search-page__field">
+        <input class="field" id="SearchPageInput-{{ section.id }}" type="search" name="q" value="{{ search.terms | escape }}" placeholder="Search products, collections, and stories" autocorrect="off" autocomplete="off">
+        <button class="button button--primary" type="submit">{{ 'general.search' | t }}</button>
+      </div>
     </form>
     {% if search.performed %}
-      <div class="product-grid" style="margin-top:2rem;">
-        {% for item in search.results %}
-          {% if item.object_type == 'product' %}
-            {% render 'product-card', product: item, style: 'below' %}
-          {% else %}
-            <article class="product-card" style="padding:1.5rem;">
-              <a href="{{ item.url }}"><strong>{{ item.title }}</strong></a>
-              <p>{{ item.content | strip_html | truncate: 80 }}</p>
-            </article>
-          {% endif %}
-        {% endfor %}
+      {% paginate search.results by section.settings.results_per_page %}
+        {% if search.results_count > 0 %}
+          <div class="search-results product-grid">
+            {% for item in search.results %}
+              {% if item.object_type == 'product' %}
+                {% render 'product-card', product: item, style: 'below' %}
+              {% else %}
+                <article class="search-result-card">
+                  {% if item.image != blank %}<a href="{{ item.url }}">{{ item.image | image_url: width: 800 | image_tag: loading: 'lazy', widths: '240, 360, 540, 800', sizes: '(min-width: 990px) 25vw, 50vw', alt: item.image.alt | default: item.title }}</a>{% endif %}
+                  <div class="search-result-card__content">
+                    <span class="eyebrow">{{ item.object_type }}</span>
+                    <h2 class="h3"><a href="{{ item.url }}">{{ item.title }}</a></h2>
+                    <p>{{ item.content | strip_html | truncatewords: 24 }}</p>
+                    <a class="button button--tertiary" href="{{ item.url }}">Read more</a>
+                  </div>
+                </article>
+              {% endif %}
+            {% endfor %}
+          </div>
+          {% render 'pagination', paginate: paginate %}
+        {% else %}
+          <div class="empty-state">
+            <h2>No results found</h2>
+            <p>Check the spelling or try a broader term.</p>
+            {% if section.settings.suggested_collection != blank %}<a class="button button--primary" href="{{ section.settings.suggested_collection.url }}">Shop {{ section.settings.suggested_collection.title }}</a>{% endif %}
+          </div>
+        {% endif %}
+      {% endpaginate %}
+    {% elsif section.settings.suggested_collection != blank %}
+      <div class="search-suggestions">
+        <h2 class="h3">Popular right now</h2>
+        <div class="product-grid">{% for product in section.settings.suggested_collection.products limit: 4 %}{% render 'product-card', product: product, style: 'below' %}{% endfor %}</div>
       </div>
     {% endif %}
   </div>
@@ -26,6 +55,20 @@
 {
   "name": "Main search",
   "settings": [
+    {
+      "type": "range",
+      "id": "results_per_page",
+      "label": "Results per page",
+      "min": 12,
+      "max": 48,
+      "step": 4,
+      "default": 24
+    },
+    {
+      "type": "collection",
+      "id": "suggested_collection",
+      "label": "No-results collection"
+    },
     {
       "type": "header",
       "content": "Background"
@@ -62,7 +105,7 @@
       "type": "color",
       "id": "background_color",
       "label": "Background color",
-      "default": "#ffffff"
+      "default": "#08090b"
     },
     {
       "type": "color_background",

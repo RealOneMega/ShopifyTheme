@@ -3,13 +3,13 @@
   <div class="container">
     <div class="stack">
       <h2 class="heading">{{ section.settings.heading }}</h2>
-      <div style="display:flex;gap:1rem;flex-wrap:wrap;">
+      <div role="tablist" aria-label="{{ section.settings.heading | escape }}" style="display:flex;gap:1rem;flex-wrap:wrap;">
         {% for block in section.blocks %}
-          <button class="button button--tertiary" data-tab-trigger data-tab-id="tab-{{ block.id }}" aria-controls="tab-{{ block.id }}">{{ block.settings.label }}</button>
+          <button class="button button--tertiary{% if forloop.first %} is-active{% endif %}" type="button" id="tab-trigger-{{ block.id }}" role="tab" data-tab-trigger data-tab-id="tab-{{ block.id }}" aria-controls="tab-{{ block.id }}" aria-selected="{% if forloop.first %}true{% else %}false{% endif %}" tabindex="{% if forloop.first %}0{% else %}-1{% endif %}" {{ block.shopify_attributes }}>{{ block.settings.label }}</button>
         {% endfor %}
       </div>
       {% for block in section.blocks %}
-        <div id="tab-{{ block.id }}" data-tab-panel {% if forloop.first == false %}class="hidden"{% endif %}>
+        <div id="tab-{{ block.id }}" role="tabpanel" aria-labelledby="tab-trigger-{{ block.id }}" data-tab-panel{% if forloop.first == false %} class="hidden" hidden{% endif %}>
           <div class="product-grid">
             {% assign tab_collection = collections[block.settings.collection] %}
             {% for product in tab_collection.products limit: section.settings.limit %}

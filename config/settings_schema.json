@@ -1,38 +1,134 @@
 [
   {
-    "name": "Theme settings",
+    "name": "theme_info",
+    "theme_name": "Risky Limits",
+    "theme_version": "2.0.0",
+    "theme_author": "Risky Limits",
+    "theme_support_email": "43621169+RealOneMega@users.noreply.github.com",
+    "theme_documentation_url": "https://github.com/RealOneMega/ShopifyTheme"
+  },
+  {
+    "name": "Brand",
     "settings": [
       {"type": "image_picker", "id": "logo", "label": "Logo"},
+      {"type": "image_picker", "id": "logo_mobile", "label": "Mobile logo"},
+      {"type": "image_picker", "id": "favicon", "label": "Favicon"}
+    ]
+  },
+  {
+    "name": "Colors",
+    "settings": [
+      {"type": "header", "content": "Brand and actions"},
+      {"type": "color", "id": "color_accent", "label": "Primary", "default": "#0060FF"},
+      {"type": "color", "id": "color_accent_hover", "label": "Primary hover", "default": "#2D7BFF"},
+      {"type": "color", "id": "color_accent_active", "label": "Primary active", "default": "#004BC7"},
+      {"type": "color", "id": "color_accent_contrast", "label": "Primary contrast", "default": "#FFFFFF"},
+      {"type": "color", "id": "color_secondary", "label": "Secondary", "default": "#D7DBE2"},
+      {"type": "color", "id": "color_secondary_hover", "label": "Secondary hover", "default": "#FFFFFF"},
+      {"type": "header", "content": "Surfaces and text"},
+      {"type": "color", "id": "color_background", "label": "Background", "default": "#08090B"},
+      {"type": "color", "id": "color_background_alt", "label": "Alternate background", "default": "#101318"},
+      {"type": "color", "id": "color_surface", "label": "Surface", "default": "#151920"},
+      {"type": "color", "id": "color_surface_elevated", "label": "Elevated surface", "default": "#1C212A"},
+      {"type": "color", "id": "color_text", "label": "Primary text", "default": "#F6F7F9"},
+      {"type": "color", "id": "color_text_secondary", "label": "Secondary text", "default": "#C1C6CF"},
+      {"type": "color", "id": "color_text_muted", "label": "Muted text", "default": "#8E96A3"},
+      {"type": "color", "id": "color_border_subtle", "label": "Subtle border", "default": "#292F39"},
+      {"type": "color", "id": "color_border_strong", "label": "Strong border", "default": "#4A5361"},
+      {"type": "header", "content": "Status"},
+      {"type": "color", "id": "color_success", "label": "Success", "default": "#37C879"},
+      {"type": "color", "id": "color_warning", "label": "Warning", "default": "#F5B942"},
+      {"type": "color", "id": "color_error", "label": "Error", "default": "#FF5D66"},
+      {"type": "color", "id": "color_info", "label": "Information", "default": "#4D8FFF"},
+      {"type": "color", "id": "color_focus", "label": "Focus ring", "default": "#78A7FF"},
+      {"type": "header", "content": "Global elements"},
+      {"type": "color", "id": "color_promo_bg", "label": "Announcement background", "default": "#0060FF"},
+      {"type": "color", "id": "color_promo_text", "label": "Announcement text", "default": "#FFFFFF"},
+      {"type": "color", "id": "color_header_bg", "label": "Header background", "default": "#08090B"},
+      {"type": "color", "id": "color_card_overlay", "label": "Media overlay", "default": "#000000"},
+      {"type": "color", "id": "color_button_primary_bg", "label": "Primary button background", "default": "#0060FF"},
+      {"type": "color", "id": "color_button_primary_text", "label": "Primary button text", "default": "#FFFFFF"},
+      {"type": "color", "id": "color_button_secondary_bg", "label": "Secondary button background", "default": "#151920"},
+      {"type": "color", "id": "color_button_secondary_text", "label": "Secondary button text", "default": "#F6F7F9"},
+      {"type": "color", "id": "color_button_tertiary_text", "label": "Text button", "default": "#F6F7F9"}
+    ]
+  },
+  {
+    "name": "Typography",
+    "settings": [
       {"type": "font_picker", "id": "font_body", "label": "Body font", "default": "archivo_n4"},
       {"type": "font_picker", "id": "font_heading", "label": "Heading font", "default": "archivo_n6"},
-      {"type": "range", "id": "font_scale", "label": "Font scale", "min": 0.9, "max": 1.2, "step": 0.1, "default": 1.0},
-      {"type": "range", "id": "letter_spacing_heading", "label": "Heading letter spacing", "min": 0, "max": 0.2, "step": 0.1, "default": 0.1, "unit": "em"},
-      {"type": "color", "id": "color_background", "label": "Background", "default": "#ffffff"},
-      {"type": "color", "id": "color_text", "label": "Text", "default": "#101010"},
-      {"type": "color", "id": "color_accent", "label": "Accent", "default": "#0d6efd"},
-      {"type": "color", "id": "color_promo_bg", "label": "Promo background", "default": "#101010"},
-      {"type": "color", "id": "color_promo_text", "label": "Promo text", "default": "#ffffff"},
-      {"type": "color", "id": "color_header_bg", "label": "Header background", "default": "#ffffff"},
-      {"type": "color", "id": "color_card_overlay", "label": "Card overlay", "default": "#000000"},
-      {"type": "color", "id": "color_button_primary_bg", "label": "Primary button background", "default": "#101010"},
-      {"type": "color", "id": "color_button_primary_text", "label": "Primary button text", "default": "#ffffff"},
-      {"type": "color", "id": "color_button_secondary_bg", "label": "Secondary button background", "default": "#ffffff"},
-      {"type": "color", "id": "color_button_secondary_text", "label": "Secondary button text", "default": "#101010"},
-      {"type": "color", "id": "color_button_tertiary_text", "label": "Tertiary button text", "default": "#101010"},
-      {"type": "range", "id": "section_padding", "label": "Section padding", "min": 2, "max": 6, "step": 0.5, "default": 4, "unit": "rem"},
-      {"type": "range", "id": "section_padding_mobile", "label": "Section padding mobile", "min": 1.5, "max": 4, "step": 0.5, "default": 2.5, "unit": "rem"},
-      {"type": "range", "id": "radius_global", "label": "Global border radius", "min": 0, "max": 40, "step": 2, "default": 10, "unit": "px"},
-      {"type": "checkbox", "id": "shadow_cards", "label": "Enable card shadow", "default": false},
+      {"type": "range", "id": "body_font_size", "label": "Base text size", "min": 14, "max": 20, "step": 1, "default": 16, "unit": "px"},
+      {"type": "range", "id": "font_scale", "label": "Type scale", "min": 0.9, "max": 1.2, "step": 0.1, "default": 1.0},
+      {"type": "range", "id": "heading_weight", "label": "Heading weight", "min": 400, "max": 900, "step": 100, "default": 700},
+      {"type": "range", "id": "body_weight", "label": "Body weight", "min": 300, "max": 700, "step": 100, "default": 400},
+      {"type": "range", "id": "letter_spacing_heading", "label": "Heading letter spacing", "min": -0.1, "max": 0.2, "step": 0.1, "default": 0, "unit": "em"},
+      {"type": "select", "id": "heading_case", "label": "Heading capitalization", "default": "uppercase", "options": [{"value": "none", "label": "As entered"}, {"value": "uppercase", "label": "Uppercase"}]}
+    ]
+  },
+  {
+    "name": "Layout",
+    "settings": [
+      {"type": "range", "id": "container_width", "label": "Content width", "min": 1100, "max": 1800, "step": 50, "default": 1450, "unit": "px"},
+      {"type": "range", "id": "container_narrow_width", "label": "Narrow content width", "min": 600, "max": 1000, "step": 50, "default": 800, "unit": "px"},
+      {"type": "range", "id": "section_padding", "label": "Section spacing", "min": 2, "max": 8, "step": 0.5, "default": 5, "unit": "rem"},
+      {"type": "range", "id": "section_padding_mobile", "label": "Mobile section spacing", "min": 1.5, "max": 5, "step": 0.5, "default": 3, "unit": "rem"},
+      {"type": "select", "id": "radius_style", "label": "Corner style", "default": "medium", "options": [{"value": "none", "label": "None"}, {"value": "small", "label": "Small"}, {"value": "medium", "label": "Medium"}, {"value": "large", "label": "Large"}]},
+      {"type": "range", "id": "radius_global", "label": "Custom corner radius", "min": 0, "max": 32, "step": 2, "default": 10, "unit": "px"},
+      {"type": "checkbox", "id": "shadow_cards", "label": "Show card elevation", "default": false}
+    ]
+  },
+  {
+    "name": "Buttons and inputs",
+    "settings": [
+      {"type": "select", "id": "button_style", "label": "Button shape", "default": "sharp", "options": [{"value": "sharp", "label": "Sharp"}, {"value": "rounded", "label": "Rounded"}, {"value": "pill", "label": "Pill"}]},
+      {"type": "checkbox", "id": "button_uppercase", "label": "Use uppercase button labels", "default": true},
+      {"type": "range", "id": "button_border_width", "label": "Button border width", "min": 1, "max": 3, "step": 1, "default": 1, "unit": "px"},
+      {"type": "select", "id": "input_style", "label": "Input style", "default": "boxed", "options": [{"value": "boxed", "label": "Boxed"}, {"value": "underline", "label": "Underline"}]}
+    ]
+  },
+  {
+    "name": "Product cards",
+    "settings": [
+      {"type": "select", "id": "product_card_style", "label": "Card style", "default": "minimal", "options": [{"value": "minimal", "label": "Clean minimal"}, {"value": "contained", "label": "Contained"}]},
+      {"type": "select", "id": "product_card_ratio", "label": "Image ratio", "default": "portrait", "options": [{"value": "adapt", "label": "Adapt to image"}, {"value": "square", "label": "Square"}, {"value": "portrait", "label": "Portrait"}, {"value": "landscape", "label": "Landscape"}]},
+      {"type": "select", "id": "product_card_alignment", "label": "Text alignment", "default": "left", "options": [{"value": "left", "label": "Left"}, {"value": "center", "label": "Center"}]},
       {"type": "checkbox", "id": "show_vendor", "label": "Show vendor", "default": false},
       {"type": "checkbox", "id": "show_second_image", "label": "Show second image on hover", "default": true},
       {"type": "checkbox", "id": "enable_quick_add", "label": "Enable quick add", "default": true},
       {"type": "checkbox", "id": "enable_quick_view", "label": "Enable quick view", "default": true},
-      {"type": "checkbox", "id": "show_rating_placeholder", "label": "Show rating placeholder", "default": false},
-      {"type": "text", "id": "product_card_ratio", "label": "Product card aspect ratio", "default": "1 / 1"},
-      {"type": "text", "id": "social_facebook", "label": "Facebook URL"},
-      {"type": "text", "id": "social_instagram", "label": "Instagram URL"},
-      {"type": "text", "id": "social_tiktok", "label": "TikTok URL"},
-      {"type": "text", "id": "social_twitter", "label": "Twitter URL"}
+      {"type": "checkbox", "id": "enable_wishlist", "label": "Enable browser wishlist", "default": true},
+      {"type": "checkbox", "id": "show_swatches", "label": "Show color swatches", "default": true},
+      {"type": "checkbox", "id": "show_rating_placeholder", "label": "Show reviews app rating metafield", "default": false},
+      {"type": "select", "id": "badge_style", "label": "Badge style", "default": "solid", "options": [{"value": "solid", "label": "Solid"}, {"value": "outline", "label": "Outline"}]}
+    ]
+  },
+  {
+    "name": "Cart and wishlist",
+    "settings": [
+      {"type": "select", "id": "cart_behavior", "label": "After adding a product", "default": "drawer", "options": [{"value": "drawer", "label": "Open cart drawer"}, {"value": "notification", "label": "Show notification"}, {"value": "page", "label": "Go to cart page"}]},
+      {"type": "range", "id": "free_shipping_threshold", "label": "Free-shipping goal", "min": 0, "max": 500, "step": 5, "default": 0, "unit": "$"},
+      {"type": "paragraph", "content": "Set the goal to 0 to hide progress. The value uses the store's active currency and must match your shipping configuration."},
+      {"type": "select", "id": "wishlist_behavior", "label": "Wishlist display", "default": "drawer", "options": [{"value": "drawer", "label": "Drawer"}, {"value": "page", "label": "Wishlist page template"}]}
+    ]
+  },
+  {
+    "name": "Search and motion",
+    "settings": [
+      {"type": "checkbox", "id": "predictive_search_enabled", "label": "Enable predictive search", "default": true},
+      {"type": "range", "id": "predictive_search_limit", "label": "Results per category", "min": 2, "max": 8, "step": 1, "default": 4},
+      {"type": "select", "id": "animation_intensity", "label": "Animation intensity", "default": "subtle", "options": [{"value": "none", "label": "None"}, {"value": "subtle", "label": "Subtle"}, {"value": "expressive", "label": "Expressive"}]},
+      {"type": "checkbox", "id": "smooth_scroll", "label": "Enable smooth scrolling", "default": true}
+    ]
+  },
+  {
+    "name": "Social media",
+    "settings": [
+      {"type": "url", "id": "social_facebook", "label": "Facebook"},
+      {"type": "url", "id": "social_instagram", "label": "Instagram"},
+      {"type": "url", "id": "social_tiktok", "label": "TikTok"},
+      {"type": "url", "id": "social_twitter", "label": "X / Twitter"},
+      {"type": "checkbox", "id": "show_payment_icons", "label": "Show enabled payment methods", "default": true}
     ]
   }
 ]

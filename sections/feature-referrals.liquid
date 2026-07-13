@@ -9,11 +9,16 @@
       {% endif %}
     </header>
   {% endif %}
-    <p>{{ section.settings.text }}</p>
-    <div class="referral">
-      <input class="input" type="text" value="{{ section.settings.link }}" readonly>
-      <button class="button" type="button" data-copy-button data-copy-text="{{ section.settings.link }}">Copy link</button>
-    </div>
+    {% if section.settings.link != blank %}
+      <p>{{ section.settings.text }}</p>
+      <div class="referral">
+        <label class="visually-hidden" for="ReferralLink-{{ section.id }}">Referral link</label>
+        <input class="field" id="ReferralLink-{{ section.id }}" type="url" value="{{ section.settings.link }}" readonly>
+        <button class="button button--secondary" type="button" data-copy-button data-copy-text="{{ section.settings.link }}">Copy link</button>
+      </div>
+    {% elsif request.design_mode %}
+      <div class="editor-note">Connect a referral provider and paste its generated referral URL. The theme does not invent customer referral codes.</div>
+    {% endif %}
   </div>
 </section>
 
@@ -39,10 +44,9 @@
       "default": "Share your referral link."
     },
     {
-      "type": "text",
+      "type": "url",
       "id": "link",
-      "label": "Referral link",
-      "default": "https://example.com"
+      "label": "Provider-generated referral link"
     },
     {
       "type": "header",

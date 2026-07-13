@@ -1,0 +1,27 @@
+{%- liquid
+  assign show_breadcrumbs = false
+  if request.page_type == 'product' or request.page_type == 'collection' or request.page_type == 'blog' or request.page_type == 'article' or request.page_type == 'page'
+    assign show_breadcrumbs = true
+  endif
+-%}
+{%- if show_breadcrumbs -%}
+  <nav class="breadcrumbs container" aria-label="{{ 'accessibility.breadcrumbs' | t }}">
+    <ol class="breadcrumbs__list" role="list">
+      <li><a href="{{ routes.root_url }}">{{ 'general.home' | t }}</a></li>
+      {%- if request.page_type == 'product' -%}
+        {%- if collection != blank -%}<li><a href="{{ collection.url }}">{{ collection.title }}</a></li>{%- endif -%}
+        <li aria-current="page">{{ product.title }}</li>
+      {%- elsif request.page_type == 'collection' -%}
+        <li aria-current="page">{{ collection.title }}</li>
+      {%- elsif request.page_type == 'blog' -%}
+        <li aria-current="page">{{ blog.title }}</li>
+      {%- elsif request.page_type == 'article' -%}
+        <li><a href="{{ blog.url }}">{{ blog.title }}</a></li>
+        <li aria-current="page">{{ article.title }}</li>
+      {%- elsif request.page_type == 'page' -%}
+        <li aria-current="page">{{ page.title }}</li>
+      {%- endif -%}
+    </ol>
+  </nav>
+{%- endif -%}
+

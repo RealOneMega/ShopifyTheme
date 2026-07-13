@@ -13,11 +13,25 @@
   "sections": {
     "promo-bar": {
       "type": "promo-bar",
+      "blocks": {
+        "brand_motto": {
+          "type": "promo",
+          "settings": {
+            "text": "Push Limits. Define Risk.",
+            "background": "#0060FF",
+            "text_color": "#FFFFFF",
+            "icon": "none",
+            "link": "",
+            "dismissible": false
+          }
+        }
+      },
+      "block_order": ["brand_motto"],
       "settings": {
-        "autoplay": true,
+        "autoplay": false,
         "autoplay_speed": 5000,
-        "background_type": "none",
-        "background_color": "#ffffff",
+        "background_type": "color",
+        "background_color": "#0060FF",
         "background_gradient": "",
         "background_position_x": 50,
         "background_position_y": 50,
@@ -27,34 +41,22 @@
     },
     "header": {
       "type": "header",
-      "blocks": {
-        "promo_H8EjRp": {
-          "type": "promo",
-          "settings": {
-            "parent_link": "",
-            "image": "shopify://shop_images/Main.jpg",
-            "heading": "ttes",
-            "link": ""
-          }
-        }
-      },
-      "block_order": [
-        "promo_H8EjRp"
-      ],
+      "blocks": {},
+      "block_order": [],
       "settings": {
-        "layout": "logo_center",
+        "layout": "logo_left",
         "menu_position": "center",
         "main_menu": "menu",
         "sticky": true,
-        "show_utility_row": true,
+        "show_utility_row": false,
         "logo_width": 180,
         "utility_menu": "utility-menu",
         "utility_alignment": "left",
         "show_localization": true,
-        "background_type": "none",
-        "background_color": "#ffffff",
+        "show_language": true,
+        "background_type": "color",
+        "background_color": "#08090B",
         "background_gradient": "",
-        "background_image": "shopify://shop_images/BoatCenterBanner.png",
         "background_position_x": 50,
         "background_position_y": 50,
         "background_size": "cover",

@@ -1,0 +1,19 @@
+{%- if request.page_type == 'product' -%}
+  <script type="application/ld+json">{{ product | structured_data }}</script>
+{%- elsif request.page_type == 'article' -%}
+  <script type="application/ld+json">{{ article | structured_data }}</script>
+{%- endif -%}
+
+{%- capture organization_logo -%}
+  {%- if settings.logo != blank -%}https:{{ settings.logo | image_url: width: 600 }}{%- endif -%}
+{%- endcapture -%}
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": {{ shop.name | json }},
+    "url": {{ shop.url | append: routes.root_url | json }}{% if organization_logo != blank %},
+    "logo": {{ organization_logo | json }}{% endif %}
+  }
+</script>
+

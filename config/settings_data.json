@@ -9,7 +9,8 @@
  */
 {
   "current": {
-    "logo": "shopify://shop_images/RiskyLimitsCommericalFont_Black.png",
+    "logo": "shopify://shop_images/RiskyLimitsCommericalFont_White.png",
+    "logo_mobile": "shopify://shop_images/RiskyLimitsCommericalFont_White.png",
     "social_facebook": "",
     "social_twitter": "",
     "sections": {
@@ -19,15 +20,15 @@
           "menu_pzbtYc": {
             "type": "menu",
             "settings": {
-              "heading": "",
-              "menu": ""
+              "heading": "Shop",
+              "menu": "footer"
             }
           },
           "menu_6N4dw7": {
             "type": "menu",
             "settings": {
-              "heading": "",
-              "menu": ""
+              "heading": "Explore",
+              "menu": "menu"
             }
           },
           "menu_KMXYcz": {
@@ -45,13 +46,15 @@
         ],
         "settings": {
           "logo": "shopify://shop_images/RiskyLimitsCommericalFont_White.png",
-          "text": "",
-          "newsletter_heading": "Stay in the loop",
+          "text": "Push Limits. Define Risk.",
+          "newsletter_heading": "Enter the limit",
           "copyright": "Risky Limits. All Rights Reserved.",
           "show_payments": true,
-          "show_back_to_top": true,
-          "background_type": "none",
-          "background_color": "#ffffff",
+          "show_back_to_top": false,
+          "show_country_selector": true,
+          "show_language_selector": true,
+          "background_type": "color",
+          "background_color": "#08090B",
           "background_gradient": "",
           "background_position_x": 50,
           "background_position_y": 50,
@@ -66,8 +69,8 @@
           "trigger": "delay",
           "delay": 6,
           "scroll": 40,
-          "heading": "Join the club",
-          "subheading": "Get first access to new drops.",
+          "heading": "Enter the limit",
+          "subheading": "Opt in for Risky Limits releases and store updates.",
           "gdpr_text": "By signing up you agree to receive emails.",
           "button_label": "Subscribe",
           "button_style": "primary",

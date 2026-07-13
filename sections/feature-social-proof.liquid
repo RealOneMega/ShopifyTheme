@@ -1,25 +1,16 @@
 <section class="section feature feature--social-proof section--background" data-feature="social-proof" style="{% render 'section-background-style', section: section %}">
   {% render 'section-background-media', section: section %}
   <div class="container">
-  {% if section.settings.heading != blank %}
-    <header class="section__header">
-      <h2 class="section__heading">{{ section.settings.heading }}</h2>
-      {% if section.settings.subheading != blank %}
-        <p class="section__description">{{ section.settings.subheading }}</p>
-      {% endif %}
-    </header>
-  {% endif %}
-    <ul class="social-proof">
-      {% for block in section.blocks %}
-        <li>{{ block.settings.text }}</li>
-      {% endfor %}
-    </ul>
+    {% if section.settings.heading != blank %}<h2 class="section__heading">{{ section.settings.heading }}</h2>{% endif %}
+    {% if section.settings.subheading != blank %}<p class="section__description">{{ section.settings.subheading }}</p>{% endif %}
+    {% for block in section.blocks %}{% render block %}{% endfor %}
+    {% if section.blocks.size == 0 and request.design_mode %}<div class="editor-note">Add a verified reviews or purchase-activity app block. The theme does not generate social-proof events.</div>{% endif %}
   </div>
 </section>
 
 {% schema %}
 {
-  "name": "Social proof",
+  "name": "Social proof app",
   "settings": [
     {
       "type": "text",
@@ -146,23 +137,11 @@
       ]
     }
   ],
-  "blocks": [
-    {
-      "type": "proof",
-      "name": "Proof",
-      "settings": [
-        {
-          "type": "text",
-          "id": "text",
-          "label": "Text",
-          "default": "Someone just purchased this item."
-        }
-      ]
-    }
-  ],
+  "blocks": [{"type": "@app"}],
+  "max_blocks": 4,
   "presets": [
     {
-      "name": "Social proof",
+      "name": "Social proof app",
       "category": "Marketing"
     }
   ]

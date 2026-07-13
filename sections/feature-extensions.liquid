@@ -1,3 +1,4 @@
+{% if request.design_mode %}
 <section class="section section--background" style="{% render 'section-background-style', section: section %}">
   {% render 'section-background-media', section: section %}
   <div class="container">
@@ -287,10 +288,11 @@
     {% endfor %}
   </div>
 </section>
+{% endif %}
 
 {% schema %}
 {
-  "name": "Feature extensions",
+  "name": "Legacy feature index",
   "settings": [
     {
       "type": "header",
@@ -650,12 +652,6 @@
           "label": "Custom description"
         }
       ]
-    }
-  ],
-  "presets": [
-    {
-      "name": "Feature extensions",
-      "category": "Marketing"
     }
   ]
 }

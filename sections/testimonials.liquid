@@ -5,10 +5,12 @@
       <h2 class="heading">{{ section.settings.heading }}</h2>
       <div class="product-grid">
         {% for block in section.blocks %}
-          <div class="product-card" style="padding:1.5rem;">
-            <p>“{{ block.settings.quote }}”</p>
-            <strong>{{ block.settings.author }}</strong>
-          </div>
+          {% if block.settings.quote != blank and block.settings.author != blank %}
+            <figure class="product-card" style="padding:1.5rem;" {{ block.shopify_attributes }}>
+              <blockquote>“{{ block.settings.quote }}”</blockquote>
+              <figcaption>{{ block.settings.author }}</figcaption>
+            </figure>
+          {% endif %}
         {% endfor %}
       </div>
     </div>
@@ -147,14 +149,12 @@
         {
           "type": "textarea",
           "id": "quote",
-          "label": "Quote",
-          "default": "Best purchase I've made this year."
+          "label": "Verified quote"
         },
         {
           "type": "text",
           "id": "author",
-          "label": "Author",
-          "default": "Jordan P."
+          "label": "Verified author"
         }
       ]
     }

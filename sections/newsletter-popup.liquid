@@ -1,24 +1,26 @@
 {% if section.settings.enable %}
-  <div class="popup" data-popup data-popup='{"id":"{{ section.id }}","trigger":"{{ section.settings.trigger }}","delay":{{ section.settings.delay }},"scroll":{{ section.settings.scroll }} }'>
-    <div class="popup__panel" role="dialog" aria-modal="true" aria-label="Newsletter">
+  <div class="popup" data-popup='{"id":"{{ section.id }}","trigger":"{{ section.settings.trigger }}","delay":{{ section.settings.delay }},"scroll":{{ section.settings.scroll }} }' aria-hidden="true">
+    <div class="popup__panel" role="dialog" aria-modal="true" aria-labelledby="NewsletterTitle-{{ section.id }}">
       <button class="popup__close" type="button" data-popup-close aria-label="Close">{% render 'icon-close' %}</button>
       <div class="stack">
         {% if section.settings.image != blank %}
           {{ section.settings.image | image_url: width: 640 | image_tag: loading: 'lazy' }}
         {% endif %}
-        <h2 class="heading">{{ section.settings.heading }}</h2>
+        <h2 class="heading" id="NewsletterTitle-{{ section.id }}">{{ section.settings.heading }}</h2>
         <p>{{ section.settings.subheading }}</p>
         {% if section.settings.gdpr_text != blank %}
           <small>{{ section.settings.gdpr_text }}</small>
         {% endif %}
-        {% form 'customer', id: 'PopupNewsletter' %}
+        {% assign popup_form_id = 'PopupNewsletter-' | append: section.id %}
+        {% form 'customer', id: popup_form_id %}
           {% if form.posted_successfully? %}
             <p>Thanks for subscribing!</p>
           {% elsif form.errors %}
             <p role="alert">{{ form.errors | default_errors }}</p>
           {% endif %}
           <input type="hidden" name="contact[tags]" value="newsletter">
-          <input class="field" type="email" name="contact[email]" placeholder="Email address" aria-label="Email address" required>
+          <label for="PopupEmail-{{ section.id }}">Email address</label>
+          <input class="field" id="PopupEmail-{{ section.id }}" type="email" name="contact[email]" autocomplete="email" required>
           <button class="button button--{{ section.settings.button_style }}" type="submit">{{ section.settings.button_label }}</button>
         {% endform %}
       </div>

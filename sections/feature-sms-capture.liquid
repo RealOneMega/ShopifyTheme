@@ -9,11 +9,8 @@
       {% endif %}
     </header>
   {% endif %}
-    <form class="feature__form" data-feature-form>
-      <label class="label">Phone</label>
-      <input class="input" type="tel" placeholder="Phone" required>
-      <button class="button" type="submit">{{ section.settings.button_label }}</button>
-    </form>
+    {% for block in section.blocks %}{% render block %}{% endfor %}
+    {% if section.blocks.size == 0 and request.design_mode %}<div class="editor-note">Add an SMS marketing app block with compliant consent language. The theme does not collect phone numbers without a configured provider.</div>{% endif %}
   </div>
 </section>
 
@@ -31,12 +28,6 @@
       "type": "text",
       "id": "subheading",
       "label": "Subheading"
-    },
-    {
-      "type": "text",
-      "id": "button_label",
-      "label": "Button label",
-      "default": "Opt in"
     },
     {
       "type": "header",
@@ -152,6 +143,8 @@
       ]
     }
   ],
+  "blocks": [{"type": "@app"}],
+  "max_blocks": 4,
   "presets": [
     {
       "name": "SMS capture",

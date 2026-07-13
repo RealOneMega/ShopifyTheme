@@ -1,38 +1,53 @@
-{% assign card_style = style | default: 'below' %}
-{% assign quick_add_variant = product.selected_or_first_available_variant %}
-{% assign color_option = nil %}
-{% for option in product.options_with_values %}
-  {% assign option_name = option.name | downcase %}
-  {% if color_option == nil %}
-    {% if option_name contains 'color' or option_name contains 'colour' %}
-      {% assign color_option = option %}
-    {% endif %}
-  {% endif %}
-{% endfor %}
+{%- liquid
+  assign card_style = style | default: 'below'
+  assign quick_add_variant = product.selected_or_first_available_variant
+  assign color_option = nil
+  assign ratio_number = 0.8
+  case settings.product_card_ratio
+    when 'square'
+      assign ratio_number = 1
+    when 'landscape'
+      assign ratio_number = 1.333
+    when 'adapt'
+      assign ratio_number = 1
+  endcase
+  for option in product.options_with_values
+    assign option_name = option.name | downcase
+    if color_option == nil
+      if option_name contains 'color' or option_name contains 'colour'
+        assign color_option = option
+      endif
+    endif
+  endfor
+-%}
 
-<article class="product-card" style="--product-card-ratio: {{ settings.product_card_ratio | default: '1 / 1' }};">
+<article class="product-card product-card--ratio-{{ settings.product_card_ratio }} product-card--align-{{ settings.product_card_alignment }}" style="--product-card-ratio-number: {{ ratio_number }};">
   <div class="product-card__media">
-    <a href="{{ product.url }}">
+    <a href="{{ product.url }}" aria-label="{{ product.title | escape }}">
       {% if product.featured_media %}
-        {{ product.featured_media | image_url: width: 900 | image_tag: loading: 'lazy', sizes: '(min-width: 990px) 25vw, (min-width: 750px) 50vw, 100vw', widths: '300, 450, 600, 900', alt: product.title }}
+        {%- assign featured_alt = product.featured_media.alt | default: product.title -%}
+        {{ product.featured_media | image_url: width: 1200 | image_tag: loading: 'lazy', sizes: '(min-width: 1200px) 22vw, (min-width: 750px) 33vw, 50vw', widths: '240, 360, 480, 720, 960, 1200', alt: featured_alt }}
       {% else %}
-        <div style="aspect-ratio:1/1;background:#f2f2f2;"></div>
+        {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
       {% endif %}
     </a>
 
-    {% if settings.show_second_image and product.media.size > 1 %}
-      <a class="product-card__secondary" href="{{ product.url }}">
-        {{ product.media[1] | image_url: width: 900 | image_tag: loading: 'lazy', sizes: '(min-width: 990px) 25vw, (min-width: 750px) 50vw, 100vw', widths: '300, 450, 600, 900', alt: product.title }}
+    {% if settings.show_second_image and product.images.size > 1 %}
+      <a class="product-card__secondary" href="{{ product.url }}" aria-hidden="true" tabindex="-1">
+        {%- assign secondary_alt = product.images[1].alt | default: product.title -%}
+        {{ product.images[1] | image_url: width: 1200 | image_tag: loading: 'lazy', sizes: '(min-width: 1200px) 22vw, (min-width: 750px) 33vw, 50vw', widths: '240, 360, 480, 720, 960, 1200', alt: secondary_alt }}
       </a>
     {% endif %}
 
-    <button class="product-card__wishlist" type="button" data-wishlist-toggle="{{ product.handle }}" aria-pressed="false" aria-label="Save {{ product.title | escape }}">
-      {% render 'icon-heart' %}
-    </button>
+    {% if settings.enable_wishlist %}
+      <button class="product-card__wishlist" type="button" data-wishlist-toggle="{{ product.handle }}" data-variant-id="{{ quick_add_variant.id }}" aria-pressed="false" aria-label="{{ 'products.save_to_wishlist' | t }}: {{ product.title | escape }}">
+        {% render 'icon-heart' %}
+      </button>
+    {% endif %}
 
     <div class="product-card__badges">
       {% if product.available == false %}
-        <span class="badge badge--muted">Sold out</span>
+        <span class="badge badge--muted">{{ 'products.sold_out' | t }}</span>
       {% elsif product.compare_at_price > product.price %}
         {% assign sale_percent = product.compare_at_price | minus: product.price | times: 100 | divided_by: product.compare_at_price %}
         <span class="badge badge--sale">Save {{ sale_percent }}%</span>
@@ -47,22 +62,25 @@
       {% if product_tag_string contains ',limited,' or product_tag_string contains ',limited drop,' %}
         <span class="badge">Limited</span>
       {% endif %}
+      {% if product.metafields.custom.badge != blank %}
+        <span class="badge">{{ product.metafields.custom.badge.value | escape }}</span>
+      {% endif %}
     </div>
 
     <div class="product-card__quick-actions">
       {% if settings.enable_quick_view %}
-        <button class="button button--secondary" type="button" data-quick-view="{{ product.handle }}" data-product-url="{{ product.url }}">Quick view</button>
+        <button class="button button--secondary" type="button" data-quick-view="{{ product.handle }}" data-product-url="{{ product.url }}" aria-haspopup="dialog">{{ 'products.quick_view' | t }}</button>
       {% endif %}
       {% if settings.enable_quick_add %}
-        {% if product.variants.size == 1 %}
-          <form method="post" action="{{ routes.cart_add_url }}" data-ajax-cart>
+        {% if product.has_only_default_variant and product.selling_plan_groups == blank %}
+          {% form 'product', product, data-ajax-cart: '' %}
             <input type="hidden" name="id" value="{{ quick_add_variant.id }}">
             <button class="button button--primary" type="submit" {% unless quick_add_variant.available %}disabled{% endunless %}>
-              {% if quick_add_variant.available %}Quick add{% else %}Sold out{% endif %}
+              {% if quick_add_variant.available %}{{ 'products.quick_add' | t }}{% else %}{{ 'products.sold_out' | t }}{% endif %}
             </button>
-          </form>
+          {% endform %}
         {% else %}
-          <a class="button button--primary" href="{{ product.url }}">Options</a>
+          <a class="button button--primary" href="{{ product.url }}">{{ 'products.choose_options' | t }}</a>
         {% endif %}
       {% endif %}
     </div>
@@ -82,11 +100,19 @@
       <div class="product-card__text">
         {% if settings.show_vendor and product.vendor != blank %}<small class="product-card__vendor">{{ product.vendor }}</small>{% endif %}
         <a class="product-card__title" href="{{ product.url }}">{{ product.title }}</a>
+        {% if settings.show_rating_placeholder and product.metafields.reviews.rating.value != blank %}
+          {% assign rating_value = product.metafields.reviews.rating.value.rating | default: product.metafields.reviews.rating.value %}
+          {% assign rating_max = product.metafields.reviews.rating.value.scale_max | default: 5 %}
+          {% assign rating_count = product.metafields.reviews.rating_count.value | default: 0 %}
+          <div class="product-card__rating" role="img" aria-label="{{ rating_value }} out of {{ rating_max }} stars{% if rating_count > 0 %}, {{ rating_count }} reviews{% endif %}">
+            <span aria-hidden="true">★ {{ rating_value }} / {{ rating_max }}</span>{% if rating_count > 0 %}<span>({{ rating_count }})</span>{% endif %}
+          </div>
+        {% endif %}
         <div class="product-card__price">
           {% render 'price', product: product %}
         </div>
       </div>
-      {% if color_option and color_option.values.size > 0 %}
+      {% if settings.show_swatches and color_option and color_option.values.size > 0 %}
         <div class="product-card__swatches" aria-label="Available colors">
           {% for value in color_option.values limit: 5 %}
             {% assign swatch_color = value | downcase | replace: ' ', '' %}

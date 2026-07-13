@@ -1,107 +1,139 @@
 <!doctype html>
-<html lang="{{ request.locale.iso_code }}">
+<html class="no-js" lang="{{ request.locale.iso_code }}" dir="{{ localization.language.direction | default: 'ltr' }}">
   <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="canonical" href="{{ canonical_url }}">
-    <meta name="description" content="{{ page_description | escape }}">
-    <meta name="theme-color" content="{{ settings.color_accent }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="{{ settings.color_background }}">
+    <script>document.documentElement.classList.replace('no-js', 'js');</script>
 
-    <title>
-      {{ page_title }}
-      {% if current_tags %} &ndash; {{ current_tags | join: ', ' }}{% endif %}
-      {% if current_page != 1 %} &ndash; Page {{ current_page }}{% endif %}
-      {% unless page_title contains shop.name %} &ndash; {{ shop.name }}{% endunless %}
-    </title>
-
-    <meta property="og:site_name" content="{{ shop.name }}">
-    <meta property="og:url" content="{{ canonical_url }}">
-    <meta property="og:title" content="{{ page_title | escape }}">
-    <meta property="og:type" content="website">
-    <meta property="og:description" content="{{ page_description | escape }}">
-    {% if page_image %}
-      <meta property="og:image" content="{{ page_image | image_url: width: 1200 }}">
-    {% endif %}
-
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="{{ page_title | escape }}">
-    <meta name="twitter:description" content="{{ page_description | escape }}">
-    {% if page_image %}
-      <meta name="twitter:image" content="{{ page_image | image_url: width: 1200 }}">
-    {% endif %}
+    {%- render 'meta-tags' -%}
+    {%- if settings.favicon != blank -%}
+      <link rel="icon" type="image/png" href="{{ settings.favicon | image_url: width: 64, height: 64 }}">
+    {%- endif -%}
 
     <link rel="preconnect" href="https://cdn.shopify.com" crossorigin>
     <style>
       {{ settings.font_body | font_face: font_display: 'swap' }}
       {{ settings.font_heading | font_face: font_display: 'swap' }}
-    </style>
-    <link rel="stylesheet" href="{{ 'theme.css' | asset_url }}">
-
-    <style>
       :root {
         --font-body: {{ settings.font_body.family }}, {{ settings.font_body.fallback_families }};
         --font-heading: {{ settings.font_heading.family }}, {{ settings.font_heading.fallback_families }};
+        --font-size-base: {{ settings.body_font_size }}px;
         --font-scale: {{ settings.font_scale }};
+        --font-weight-body: {{ settings.body_weight }};
+        --font-weight-heading: {{ settings.heading_weight }};
+        --heading-case: {{ settings.heading_case }};
         --letter-spacing-heading: {{ settings.letter_spacing_heading }}em;
+        --color-primary: {{ settings.color_accent }};
+        --color-primary-hover: {{ settings.color_accent_hover }};
+        --color-primary-active: {{ settings.color_accent_active }};
+        --color-primary-contrast: {{ settings.color_accent_contrast }};
+        --color-secondary: {{ settings.color_secondary }};
+        --color-secondary-hover: {{ settings.color_secondary_hover }};
         --color-background: {{ settings.color_background }};
+        --color-background-alt: {{ settings.color_background_alt }};
+        --color-surface: {{ settings.color_surface }};
+        --color-surface-elevated: {{ settings.color_surface_elevated }};
         --color-text: {{ settings.color_text }};
-        --color-accent: {{ settings.color_accent }};
+        --color-text-secondary: {{ settings.color_text_secondary }};
+        --color-text-muted: {{ settings.color_text_muted }};
+        --color-border-subtle: {{ settings.color_border_subtle }};
+        --color-border-strong: {{ settings.color_border_strong }};
+        --color-border: var(--color-border-subtle);
+        --color-muted: var(--color-text-muted);
+        --color-elevation: rgba(0, 0, 0, 0.32);
+        --color-success: {{ settings.color_success }};
+        --color-warning: {{ settings.color_warning }};
+        --color-error: {{ settings.color_error }};
+        --color-info: {{ settings.color_info }};
+        --color-focus: {{ settings.color_focus }};
+        --focus-ring: 2px solid var(--color-focus);
+        --color-overlay: rgba(0, 0, 0, 0.72);
+        --color-accent: var(--color-primary);
         --color-promo-bg: {{ settings.color_promo_bg }};
         --color-promo-text: {{ settings.color_promo_text }};
         --color-header-bg: {{ settings.color_header_bg }};
-        --color-card-overlay: {{ settings.color_card_overlay | color_modify: 'alpha', 0.45 }};
+        --color-card-overlay: {{ settings.color_card_overlay | color_modify: 'alpha', 0.52 }};
         --color-button-primary-bg: {{ settings.color_button_primary_bg }};
         --color-button-primary-text: {{ settings.color_button_primary_text }};
         --color-button-secondary-bg: {{ settings.color_button_secondary_bg }};
         --color-button-secondary-text: {{ settings.color_button_secondary_text }};
         --color-button-tertiary-text: {{ settings.color_button_tertiary_text }};
+        --container-width: {{ settings.container_width }}px;
+        --container-narrow-width: {{ settings.container_narrow_width }}px;
         --section-padding-y: {{ settings.section_padding }}rem;
         --section-padding-y-mobile: {{ settings.section_padding_mobile }}rem;
-        --radius-global: {{ settings.radius_global }}px;
-        --shadow-card: {% if settings.shadow_cards %}0 12px 30px rgba(0,0,0,0.1){% else %}none{% endif %};
+        --radius-global: {% case settings.radius_style %}{% when 'none' %}0px{% when 'small' %}4px{% when 'large' %}18px{% else %}{{ settings.radius_global }}px{% endcase %};
+        --radius-small: min(4px, var(--radius-global));
+        --radius-large: calc(var(--radius-global) * 1.6);
+        --button-radius: {% case settings.button_style %}{% when 'pill' %}999px{% when 'rounded' %}var(--radius-global){% else %}2px{% endcase %};
+        --button-border-width: {{ settings.button_border_width }}px;
+        --shadow-card: {% if settings.shadow_cards %}0 18px 50px rgba(0, 0, 0, 0.3){% else %}none{% endif %};
+        --motion-duration: {% case settings.animation_intensity %}{% when 'none' %}0ms{% when 'expressive' %}420ms{% else %}220ms{% endcase %};
       }
     </style>
-
+    {{ 'theme.css' | asset_url | stylesheet_tag }}
+    {{ 'components.css' | asset_url | stylesheet_tag }}
     {{ content_for_header }}
-
-    <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "Organization",
-        "name": "{{ shop.name | escape }}",
-        "url": "{{ shop.url }}",
-        "logo": "{{ settings.logo | image_url: width: 400 }}",
-        "sameAs": [
-          {% if settings.social_facebook != blank %}"{{ settings.social_facebook }}"{% endif %}
-          {% if settings.social_instagram != blank %},"{{ settings.social_instagram }}"{% endif %}
-          {% if settings.social_tiktok != blank %},"{{ settings.social_tiktok }}"{% endif %}
-          {% if settings.social_twitter != blank %},"{{ settings.social_twitter }}"{% endif %}
-        ]
-      }
-    </script>
+    {%- render 'structured-data' -%}
   </head>
-  <body>
-    <div class="overlay" data-overlay></div>
+  <body
+    class="template-{{ request.page_type | handle }} motion-{{ settings.animation_intensity }} card-style-{{ settings.product_card_style }} badge-style-{{ settings.badge_style }} input-style-{{ settings.input_style }}{% if settings.button_uppercase %} buttons-uppercase{% endif %}{% if settings.smooth_scroll %} smooth-scroll{% endif %}"
+    data-cart-behavior="{{ settings.cart_behavior }}"
+  >
+    <a class="skip-link" href="#MainContent">{{ 'accessibility.skip_to_content' | t }}</a>
+    <div class="overlay" data-overlay aria-hidden="true"></div>
+    <div class="visually-hidden" role="status" aria-live="polite" aria-atomic="true" data-theme-status></div>
+
     {% sections 'header-group' %}
-    <main id="MainContent" role="main">
+    <main id="MainContent" tabindex="-1">
+      {%- render 'breadcrumbs' -%}
       {{ content_for_layout }}
     </main>
-    {% section 'footer' %}
-
+    {% sections 'footer-group' %}
     {% section 'newsletter-popup' %}
 
-    <div id="quick-view-drawer" class="drawer drawer--wide" role="dialog" aria-modal="true" aria-label="Quick view" data-quick-view-drawer>
+    <div id="quick-view-drawer" class="drawer drawer--wide" role="dialog" aria-modal="true" aria-labelledby="QuickViewTitle" aria-hidden="true" data-quick-view-drawer>
       <div class="drawer__header">
-        <strong>Quick view</strong>
-        <button class="header__icon-button" type="button" data-drawer-close aria-label="Close quick view">{% render 'icon-close' %}</button>
+        <strong id="QuickViewTitle">{{ 'products.quick_view' | t }}</strong>
+        <button class="header__icon-button" type="button" data-drawer-close aria-label="{{ 'accessibility.close' | t }}">{% render 'icon-close' %}</button>
       </div>
-      <div class="drawer__content" data-quick-view-content>
-        <p>Select a product to preview.</p>
-      </div>
+      <div class="drawer__content" data-quick-view-content></div>
     </div>
 
-    <button class="back-to-top" type="button" data-back-to-top aria-label="Back to top" aria-hidden="true" tabindex="-1">Back to top</button>
+    <button class="back-to-top" type="button" data-back-to-top aria-label="{{ 'accessibility.back_to_top' | t }}" aria-hidden="true" tabindex="-1">{{ 'accessibility.back_to_top' | t }}</button>
 
+    <script>
+      window.RiskyLimitsTheme = {
+        locale: {{ request.locale.iso_code | json }},
+        currency: {{ cart.currency.iso_code | default: shop.currency | json }},
+        routes: {
+          root: {{ routes.root_url | json }},
+          cart: {{ routes.cart_url | json }},
+          cartAdd: {{ routes.cart_add_url | json }},
+          cartChange: {{ routes.cart_change_url | json }},
+          search: {{ routes.search_url | json }},
+          predictiveSearch: {{ routes.predictive_search_url | json }},
+          productRecommendations: {{ routes.product_recommendations_url | json }}
+        },
+        settings: {
+          predictiveSearch: {{ settings.predictive_search_enabled | json }},
+          predictiveSearchLimit: {{ settings.predictive_search_limit | json }},
+          freeShippingThreshold: {{ settings.free_shipping_threshold | times: 100 | json }},
+          wishlistEnabled: {{ settings.enable_wishlist | json }}
+        },
+        strings: {
+          addToCart: {{ 'products.add_to_cart' | t | json }},
+          addedToCart: {{ 'cart.added' | t | json }},
+          adding: {{ 'cart.adding' | t | json }},
+          cartError: {{ 'cart.error' | t | json }},
+          loading: {{ 'general.loading' | t | json }},
+          searchResults: {{ 'search.results_count' | t | json }},
+          wishlistAdded: {{ 'wishlist.added' | t | json }},
+          wishlistRemoved: {{ 'wishlist.removed' | t | json }}
+        }
+      };
+    </script>
     <script src="{{ 'theme.js' | asset_url }}" defer></script>
   </body>
 </html>

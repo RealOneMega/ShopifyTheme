@@ -1,42 +1,10 @@
 <section class="section section--background" style="{% render 'section-background-style', section: section %}">
   {% render 'section-background-media', section: section %}
   <div class="container">
-    <div class="stack">
-      <h2 class="heading">{{ section.settings.heading }}</h2>
-      <p>{{ section.settings.subheading }}</p>
-      <div class="product-card" style="padding:1.5rem;" data-rewards-ledger>
-        <strong>Your points</strong>
-        {% if customer and customer.metafields.rewards.points != blank %}
-          <p data-rewards-balance>{{ customer.metafields.rewards.points }}</p>
-        {% else %}
-          <p data-rewards-balance>0</p>
-          <small>Connect your in-house rewards service or set customer metafields for now.</small>
-        {% endif %}
-      </div>
-      <div class="product-grid">
-        <div class="product-card" style="padding:1.5rem;">
-          <strong>Earn rules</strong>
-          <p>{{ section.settings.earn_text }}</p>
-        </div>
-        <div class="product-card" style="padding:1.5rem;">
-          <strong>Redeem options</strong>
-          <ul>
-            {% for block in section.blocks %}
-              <li data-reward-option data-reward-value="{{ block.settings.points }}" data-reward-type="{{ block.settings.type }}">
-                {{ block.settings.label }}
-              </li>
-            {% endfor %}
-          </ul>
-        </div>
-      </div>
-      <div data-rewards-actions>
-        <button class="button button--secondary" data-reward-redeem>Redeem points</button>
-        <p data-rewards-integration>
-          This section is ready for an in-house rewards system. When available, connect a secure backend
-          (Shopify app + Functions) to validate balances and generate discount codes.
-        </p>
-      </div>
-    </div>
+    {% if section.settings.heading != blank %}<h2 class="heading">{{ section.settings.heading }}</h2>{% endif %}
+    {% if section.settings.subheading != blank %}<p>{{ section.settings.subheading }}</p>{% endif %}
+    {% for block in section.blocks %}{% render block %}{% endfor %}
+    {% if section.blocks.size == 0 and request.design_mode %}<div class="editor-note">Add a loyalty provider app block. The provider must own balances, earning rules, redemption, and discount generation.</div>{% endif %}
   </div>
 </section>
 
@@ -55,12 +23,6 @@
       "id": "subheading",
       "label": "Subheading",
       "default": "Earn points every time you shop."
-    },
-    {
-      "type": "text",
-      "id": "earn_text",
-      "label": "Earn rules",
-      "default": "$1 spent = 1 point"
     },
     {
       "type": "header",
@@ -176,41 +138,7 @@
       ]
     }
   ],
-  "blocks": [
-    {
-      "type": "reward",
-      "name": "Redeem option",
-      "settings": [
-        {
-          "type": "text",
-          "id": "label",
-          "label": "Label",
-          "default": "100 pts = $5 off"
-        },
-        {
-          "type": "number",
-          "id": "points",
-          "label": "Points"
-        },
-        {
-          "type": "select",
-          "id": "type",
-          "label": "Type",
-          "default": "money",
-          "options": [
-            {
-              "value": "money",
-              "label": "Money off"
-            },
-            {
-              "value": "shipping",
-              "label": "Free shipping"
-            }
-          ]
-        }
-      ]
-    }
-  ],
+  "blocks": [{"type": "@app"}],
   "max_blocks": 4,
   "presets": [
     {

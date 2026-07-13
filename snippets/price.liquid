@@ -1,7 +1,24 @@
-{% if product.compare_at_price > product.price %}
-  <span class="price__compare"><s>{{ product.compare_at_price | money }}</s></span>
-{% endif %}
-<span class="price__current">{{ product.price | money }}</span>
-{% if product.unit_price_measurement %}
-  <small class="price__unit">{{ product.unit_price | money }} / {{ product.unit_price_measurement.reference_value }}{{ product.unit_price_measurement.reference_unit }}</small>
-{% endif %}
+{%- liquid
+  assign price_target = product.selected_or_first_available_variant | default: product
+  assign display_price = product.price | default: price_target.price
+  assign compare_price = product.compare_at_price | default: price_target.compare_at_price
+  if use_variant
+    assign display_price = price_target.price
+    assign compare_price = price_target.compare_at_price
+  endif
+-%}
+{%- if compare_price > display_price -%}
+  <span class="price__compare"><span class="visually-hidden">Regular price</span><s>{{ compare_price | money }}</s></span>
+{%- endif -%}
+<span class="price__current">
+  {%- if product.price_varies and use_variant != true -%}<span class="price__from">From </span>{%- endif -%}
+  {{- display_price | money -}}
+</span>
+{%- if price_target.unit_price_measurement -%}
+  <small class="price__unit">
+    <span class="visually-hidden">Unit price</span>
+    {{ price_target.unit_price | money }} /
+    {%- if price_target.unit_price_measurement.reference_value != 1 %} {{ price_target.unit_price_measurement.reference_value }}{% endif -%}
+    {{- price_target.unit_price_measurement.reference_unit -}}
+  </small>
+{%- endif -%}

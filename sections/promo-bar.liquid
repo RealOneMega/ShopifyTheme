@@ -1,9 +1,9 @@
 {% if section.blocks.size > 0 %}
-  <div class="header__promo" data-slideshow data-autoplay="{{ section.settings.autoplay }}" data-autoplay-speed="{{ section.settings.autoplay_speed }}">
-    <div class="container" style="padding:0.5rem 1.5rem;">
+  <div class="header__promo" role="region" aria-label="Announcements" data-slideshow data-autoplay="{{ section.settings.autoplay }}" data-autoplay-speed="{{ section.settings.autoplay_speed }}">
+    <div class="container promo-bar__viewport">
       {% for block in section.blocks %}
-        <div data-slide data-promo-item {% if forloop.index0 > 0 %}class="hidden"{% endif %}>
-          <div style="display:flex;align-items:center;justify-content:center;gap:0.75rem;background:{{ block.settings.background }};color:{{ block.settings.text_color }};padding:0.35rem 0.75rem;border-radius:999px;">
+        <div data-slide data-promo-item role="group" aria-roledescription="slide" aria-label="{{ forloop.index }} of {{ forloop.length }}" aria-hidden="{% if forloop.first %}false{% else %}true{% endif %}" {% if forloop.index0 > 0 %}class="hidden"{% endif %} {{ block.shopify_attributes }}>
+          <div class="promo-bar__item" style="--promo-item-background: {{ block.settings.background }}; --promo-item-color: {{ block.settings.text_color }};">
             {% if block.settings.icon_image != blank %}
               {{ block.settings.icon_image | image_url: width: 24 | image_tag: loading: 'lazy' }}
             {% elsif block.settings.icon != 'none' %}
@@ -16,17 +16,19 @@
               <span>{{ block.settings.text }}</span>
             {% endif %}
             {% if block.settings.dismissible %}
-              <button class="header__icon-button" type="button" data-promo-dismiss="promo-{{ block.id }}" aria-label="Dismiss">{% render 'icon-close' %}</button>
+              <button class="header__icon-button" type="button" data-promo-dismiss="promo-{{ block.id }}" aria-label="Dismiss announcement">{% render 'icon-close' %}</button>
             {% endif %}
           </div>
         </div>
       {% endfor %}
     </div>
     {% if section.blocks.size > 1 %}
-      <div class="hero__controls" aria-label="Promo bar controls">
+      <div class="promo-bar__controls" aria-label="Announcement controls">
+        <button class="hero__arrow" type="button" data-slide-prev aria-label="Previous announcement">‹</button>
         {% for block in section.blocks %}
-          <button class="hero__dot {% if forloop.first %}is-active{% endif %}" data-slide-dot aria-label="Promo {{ forloop.index }}"></button>
+          <button class="hero__dot {% if forloop.first %}is-active{% endif %}" type="button" data-slide-dot aria-label="Show announcement {{ forloop.index }}" aria-current="{% if forloop.first %}true{% else %}false{% endif %}"></button>
         {% endfor %}
+        <button class="hero__arrow" type="button" data-slide-next aria-label="Next announcement">›</button>
       </div>
     {% endif %}
   </div>
@@ -87,7 +89,7 @@
       "type": "color",
       "id": "background_color",
       "label": "Background color",
-      "default": "#ffffff"
+      "default": "#0060ff"
     },
     {
       "type": "color_background",
@@ -174,13 +176,13 @@
           "type": "text",
           "id": "text",
           "label": "Text",
-          "default": "Free shipping on orders $75+"
+          "default": "Push Limits. Define Risk."
         },
         {
           "type": "color",
           "id": "background",
           "label": "Background",
-          "default": "#111111"
+          "default": "#0060ff"
         },
         {
           "type": "color",

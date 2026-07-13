@@ -1,0 +1,29 @@
+/* Risky Limits section and theme-block components. */
+.flexible-content__blocks { display: grid; grid-template-columns: repeat(var(--flex-columns, 1), minmax(0, 1fr)); gap: clamp(1rem, 3vw, 2rem); align-items: start; }
+.theme-block-image { margin: 0; }
+.theme-block-image img { width: 100%; border-radius: var(--radius-global); }
+.theme-block-image figcaption { margin-top: 0.5rem; color: var(--color-text-muted); font-size: 0.75rem; }
+.theme-block-divider { width: 100%; border: 0; border-top: 1px solid var(--color-border-subtle); }
+@media (max-width: 749px) { .flexible-content__blocks { grid-template-columns: 1fr; } }
+
+.customer-form { display: grid; gap: .75rem; }
+.customer-page__header { display: flex; align-items: flex-end; justify-content: space-between; gap: 1rem; margin-bottom: clamp(2rem, 5vw, 4rem); }
+.customer-auth-grid, .customer-account-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(1.5rem, 4vw, 3rem); }
+.customer-recovery, .customer-address-summary, .address-form-panel, .address-card { padding: clamp(1rem, 3vw, 1.5rem); background: var(--color-surface); border: 1px solid var(--color-border-subtle); border-radius: var(--radius-global); }
+.customer-recovery summary, .address-form-panel summary { cursor: pointer; }
+.responsive-table { max-width: 100%; overflow-x: auto; }
+.responsive-table table { width: 100%; border-collapse: collapse; }
+.responsive-table th, .responsive-table td { padding: .85rem; text-align: start; border-bottom: 1px solid var(--color-border-subtle); }
+.responsive-table th { color: var(--color-text-muted); font-size: .72rem; letter-spacing: .08em; text-transform: uppercase; }
+.address-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; margin-top: 2rem; }
+.address-card { display: grid; gap: .75rem; align-content: start; }
+@media (max-width: 899px) { .address-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 649px) { .customer-page__header { align-items: flex-start; flex-direction: column; } .customer-auth-grid, .customer-account-grid, .address-grid { grid-template-columns: 1fr; } }
+.password-page, .gift-card-page { min-height: 100vh; display: grid; place-items: center; background: radial-gradient(circle at 50% 0%, color-mix(in srgb, var(--color-primary) 16%, transparent), transparent 38%), var(--color-background); }
+.password-page__panel, .gift-card { display: grid; gap: 1rem; padding: clamp(1.5rem, 5vw, 4rem); text-align: center; background: var(--color-surface); border: 1px solid var(--color-border-subtle); border-radius: var(--radius-small); }
+.password-page__panel img { max-width: 240px; margin-inline: auto; }
+.gift-card__value { font-family: var(--font-heading); font-size: clamp(2rem, 6vw, 4rem); font-weight: 800; }
+.gift-card__qr svg { max-width: 160px; margin-inline: auto; }
+.gift-card__code { padding: 1rem; color: var(--color-text); background: var(--color-background); border: 1px dashed var(--color-primary); font: inherit; letter-spacing: .1em; }
+.product-card__rating { align-items: center; color: var(--color-text-secondary); display: flex; font-size: .78rem; gap: .35rem; }
+@media print { .gift-card-page { background: #fff; color: #000; } .gift-card .button { display: none; } }

@@ -1,0 +1,31 @@
+<article class="section article-page">
+  <div class="container container--narrow">
+    <header class="article-page__header">
+      <p class="eyebrow"><a href="{{ blog.url }}">{{ blog.title }}</a> / {{ article.published_at | time_tag: format: 'date' }}</p>
+      <h1 class="heading">{{ article.title }}</h1>
+      {% if section.settings.show_author %}<p>By {{ article.author }}</p>{% endif %}
+    </header>
+    {% if article.image != blank %}<div class="article-page__image">{{ article.image | image_url: width: 2000 | image_tag: loading: 'eager', fetchpriority: 'high', widths: '720, 960, 1200, 1600, 2000', sizes: 'min(100vw, 1000px)', alt: article.image.alt | default: article.title }}</div>{% endif %}
+    <div class="rte article-page__content">{{ article.content }}</div>
+    {% if blog.comments_enabled? %}
+      <section class="article-comments" aria-labelledby="CommentsTitle">
+        <h2 id="CommentsTitle">Comments</h2>
+        {% paginate article.comments by 20 %}
+          {% for comment in article.comments %}<article class="article-comment"><strong>{{ comment.author }}</strong><p>{{ comment.content }}</p></article>{% endfor %}
+          {% render 'pagination', paginate: paginate %}
+        {% endpaginate %}
+        {% form 'new_comment', article %}
+          {% if form.errors %}<div class="form-message form-message--error" role="alert">{{ form.errors | default_errors }}</div>{% endif %}
+          <label for="CommentAuthor">Name</label><input class="field" id="CommentAuthor" name="comment[author]" value="{{ form.author }}" autocomplete="name" required>
+          <label for="CommentEmail">Email</label><input class="field" id="CommentEmail" type="email" name="comment[email]" value="{{ form.email }}" autocomplete="email" required>
+          <label for="CommentBody">Comment</label><textarea class="field" id="CommentBody" name="comment[body]" rows="6" required>{{ form.body }}</textarea>
+          <button class="button button--primary" type="submit">Post comment</button>
+        {% endform %}
+      </section>
+    {% endif %}
+  </div>
+</article>
+{% schema %}
+{"name":"Main article","settings":[{"type":"checkbox","id":"show_author","label":"Show author","default":true}]}
+{% endschema %}
+

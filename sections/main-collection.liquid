@@ -1,78 +1,133 @@
-<section class="section section--background" style="{% render 'section-background-style', section: section %}">
+<section class="section section--background" data-collection-section style="{% render 'section-background-style', section: section %}">
   {% render 'section-background-media', section: section %}
   <div class="container">
-    <h1 class="heading">{{ collection.title }}</h1>
-    <div class="collection-toolbar">
-      <span>{{ collection.products_count }} products</span>
+    <header class="collection-hero{% if collection.featured_image != blank and section.settings.show_collection_image %} collection-hero--with-image{% endif %}">
+      {% if collection.featured_image != blank and section.settings.show_collection_image %}
+        <div class="collection-hero__media">
+          {{ collection.featured_image | image_url: width: 1800 | image_tag: loading: 'eager', fetchpriority: 'high', widths: '480, 720, 960, 1200, 1600, 1800', sizes: '(min-width: 990px) 50vw, 100vw', alt: collection.featured_image.alt | default: collection.title }}
+        </div>
+      {% endif %}
+      <div class="collection-hero__content">
+        <p class="eyebrow">Collection / {{ collection.products_count }} products</p>
+        <h1 class="heading">{{ collection.title }}</h1>
+        {% if section.settings.show_description and collection.description != blank %}<div class="rte collection-hero__description">{{ collection.description }}</div>{% endif %}
+      </div>
+    </header>
+
+    {% paginate collection.products by section.settings.products_per_page %}
+      <div class="collection-toolbar">
+        <div class="collection-toolbar__primary">
+          {% if collection.filters != blank %}
+            <button class="button button--secondary collection-filter-toggle" type="button" data-drawer-open="#CollectionFiltersDrawer-{{ section.id }}" aria-controls="CollectionFiltersDrawer-{{ section.id }}" aria-expanded="false">Filters</button>
+          {% endif %}
+          <span aria-live="polite">{{ collection.products_count }} products</span>
+        </div>
+        <div class="collection-toolbar__actions">
+          <div class="grid-density" aria-label="Products per row">
+            <button type="button" data-grid-columns="2" aria-label="Two products per row">2</button>
+            <button type="button" data-grid-columns="3" aria-label="Three products per row">3</button>
+            <button type="button" data-grid-columns="4" aria-label="Four products per row" aria-pressed="true">4</button>
+          </div>
+          <form class="collection-sort" action="{{ collection.url }}" method="get">
+            {% for filter in collection.filters %}
+              {% for value in filter.active_values %}<input type="hidden" name="{{ value.param_name }}" value="{{ value.value }}">{% endfor %}
+              {% if filter.type == 'price_range' %}
+                {% if filter.min_value.value != blank %}<input type="hidden" name="{{ filter.min_value.param_name }}" value="{{ filter.min_value.value | money_without_currency | replace: ',', '' }}">{% endif %}
+                {% if filter.max_value.value != blank %}<input type="hidden" name="{{ filter.max_value.param_name }}" value="{{ filter.max_value.value | money_without_currency | replace: ',', '' }}">{% endif %}
+              {% endif %}
+            {% endfor %}
+            <label for="SortBy-{{ section.id }}">Sort by</label>
+            <select id="SortBy-{{ section.id }}" class="field field--select" name="sort_by">
+              {% assign sort_by = collection.sort_by | default: collection.default_sort_by %}
+              {% for option in collection.sort_options %}<option value="{{ option.value }}"{% if option.value == sort_by %} selected{% endif %}>{{ option.name }}</option>{% endfor %}
+            </select>
+            <button class="button button--secondary" type="submit">Apply</button>
+          </form>
+        </div>
+      </div>
+
       <div class="collection-active-filters" aria-label="Active filters">
+        {% assign has_active_filters = false %}
         {% for filter in collection.filters %}
           {% for value in filter.active_values %}
+            {% assign has_active_filters = true %}
             <a class="filter-chip" href="{{ value.url_to_remove }}">{{ value.label }} <span aria-hidden="true">×</span></a>
           {% endfor %}
           {% if filter.type == 'price_range' %}
             {% if filter.min_value.value != blank or filter.max_value.value != blank %}
+              {% assign has_active_filters = true %}
               <a class="filter-chip" href="{{ filter.url_to_remove }}">
-                {% if filter.min_value.value != blank %}{{ filter.min_value.value | money }}{% else %}{{ 0 | money }}{% endif %}
-                –
-                {% if filter.max_value.value != blank %}{{ filter.max_value.value | money }}{% else %}{{ filter.range_max | money }}{% endif %}
+                {% if filter.min_value.value != blank %}{{ filter.min_value.value | money }}{% else %}{{ 0 | money }}{% endif %} – {% if filter.max_value.value != blank %}{{ filter.max_value.value | money }}{% else %}{{ filter.range_max | money }}{% endif %}
                 <span aria-hidden="true">×</span>
               </a>
             {% endif %}
           {% endif %}
         {% endfor %}
+        {% if has_active_filters %}<a class="filter-chip filter-chip--clear" href="{{ collection.url }}{% if collection.sort_by != blank %}?sort_by={{ collection.sort_by | url_encode }}{% endif %}">Clear all</a>{% endif %}
       </div>
-    </div>
-    <div class="collection-layout">
-      <aside class="collection-filters">
-        <form id="CollectionFilters" class="stack" method="get">
-          {% for filter in collection.filters %}
-            {% if filter.type == 'list' %}
-              <fieldset class="collection-filter">
-                <legend><strong>{{ filter.label }}</strong></legend>
-                <div class="stack">
-                  {% for value in filter.values %}
-                    <label>
-                      <input type="checkbox" name="{{ value.param_name }}" value="{{ value.value }}" {% if value.active %}checked{% endif %} {% if value.count == 0 and value.active == false %}disabled{% endif %}>
-                      {{ value.label }}
-                    </label>
-                  {% endfor %}
-                </div>
-              </fieldset>
-            {% elsif filter.type == 'price_range' %}
-              <fieldset class="collection-filter">
-                <legend><strong>{{ filter.label }}</strong></legend>
-                <div class="collection-filter__range">
-                  <input class="field" type="number" name="{{ filter.min_value.param_name }}" value="{{ filter.min_value.value | default: '' }}" placeholder="Min">
-                  <input class="field" type="number" name="{{ filter.max_value.param_name }}" value="{{ filter.max_value.value | default: '' }}" placeholder="Max">
-                </div>
-              </fieldset>
-            {% endif %}
-          {% endfor %}
-          <div class="collection-sort">
-            <label for="SortBy"><strong>Sort by</strong></label>
-            <select id="SortBy" class="field field--select" name="sort_by">
-              {% assign sort_by = collection.sort_by | default: collection.default_sort_by %}
-              {% for option in collection.sort_options %}
-                <option value="{{ option.value }}" {% if option.value == sort_by %}selected{% endif %}>{{ option.name }}</option>
-              {% endfor %}
-            </select>
-            <button class="button button--secondary" type="submit">Apply</button>
-          </div>
-        </form>
-      </aside>
-      <div class="collection-grid product-grid">
-        {% for product in collection.products %}
-          {% render 'product-card', product: product, style: 'below' %}
-        {% endfor %}
+
+      <div class="collection-layout">
+        {% if collection.filters != blank %}
+          {% assign desktop_facets_id = section.id | append: '-desktop' %}
+          <aside class="collection-filters" aria-label="Product filters">{% render 'facets', collection: collection, id: desktop_facets_id %}</aside>
+        {% endif %}
+        <div>
+          {% if collection.products_count > 0 %}
+            <div class="collection-grid product-grid" data-product-grid style="--desktop-columns: {{ section.settings.columns_desktop }};">
+              {% for product in collection.products %}{% render 'product-card', product: product, style: 'below' %}{% endfor %}
+            </div>
+            {% render 'pagination', paginate: paginate %}
+          {% else %}
+            <div class="empty-state"><h2>No products found</h2><p>Try removing a filter or browse the full catalog.</p><a class="button button--primary" href="{{ collection.url }}">Clear filters</a></div>
+          {% endif %}
+        </div>
       </div>
-    </div>
+    {% endpaginate %}
   </div>
+
+  {% if collection.filters != blank %}
+    {% assign mobile_facets_id = section.id | append: '-mobile' %}
+    <div class="drawer collection-filter-drawer" id="CollectionFiltersDrawer-{{ section.id }}" role="dialog" aria-modal="true" aria-labelledby="CollectionFiltersTitle-{{ section.id }}" aria-hidden="true">
+      <div class="drawer__header"><strong id="CollectionFiltersTitle-{{ section.id }}">Filters</strong><button class="header__icon-button" type="button" data-drawer-close aria-label="{{ 'accessibility.close' | t }}">{% render 'icon-close' %}</button></div>
+      <div class="drawer__content">{% render 'facets', collection: collection, id: mobile_facets_id %}</div>
+    </div>
+  {% endif %}
 </section>
 
 {% schema %}
 {
   "name": "Main collection",
   "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_collection_image",
+      "label": "Show collection image",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_description",
+      "label": "Show collection description",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "products_per_page",
+      "label": "Products per page",
+      "min": 12,
+      "max": 48,
+      "step": 4,
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "label": "Desktop columns",
+      "min": 3,
+      "max": 5,
+      "step": 1,
+      "default": 4
+    },
     {
       "type": "header",
       "content": "Background"
