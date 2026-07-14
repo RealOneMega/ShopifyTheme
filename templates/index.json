@@ -15,13 +15,15 @@
         "slide_FreEJr": {
           "type": "slide",
           "settings": {
-            "image": "",
+            "image": "shopify://shop_images/TerminalVelocityBanner.jpg",
+            "video_autoplay": false,
+            "video_loop": true,
             "image_fit": "cover",
             "subtitle": "Risky Limits",
             "title": "Push limits. Define risk.",
             "text": "Independent apparel for people who choose their own line.",
             "text_color": "light",
-            "text_position": "top:40%;left:10%;",
+            "text_position": "top:40%;left:50%;transform:translateX(-50%);",
             "focal_point": "object-position: center;",
             "overlay_opacity": 25,
             "button_label_1": "Shop the collection",
@@ -34,16 +36,41 @@
             "button_link_3": "",
             "button_style_3": "tertiary"
           }
+        },
+        "slide_jpdCQx": {
+          "type": "slide",
+          "settings": {
+            "video_autoplay": false,
+            "video_loop": true,
+            "image_fit": "contain",
+            "subtitle": "Latest release",
+            "title": "Made beyond the comfort zone.",
+            "text": "Explore the latest Risky Limits release and available core pieces.",
+            "text_color": "light",
+            "text_position": "top:12%;left:8%;",
+            "focal_point": "object-position: center;",
+            "overlay_opacity": 25,
+            "button_label_1": "Explore all products",
+            "button_link_1": "shopify://collections/all",
+            "button_style_1": "primary",
+            "button_label_2": "",
+            "button_link_2": "",
+            "button_style_2": "secondary",
+            "button_label_3": "",
+            "button_link_3": "",
+            "button_style_3": "tertiary"
+          }
         }
       },
       "block_order": [
-        "slide_FreEJr"
+        "slide_FreEJr",
+        "slide_jpdCQx"
       ],
       "settings": {
         "layout": "full",
-        "height_desktop": 720,
-        "height_mobile": 560,
-        "autoplay": false,
+        "height_desktop": 520,
+        "height_mobile": 420,
+        "autoplay": true,
         "autoplay_speed": 6000,
         "background_type": "none",
         "background_color": "#ffffff",
@@ -60,7 +87,6 @@
         "tile_women": {
           "type": "tile",
           "settings": {
-            "image": "",
             "title": "Latest releases",
             "text": "See what is currently available.",
             "button_label": "Explore",
@@ -70,7 +96,6 @@
         "tile_men": {
           "type": "tile",
           "settings": {
-            "image": "",
             "title": "Core collection",
             "text": "The essential Risky Limits lineup.",
             "button_label": "Shop all",
@@ -80,7 +105,6 @@
         "tile_accessories": {
           "type": "tile",
           "settings": {
-            "image": "",
             "title": "Accessories",
             "text": "Complete the fit with available accessories.",
             "button_label": "Explore",
@@ -151,12 +175,12 @@
     "featured_collection": {
       "type": "featured-collection",
       "settings": {
-        "title": "The latest drop",
+        "title": "New arrivals",
         "collection": "all",
-        "limit": 4,
+        "limit": 8,
         "card_style": "below",
-        "background_type": "color",
-        "background_color": "#FFFFFF",
+        "background_type": "none",
+        "background_color": "#ffffff",
         "background_gradient": "",
         "background_position_x": 50,
         "background_position_y": 50,
@@ -169,12 +193,11 @@
       "settings": {
         "heading": "Choose your own line",
         "subheading": "The Risky Limits standard",
-        "image": "",
         "body": "<p>Risky Limits is built around one idea: progress starts where comfort ends. Explore the current collection and decide what the next limit looks like.</p>",
         "button_label": "Shop the collection",
         "button_link": "shopify://collections/all",
-        "background_type": "color",
-        "background_color": "#11141A",
+        "background_type": "none",
+        "background_color": "#ffffff",
         "background_gradient": "",
         "background_position_x": 50,
         "background_position_y": 50,
@@ -216,8 +239,8 @@
         "usp_rewards"
       ],
       "settings": {
-        "background_type": "color",
-        "background_color": "#0060FF",
+        "background_type": "none",
+        "background_color": "#ffffff",
         "background_gradient": "",
         "background_position_x": 50,
         "background_position_y": 50,
@@ -231,8 +254,8 @@
         "heading": "Enter the limit",
         "subheading": "Opt in for Risky Limits releases and store updates.",
         "button_label": "Sign up",
-        "background_type": "color",
-        "background_color": "#11141A",
+        "background_type": "none",
+        "background_color": "#ffffff",
         "background_gradient": "",
         "background_position_x": 50,
         "background_position_y": 50,
@@ -244,6 +267,7 @@
   "order": [
     "hero",
     "category_tiles",
+    "collection_tabs",
     "featured_collection",
     "image_with_text",
     "usp",
