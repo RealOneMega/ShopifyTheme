@@ -1,9 +1,9 @@
-<section class="section section--background" style="{% render 'section-background-style', section: section %}">
+<section class="section main-page-section section--background" style="{% render 'section-background-style', section: section %}">
   {% render 'section-background-media', section: section %}
   <div class="container">
-    <article class="stack">
+    <article class="main-page__article">
       <h1 class="heading">{{ page.title }}</h1>
-      <div>{{ page.content }}</div>
+      <div class="rte main-page__body">{{ page.content }}</div>
     </article>
   </div>
 </section>

@@ -2,6 +2,14 @@
 
 This file records implementation notes for future troubleshooting. Add a dated entry whenever theme behavior, structure, or performance is changed so prior work is easy to audit before repeating it.
 
+## 2026-07-13 — Risky Limits 2.0.2 width system and page templates
+
+- Removed the duplicated section/container horizontal inset and increased the configurable content canvas to 1700px.
+- Widened the hero copy frame and set a 16ch headline measure so the primary slogan resolves into two balanced lines at desktop widths.
+- Rebalanced the footer newsletter and menu columns, expanded common content frames, and converted the default page into a wide editorial split.
+- Added brand-story, lookbook, customer-care, and release page templates plus visible hotspot/video empty states for media-free setup.
+- Shopify Theme Check inspected 157 files with zero offenses and Shopify CLI built `Risky Limits-2.0.2.zip`. Post-upload desktop/mobile validation remains required.
+
 ## 2026-07-13 — Risky Limits 2.0.1 visual calibration
 
 - Measured the connected development storefront before editing and confirmed mixed saved color tokens, a dark product-section background with dark text, a 104px hero heading in a 520px hero, and 56px footer/menu headings.

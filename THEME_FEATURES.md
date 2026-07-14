@@ -2,7 +2,7 @@
 
 ## Global storefront
 
-- Dark Risky Limits design tokens, responsive typography, configurable containers, button/input shapes, and restrained motion.
+- Warm product-first design tokens, black editorial surfaces, responsive typography, configurable wide containers, button/input shapes, and restrained motion.
 - Header and footer section groups with sticky navigation, menu drawers, mega-menu blocks, announcements, social links, payment icons, country/region selection, and language selection.
 - Accessible skip link, focus management, drawer focus traps, keyboard tabs, accordion semantics, live status announcements, and reduced-motion behavior.
 - Canonical metadata, social sharing metadata, Shopify structured product/article data, organization data, and breadcrumbs.
@@ -31,6 +31,7 @@
 - Classic customer login, registration, account, order, addresses, password reset, and account activation templates. Stores using new customer accounts will route to Shopify-hosted customer account pages.
 - Reusable flexible-content section with heading, text, button, image, divider, and app blocks.
 - Editorial sections for hero slides, featured products/collections, collection tabs, image-with-text, video, FAQ, lookbook/hotspots, comparison, countdown, and supporting content patterns.
+- Assignable brand-story, lookbook, customer-care, and release page templates that demonstrate those content and commerce sections in complete flows.
 
 ## Native versus app-backed behavior
 

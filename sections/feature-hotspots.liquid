@@ -10,14 +10,20 @@
     </header>
   {% endif %}
     <div class="hotspots">
-      {% if section.settings.image != blank %}
-        <div class="hotspots__image" style="position: relative;">
+        <div class="hotspots__image">
+          {% if section.settings.image != blank %}
           {{ section.settings.image | image_url: width: 1400 | image_tag: loading: 'lazy', sizes: '100vw', widths: '700, 1000, 1400', alt: section.settings.image.alt }}
+          {% else %}
+            <div class="hotspots__placeholder" aria-hidden="true"><span>LOOK / 01</span><strong>BUILD THE FIT</strong></div>
+          {% endif %}
           {% for block in section.blocks %}
-            <a class="hotspot" href="{{ block.settings.link | default: '#' }}" style="position:absolute; top: {{ block.settings.top }}%; left: {{ block.settings.left }}%;">{{ block.settings.label }}</a>
+            {% if block.settings.link != blank %}
+              <a class="hotspot" href="{{ block.settings.link }}" style="position:absolute; top: {{ block.settings.top }}%; left: {{ block.settings.left }}%;" {{ block.shopify_attributes }}>{{ block.settings.label }}</a>
+            {% else %}
+              <span class="hotspot" style="position:absolute; top: {{ block.settings.top }}%; left: {{ block.settings.left }}%;" aria-hidden="true" {{ block.shopify_attributes }}>{{ block.settings.label }}</span>
+            {% endif %}
           {% endfor %}
         </div>
-      {% endif %}
     </div>
   </div>
 </section>

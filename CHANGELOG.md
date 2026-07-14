@@ -1,5 +1,32 @@
 # Changelog
 
+## 2.0.2 — 2026-07-13
+
+### Changed
+
+- Expanded the default content canvas from 1500px to 1700px and removed duplicate horizontal padding between sections and containers.
+- Increased the homepage hero to 720px desktop and 560px mobile while widening its content frame to 980px.
+- Set the hero headline to a 16-character measure so the Risky Limits slogan resolves as two deliberate lines instead of one word per line.
+- Reduced and widened the footer newsletter heading, expanded its form area, and rebalanced the footer columns.
+- Expanded shared section headers, descriptions, product titles, image-with-text content, FAQ content, tabs, service cards, and email forms.
+- Reworked the generic page layout into a wide editorial split and expanded the contact template.
+
+### Added
+
+- Assignable `brand-story`, `lookbook`, `customer-care`, and `release` page templates with complete default section compositions.
+- Designed empty states for shoppable hotspots and campaign video sections so templates remain intentional before final media is uploaded.
+
+### Fixed
+
+- Removed the remaining edge gutter from full-width hero sections.
+- Removed placeholder `#` links from hotspot, logo-list, promo-bar, and video-banner sections.
+
+### Validation
+
+- JavaScript and JSON parsing: pass.
+- Shopify Theme Check: 157 files, zero offenses.
+- Shopify CLI package: `Risky Limits-2.0.2.zip`.
+
 ## 2.0.1 — 2026-07-13
 
 ### Changed

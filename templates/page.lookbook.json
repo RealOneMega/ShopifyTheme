@@ -1,0 +1,82 @@
+{
+  "sections": {
+    "hero": {
+      "type": "hero-slideshow",
+      "blocks": {
+        "look_slide": {
+          "type": "slide",
+          "settings": {
+            "subtitle": "Risky Limits lookbook",
+            "title": "Wear the decision.",
+            "text": "Build a complete line from current pieces and the way you choose to move in them.",
+            "text_color": "light",
+            "text_position": "top:40%;left:10%;",
+            "overlay_opacity": 25,
+            "button_label_1": "Shop every piece",
+            "button_link_1": "shopify://collections/all",
+            "button_style_1": "primary"
+          }
+        }
+      },
+      "block_order": ["look_slide"],
+      "settings": {"layout": "full", "height_desktop": 700, "height_mobile": 540, "autoplay": false}
+    },
+    "shop_the_look": {
+      "type": "feature-hotspots",
+      "blocks": {
+        "spot_1": {"type": "hotspot", "settings": {"label": "01", "top": 28, "left": 30, "link": "shopify://collections/all"}},
+        "spot_2": {"type": "hotspot", "settings": {"label": "02", "top": 52, "left": 60, "link": "shopify://collections/all"}},
+        "spot_3": {"type": "hotspot", "settings": {"label": "03", "top": 72, "left": 42, "link": "shopify://collections/all"}}
+      },
+      "block_order": ["spot_1", "spot_2", "spot_3"],
+      "settings": {
+        "heading": "Build the fit",
+        "subheading": "Replace the graphic with a campaign image, then point each marker to the exact product.",
+        "background_type": "color",
+        "background_color": "#FFFFFF"
+      }
+    },
+    "motion": {
+      "type": "feature-video-banner",
+      "settings": {
+        "heading": "Designed in motion",
+        "subheading": "Use this section for campaign film, product movement, or a fit walkthrough.",
+        "button_label": "Explore the collection",
+        "button_link": "shopify://collections/all",
+        "background_type": "color",
+        "background_color": "#F4F3EE"
+      }
+    },
+    "looks": {
+      "type": "feature-announcement-tiles",
+      "blocks": {
+        "look_1": {"type": "tile", "settings": {"title": "Daily pressure", "text": "Core pieces with a direct everyday line.", "button_label": "Shop the look", "button_link": "shopify://collections/all"}},
+        "look_2": {"type": "tile", "settings": {"title": "After hours", "text": "A darker rotation built around contrast.", "button_label": "Shop the look", "button_link": "shopify://collections/all"}},
+        "look_3": {"type": "tile", "settings": {"title": "Open movement", "text": "Easy layers for motion without distraction.", "button_label": "Shop the look", "button_link": "shopify://collections/all"}}
+      },
+      "block_order": ["look_1", "look_2", "look_3"],
+      "settings": {
+        "heading": "Three ways through",
+        "subheading": "Use each tile as an editorial path into a collection or curated outfit.",
+        "background_type": "color",
+        "background_color": "#F4F3EE"
+      }
+    },
+    "products": {
+      "type": "featured-collection",
+      "settings": {
+        "title": "Pieces in rotation",
+        "collection": "all",
+        "limit": 4,
+        "card_style": "below",
+        "background_type": "color",
+        "background_color": "#FFFFFF"
+      }
+    },
+    "email": {
+      "type": "feature-email-capture",
+      "settings": {"heading": "Enter the limit", "subheading": "Get the next lookbook and release update.", "button_label": "Join the list", "background_type": "color", "background_color": "#11141A"}
+    }
+  },
+  "order": ["hero", "shop_the_look", "motion", "looks", "products", "email"]
+}

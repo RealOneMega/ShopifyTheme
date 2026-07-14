@@ -2,11 +2,11 @@
 
 ## 1. Install as an unpublished theme
 
-Upload `Risky Limits-2.0.0.zip` in Shopify Admin. Keep it unpublished while completing this guide and `THEME_QA.md`.
+Upload `Risky Limits-2.0.2.zip` in Shopify Admin. Keep it unpublished while completing this guide and `THEME_QA.md`.
 
 ## 2. Brand and global settings
 
-- Upload desktop/mobile white logos for the dark header and a square favicon.
+- Upload desktop/mobile dark logos for the light header, a light footer logo, and a square favicon.
 - Review all color, typography, layout, radius, button, input, product-card, cart, search, wishlist, social, and motion settings.
 - Replace `theme_support_email` in `config/settings_schema.json` with a monitored business address before launch.
 - Set the free-shipping goal only when it exactly matches the active Shopify shipping configuration for every relevant Market; otherwise leave it at 0.
@@ -25,6 +25,17 @@ Upload `Risky Limits-2.0.0.zip` in Shopify Admin. Keep it unpublished while comp
 - Upload final hero, editorial, product, collection, and social-sharing media with useful alt text and focal points.
 - Review every homepage section; remove unused sections and replace all default copy with approved brand content.
 - Add policy pages, contact information, shipping details, returns details, privacy/terms, and accessibility information.
+
+## 4a. Assignable page templates
+
+Create Shopify Pages and assign these templates from each page's **Theme template** selector:
+
+- `brand-story`: brand origin, principles, values, brand FAQ, and email capture.
+- `lookbook`: campaign hero, shoppable hotspots, campaign video, editorial looks, and products.
+- `customer-care`: service introduction, FAQ, confidence cards, account access, and contact form.
+- `release`: release hero, current products, release notes, customer-confidence cards, and email capture.
+
+Treat the supplied copy as a structured starting point. Replace the lookbook and campaign placeholders with owned media, point hotspots to exact products, replace `all` collection defaults, and align every service answer with active store policies before publishing.
 
 ## 5. Product data
 

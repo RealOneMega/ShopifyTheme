@@ -6,6 +6,8 @@
         <video controls poster="{{ section.settings.poster | image_url: width: 1200 }}">
           <source src="{{ section.settings.video_url }}" type="video/mp4">
         </video>
+      {% else %}
+        <div class="video-banner__placeholder" aria-hidden="true"><span>MOTION / 01</span><strong>MOVE PAST COMFORT</strong></div>
       {% endif %}
       <div class="video-banner__content">
   {% if section.settings.heading != blank %}
@@ -16,8 +18,8 @@
       {% endif %}
     </header>
   {% endif %}
-        {% if section.settings.button_label != blank %}
-          <a class="button" href="{{ section.settings.button_link | default: '#' }}">{{ section.settings.button_label }}</a>
+        {% if section.settings.button_label != blank and section.settings.button_link != blank %}
+          <a class="button" href="{{ section.settings.button_link }}">{{ section.settings.button_label }}</a>
         {% endif %}
       </div>
     </div>

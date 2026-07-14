@@ -1,0 +1,55 @@
+{
+  "sections": {
+    "hero": {
+      "type": "hero-slideshow",
+      "blocks": {
+        "release_slide": {
+          "type": "slide",
+          "settings": {
+            "subtitle": "Current release",
+            "title": "The limit moves with you.",
+            "text": "A focused release page for product, fit, material, and service information.",
+            "text_color": "light",
+            "text_position": "top:40%;left:10%;",
+            "overlay_opacity": 25,
+            "button_label_1": "Shop the release",
+            "button_link_1": "shopify://collections/all",
+            "button_style_1": "primary"
+          }
+        }
+      },
+      "block_order": ["release_slide"],
+      "settings": {"layout": "full", "height_desktop": 680, "height_mobile": 520, "autoplay": false}
+    },
+    "release_products": {
+      "type": "featured-collection",
+      "settings": {"title": "The current line", "collection": "all", "limit": 8, "card_style": "below", "background_type": "color", "background_color": "#FFFFFF"}
+    },
+    "release_notes": {
+      "type": "feature-product-tabs",
+      "blocks": {
+        "tab_1": {"type": "tab", "settings": {"title": "Direction", "content": "<p>Use this tab to explain the release concept, silhouette direction, and how the pieces work together.</p>"}},
+        "tab_2": {"type": "tab", "settings": {"title": "Materials", "content": "<p>Add accurate release-level material and care context here. Keep product-specific fiber content and instructions on each product page.</p>"}},
+        "tab_3": {"type": "tab", "settings": {"title": "Fit", "content": "<p>Summarize the overall fit direction, then direct customers to the measurements and fit notes on each product.</p>"}},
+        "tab_4": {"type": "tab", "settings": {"title": "Access", "content": "<p>Use this area for confirmed release timing, availability, and restock information without implying inventory that Shopify does not report.</p>"}}
+      },
+      "block_order": ["tab_1", "tab_2", "tab_3", "tab_4"],
+      "settings": {"heading": "Release notes", "subheading": "Give customers the context larger retailers often bury.", "background_type": "color", "background_color": "#F4F3EE"}
+    },
+    "confidence": {
+      "type": "feature-trust-badges",
+      "blocks": {
+        "trust_1": {"type": "item", "settings": {"title": "Product-specific fit", "text": "Use product metafields for measurements and fit guidance."}},
+        "trust_2": {"type": "item", "settings": {"title": "Visible availability", "text": "Product and variant availability comes directly from Shopify."}},
+        "trust_3": {"type": "item", "settings": {"title": "Direct checkout", "text": "Move from product selection into Shopify's configured checkout."}}
+      },
+      "block_order": ["trust_1", "trust_2", "trust_3"],
+      "settings": {"heading": "The advantage is clarity", "subheading": "Make every product decision easier.", "background_type": "color", "background_color": "#FFFFFF"}
+    },
+    "email": {
+      "type": "feature-email-capture",
+      "settings": {"heading": "Enter the limit", "subheading": "Be first to see the next Risky Limits release.", "button_label": "Join the list", "background_type": "color", "background_color": "#11141A"}
+    }
+  },
+  "order": ["hero", "release_products", "release_notes", "confidence", "email"]
+}

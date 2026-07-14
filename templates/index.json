@@ -41,8 +41,8 @@
       ],
       "settings": {
         "layout": "full",
-        "height_desktop": 670,
-        "height_mobile": 520,
+        "height_desktop": 720,
+        "height_mobile": 560,
         "autoplay": false,
         "autoplay_speed": 6000,
         "background_type": "none",

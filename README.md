@@ -4,7 +4,7 @@ Risky Limits 2.0 is a Shopify Online Store 2.0 theme built for an independent ap
 
 ## Quick start
 
-1. Upload `Risky Limits-2.0.1.zip` in Shopify Admin under **Online Store > Themes**.
+1. Upload `Risky Limits-2.0.2.zip` in Shopify Admin under **Online Store > Themes**.
 2. Keep the uploaded theme unpublished while completing `THEME_SETUP.md`.
 3. Add navigation menus, policies, product media, collections, Markets, shipping rates, and payment methods in Shopify Admin.
 4. Complete the preview-store checklist in `THEME_QA.md` before publishing.
@@ -19,7 +19,7 @@ shopify theme check --path .
 shopify theme package --path .
 ```
 
-The 2.0.1 package includes the visual calibration release. See `CHANGELOG.md` and `THEME_QA.md` for its current validation boundary.
+The 2.0.2 package includes the expanded layout system and four assignable showcase page templates. See `CHANGELOG.md` and `THEME_QA.md` for its current validation boundary.
 
 ## Architecture
 
@@ -32,6 +32,8 @@ The 2.0.1 package includes the visual calibration release. See `CHANGELOG.md` an
 - `assets/components.css`: focused component styles and the final storefront visual-calibration layer.
 - `assets/theme.js`: idempotent storefront controllers and Theme Editor lifecycle handling.
 - `config/`: global theme settings and saved store configuration.
+
+Assignable page templates include `brand-story`, `lookbook`, `customer-care`, and `release`. Create a Shopify Page, assign the desired template, then replace default media, links, policy guidance, and copy in the Theme Editor before publishing.
 
 ## Documentation
 

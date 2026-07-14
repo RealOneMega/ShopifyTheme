@@ -2,7 +2,7 @@
   {
     "name": "theme_info",
     "theme_name": "Risky Limits",
-    "theme_version": "2.0.1",
+    "theme_version": "2.0.2",
     "theme_author": "Risky Limits",
     "theme_support_email": "43621169+RealOneMega@users.noreply.github.com",
     "theme_documentation_url": "https://github.com/RealOneMega/ShopifyTheme"
@@ -69,7 +69,7 @@
   {
     "name": "Layout",
     "settings": [
-      {"type": "range", "id": "container_width", "label": "Content width", "min": 1100, "max": 1800, "step": 50, "default": 1500, "unit": "px"},
+      {"type": "range", "id": "container_width", "label": "Content width", "min": 1100, "max": 1800, "step": 50, "default": 1700, "unit": "px"},
       {"type": "range", "id": "container_narrow_width", "label": "Narrow content width", "min": 600, "max": 1000, "step": 50, "default": 800, "unit": "px"},
       {"type": "range", "id": "section_padding", "label": "Section spacing", "min": 2, "max": 8, "step": 0.5, "default": 5.5, "unit": "rem"},
       {"type": "range", "id": "section_padding_mobile", "label": "Mobile section spacing", "min": 1.5, "max": 5, "step": 0.5, "default": 3, "unit": "rem"},

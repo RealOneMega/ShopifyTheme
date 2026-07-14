@@ -1,0 +1,94 @@
+{
+  "sections": {
+    "hero": {
+      "type": "hero-slideshow",
+      "blocks": {
+        "story_slide": {
+          "type": "slide",
+          "settings": {
+            "subtitle": "The Risky Limits standard",
+            "title": "Built beyond the baseline.",
+            "text": "Independent apparel shaped by the decision to move past comfort.",
+            "text_color": "light",
+            "text_position": "top:40%;left:10%;",
+            "overlay_opacity": 25,
+            "button_label_1": "Shop the collection",
+            "button_link_1": "shopify://collections/all",
+            "button_style_1": "primary"
+          }
+        }
+      },
+      "block_order": ["story_slide"],
+      "settings": {
+        "layout": "full",
+        "height_desktop": 650,
+        "height_mobile": 520,
+        "autoplay": false
+      }
+    },
+    "origin": {
+      "type": "feature-image-with-text",
+      "settings": {
+        "heading": "Choose your own line",
+        "subheading": "Why Risky Limits exists",
+        "body": "<p>Risky Limits is for the moment when comfort stops being useful. Every release is designed to feel direct, capable, and individual without borrowing another brand's identity.</p><p>The goal is simple: make pieces that earn their place in your rotation and support the way you decide to move.</p>",
+        "button_label": "Explore the current release",
+        "button_link": "shopify://collections/all",
+        "background_type": "color",
+        "background_color": "#11141A"
+      }
+    },
+    "principles": {
+      "type": "feature-rich-text",
+      "settings": {
+        "heading": "What we build for",
+        "subheading": "A clear standard instead of empty noise.",
+        "body": "<p>Strong utility. Honest product information. Confident design. Easy access on every screen. Risky Limits is built to compete through focus and service—not imitation.</p>",
+        "background_type": "color",
+        "background_color": "#F4F3EE"
+      }
+    },
+    "values": {
+      "type": "feature-logo-list",
+      "blocks": {
+        "value_1": {"type": "logo", "settings": {"label": "Independent"}},
+        "value_2": {"type": "logo", "settings": {"label": "Purposeful"}},
+        "value_3": {"type": "logo", "settings": {"label": "Accessible"}},
+        "value_4": {"type": "logo", "settings": {"label": "Unrestricted"}}
+      },
+      "block_order": ["value_1", "value_2", "value_3", "value_4"],
+      "settings": {
+        "heading": "The operating principles",
+        "subheading": "Four ideas that keep the brand moving in its own direction.",
+        "background_type": "color",
+        "background_color": "#FFFFFF"
+      }
+    },
+    "story_faq": {
+      "type": "feature-faq",
+      "blocks": {
+        "faq_1": {"type": "faq", "settings": {"question": "What does Risky Limits stand for?", "answer": "<p>Choosing progress when comfort would be easier. The brand is built around independent movement, honest design, and personal definition.</p>"}},
+        "faq_2": {"type": "faq", "settings": {"question": "How are releases developed?", "answer": "<p>Each release begins with a clear use, silhouette, and visual direction. Product-specific materials and fit information should be added to each product before launch.</p>"}},
+        "faq_3": {"type": "faq", "settings": {"question": "Where can I follow new releases?", "answer": "<p>Join the email list for store and release updates. Social channels can be added in Theme settings when the official accounts are ready.</p>"}}
+      },
+      "block_order": ["faq_1", "faq_2", "faq_3"],
+      "settings": {
+        "heading": "The short version",
+        "subheading": "Answers about the brand and how it works.",
+        "background_type": "color",
+        "background_color": "#FFFFFF"
+      }
+    },
+    "email": {
+      "type": "feature-email-capture",
+      "settings": {
+        "heading": "Enter the limit",
+        "subheading": "Get release and store updates directly from Risky Limits.",
+        "button_label": "Join the list",
+        "background_type": "color",
+        "background_color": "#11141A"
+      }
+    }
+  },
+  "order": ["hero", "origin", "principles", "values", "story_faq", "email"]
+}

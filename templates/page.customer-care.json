@@ -1,0 +1,65 @@
+{
+  "sections": {
+    "hero": {
+      "type": "hero-slideshow",
+      "blocks": {
+        "care_slide": {
+          "type": "slide",
+          "settings": {
+            "subtitle": "Customer care",
+            "title": "Answers without the runaround.",
+            "text": "Find the fastest path to order, product, fit, and store information.",
+            "text_color": "light",
+            "text_position": "top:40%;left:10%;",
+            "overlay_opacity": 25
+          }
+        }
+      },
+      "block_order": ["care_slide"],
+      "settings": {"layout": "full", "height_desktop": 520, "height_mobile": 440, "autoplay": false}
+    },
+    "care_intro": {
+      "type": "feature-rich-text",
+      "settings": {
+        "heading": "Start here",
+        "subheading": "Keep these answers aligned with your active Shopify policies and fulfillment setup.",
+        "body": "<p>This template is designed as the central service page. Replace the guidance below with the store's confirmed processing times, return window, shipping destinations, and support response expectations before publishing.</p>",
+        "background_type": "color",
+        "background_color": "#F4F3EE"
+      }
+    },
+    "care_faq": {
+      "type": "feature-faq",
+      "blocks": {
+        "faq_1": {"type": "faq", "settings": {"question": "Where can I track my order?", "answer": "<p>Use the tracking link in the shipping confirmation email. Customers with an account can also review their available order history after signing in.</p>"}},
+        "faq_2": {"type": "faq", "settings": {"question": "How do I choose a size?", "answer": "<p>Review the product-specific size and fit information on the product page. Contact the store before ordering if a measurement or fit note is missing.</p>"}},
+        "faq_3": {"type": "faq", "settings": {"question": "Can I change or cancel an order?", "answer": "<p>Contact the store as soon as possible. A change is not guaranteed after fulfillment processing begins.</p>"}},
+        "faq_4": {"type": "faq", "settings": {"question": "What is the return policy?", "answer": "<p>Link this answer to the published return policy and state the confirmed return window, item condition requirements, exclusions, and refund timing.</p>"}},
+        "faq_5": {"type": "faq", "settings": {"question": "Where does Risky Limits ship?", "answer": "<p>Available destinations, rates, duties, and delivery estimates are determined by the active Shopify Markets and shipping configuration.</p>"}},
+        "faq_6": {"type": "faq", "settings": {"question": "How do I contact support?", "answer": "<p>Use the contact form below. Add a monitored support email and confirmed response window before this page is published.</p>"}}
+      },
+      "block_order": ["faq_1", "faq_2", "faq_3", "faq_4", "faq_5", "faq_6"],
+      "settings": {"heading": "Common questions", "subheading": "Straight answers, organized for quick scanning.", "background_type": "color", "background_color": "#FFFFFF"}
+    },
+    "confidence": {
+      "type": "feature-trust-badges",
+      "blocks": {
+        "trust_1": {"type": "item", "settings": {"title": "Secure checkout", "text": "Payments are processed through Shopify's configured checkout."}},
+        "trust_2": {"type": "item", "settings": {"title": "Order access", "text": "Use account and confirmation tools to review available order details."}},
+        "trust_3": {"type": "item", "settings": {"title": "Direct support", "text": "Route questions through one clear contact form."}}
+      },
+      "block_order": ["trust_1", "trust_2", "trust_3"],
+      "settings": {"heading": "Built for clarity", "subheading": "Useful service features without invented promises.", "background_type": "color", "background_color": "#F4F3EE"}
+    },
+    "account": {
+      "type": "feature-account-cta",
+      "settings": {"heading": "Keep orders in reach", "subheading": "Customer account", "text": "Sign in to review the order information available to your account, or create an account for future access.", "login_label": "Log in", "signup_label": "Create account", "background_type": "color", "background_color": "#FFFFFF"}
+    },
+    "contact": {"type": "main-contact", "settings": {}},
+    "email": {
+      "type": "feature-email-capture",
+      "settings": {"heading": "Enter the limit", "subheading": "Opt in for release and store updates.", "button_label": "Join the list", "background_type": "color", "background_color": "#11141A"}
+    }
+  },
+  "order": ["hero", "care_intro", "care_faq", "confidence", "account", "contact", "email"]
+}

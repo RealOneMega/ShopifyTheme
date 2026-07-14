@@ -11,13 +11,13 @@
   {% endif %}
     <div class="logo-list">
       {% for block in section.blocks %}
-        <a class="logo-list__item" href="{{ block.settings.link | default: '#' }}">
+        {% if block.settings.link != blank %}<a class="logo-list__item" href="{{ block.settings.link }}" {{ block.shopify_attributes }}>{% else %}<div class="logo-list__item" {{ block.shopify_attributes }}>{% endif %}
           {% if block.settings.logo != blank %}
             {{ block.settings.logo | image_url: width: 300 | image_tag: loading: 'lazy', sizes: '(min-width: 900px) 160px, 40vw', widths: '120, 200, 300', alt: block.settings.logo.alt }}
           {% else %}
             <span>{{ block.settings.label }}</span>
           {% endif %}
-        </a>
+        {% if block.settings.link != blank %}</a>{% else %}</div>{% endif %}
       {% endfor %}
     </div>
   </div>
