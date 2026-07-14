@@ -372,194 +372,255 @@ const Theme = (() => {
     });
   };
 
-  const initWishlist = (root = document) => {
-    const storageKey = 'wishlist-items';
-    const normalizeItems = (items) =>
-      items
-        .map((item) => {
-          if (typeof item === 'string') {
-            return { handle: item, variantId: null };
-          }
-          if (item && item.handle) {
-            return { handle: item.handle, variantId: item.variantId || null };
-          }
-          return null;
-        })
-        .filter(Boolean);
-    const getItems = () => {
+  const wishlistStorageKey = 'wishlist-items';
+  let wishlistMemoryItems = [];
+
+  const normalizeWishlistItems = (items = []) => {
+    const unique = new Map();
+    items.forEach((item) => {
+      const normalized = typeof item === 'string'
+        ? { handle: item, variantId: null }
+        : item?.handle
+          ? { handle: String(item.handle), variantId: item.variantId ? Number(item.variantId) : null }
+          : null;
+      if (normalized?.handle) unique.set(normalized.handle, normalized);
+    });
+    return [...unique.values()];
+  };
+
+  const WishlistStore = {
+    get() {
       try {
-        return normalizeItems(JSON.parse(safeStorage.get(storageKey, '[]')));
+        const stored = safeStorage.get(wishlistStorageKey);
+        if (stored === null) return [...wishlistMemoryItems];
+        wishlistMemoryItems = normalizeWishlistItems(JSON.parse(stored));
       } catch {
-        return [];
+        // Preserve this page's wishlist state when storage is unavailable or malformed.
       }
-    };
-    const updateCount = (items = getItems()) => {
+      return [...wishlistMemoryItems];
+    },
+    set(items) {
+      wishlistMemoryItems = normalizeWishlistItems(items);
+      safeStorage.set(wishlistStorageKey, JSON.stringify(wishlistMemoryItems));
+      document.dispatchEvent(new CustomEvent('wishlist:change', { detail: { items: [...wishlistMemoryItems] } }));
+      return [...wishlistMemoryItems];
+    },
+    find(handle) {
+      return this.get().find((item) => item.handle === handle);
+    },
+    add(handle, variantId = null) {
+      if (!handle) return this.get();
+      const items = this.get();
+      const existing = items.find((item) => item.handle === handle);
+      if (existing) existing.variantId = variantId || existing.variantId;
+      else items.push({ handle, variantId: variantId || null });
+      return this.set(items);
+    },
+    remove(handle) {
+      return this.set(this.get().filter((item) => item.handle !== handle));
+    },
+  };
+
+  const initWishlist = (root = document) => {
+    const updateWishlistUI = (items = WishlistStore.get()) => {
       document.querySelectorAll('[data-wishlist-count]').forEach((badge) => {
         badge.textContent = String(items.length);
         badge.classList.toggle('hidden', items.length === 0);
       });
+      document.querySelectorAll('[data-wishlist-toggle]').forEach((button) => {
+        const active = items.some((item) => item.handle === button.dataset.wishlistToggle);
+        button.setAttribute('aria-pressed', String(active));
+        button.classList.toggle('is-active', active);
+      });
+      document.querySelectorAll('[data-wishlist-add]').forEach((button) => {
+        const form = button.closest('[data-product-form]');
+        const section = button.closest('[data-product-handle]');
+        const handle = button.dataset.productHandle || form?.dataset.productHandle || section?.dataset.productHandle;
+        const active = !!handle && items.some((item) => item.handle === handle);
+        button.setAttribute('aria-pressed', String(active));
+        button.classList.toggle('is-active', active);
+        button.textContent = active ? 'Saved to wishlist' : 'Save to wishlist';
+      });
     };
-    const setItems = (items) => {
-      safeStorage.set(storageKey, JSON.stringify(items));
-      updateCount(items);
-    };
-    const findItem = (items, handle) => items.find((item) => item.handle === handle);
-    const upsertItem = (items, handle, variantId) => {
-      const existing = findItem(items, handle);
-      if (existing) {
-        existing.variantId = variantId || existing.variantId;
-        return items;
-      }
-      items.push({ handle, variantId: variantId || null });
-      return items;
-    };
+
     const renderWishlist = async () => {
-      const container = document.querySelector('[data-wishlist-items]');
-      if (!container) return;
-      const items = getItems();
+      const containers = Array.from(document.querySelectorAll('[data-wishlist-items]'));
+      const recommendations = Array.from(document.querySelectorAll('[data-wishlist-recommendations]'));
+      if (!containers.length && !recommendations.length) return;
+
+      const items = WishlistStore.get();
       if (!items.length) {
-        container.innerHTML = '<p>Your wishlist is empty.</p>';
+        containers.forEach((container) => {
+          container.innerHTML = '<div class="empty-state empty-state--compact"><p>Your wishlist is empty.</p><a class="button button--secondary" href="' + escapeHTML(config.routes?.allProducts || shopifyPath('collections/all')) + '">Explore products</a></div>';
+        });
+        recommendations.forEach((container) => {
+          container.hidden = true;
+          container.closest('[data-wishlist-recommendations-section]')?.setAttribute('hidden', '');
+          container.replaceChildren();
+        });
         return;
       }
-      container.innerHTML = '<p>Loading wishlist...</p>';
-      const handles = [...new Set(items.map((item) => item.handle))];
+
+      containers.forEach((container) => { container.innerHTML = '<p class="wishlist-status">Loading saved items…</p>'; });
       const products = await Promise.all(
-        handles.map((handle) =>
-          fetch(shopifyPath(`products/${handle}.js`))
+        items.map((item) =>
+          fetch(shopifyPath(`products/${encodeURIComponent(item.handle)}.js`), { headers: { Accept: 'application/json' } })
             .then((response) => (response.ok ? response.json() : null))
             .catch(() => null),
         ),
       );
       const validProducts = products.filter(Boolean);
       if (!validProducts.length) {
-        container.innerHTML = '<p>Your wishlist is empty.</p>';
+        containers.forEach((container) => { container.innerHTML = '<p>Your wishlist is empty.</p>'; });
+        recommendations.forEach((container) => {
+          container.hidden = true;
+          container.closest('[data-wishlist-recommendations-section]')?.setAttribute('hidden', '');
+        });
         return;
       }
-      container.innerHTML = `
-        <div class="stack">
-          ${validProducts
-            .map((product) => {
-              const savedItem = findItem(items, product.handle);
-              const variantId = savedItem?.variantId || product.variants?.[0]?.id;
-              const price = formatMoney(product.price);
-              const title = escapeHTML(product.title);
-              const url = escapeHTML(product.url);
-              const handle = escapeHTML(product.handle);
-              const image = product.featured_image
-                ? `<img src="${escapeHTML(withWidth(product.featured_image, 140))}" alt="${title}" loading="lazy">`
-                : '';
-              return `
-                <div class="wishlist-item">
-                  <a class="wishlist-item__media" href="${url}">${image}</a>
-                  <div class="wishlist-item__details">
-                    <a class="wishlist-item__title" href="${url}">${title}</a>
-                    <div class="wishlist-item__price">${price}</div>
-                    <div class="wishlist-item__actions">
-                      <button class="button button--secondary" type="button" data-wishlist-move data-variant-id="${variantId}" data-handle="${handle}">Move to cart</button>
-                      <button class="button button--tertiary" type="button" data-wishlist-remove data-handle="${handle}">Remove</button>
-                    </div>
-                  </div>
-                </div>
-              `;
-            })
-            .join('')}
-        </div>
-      `;
+
+      const itemMarkup = validProducts.map((product) => {
+        const savedItem = items.find((item) => item.handle === product.handle);
+        const savedVariant = product.variants?.find((variant) => Number(variant.id) === Number(savedItem?.variantId));
+        const variant = savedVariant || product.variants?.find((candidate) => candidate.available) || product.variants?.[0];
+        const title = escapeHTML(product.title);
+        const url = escapeHTML(product.url);
+        const handle = escapeHTML(product.handle);
+        const image = product.featured_image
+          ? `<img src="${escapeHTML(withWidth(product.featured_image, 180))}" alt="${title}" loading="lazy">`
+          : '<span class="wishlist-item__placeholder" aria-hidden="true"></span>';
+        return `
+          <article class="wishlist-item">
+            <a class="wishlist-item__media" href="${url}">${image}</a>
+            <div class="wishlist-item__details">
+              <a class="wishlist-item__title" href="${url}">${title}</a>
+              <div class="wishlist-item__price">${formatMoney(variant?.price ?? product.price)}</div>
+              <div class="wishlist-item__actions">
+                <button class="button button--secondary" type="button" data-wishlist-move data-variant-id="${variant?.id || ''}" data-handle="${handle}"${variant?.available === false ? ' disabled' : ''}>${variant?.available === false ? 'Sold out' : 'Move to cart'}</button>
+                <button class="button button--tertiary" type="button" data-wishlist-remove data-handle="${handle}">Remove</button>
+              </div>
+            </div>
+          </article>`;
+      }).join('');
+      containers.forEach((container) => { container.innerHTML = `<div class="wishlist-list">${itemMarkup}</div>`; });
+
+      recommendations.forEach((container) => {
+        const cartHandles = new Set((container.dataset.cartHandles || '').split(',').filter(Boolean));
+        const available = validProducts.filter((product) => !cartHandles.has(product.handle)).slice(0, Number(container.dataset.limit || 4));
+        if (!available.length) {
+          container.hidden = true;
+          container.closest('[data-wishlist-recommendations-section]')?.setAttribute('hidden', '');
+          container.replaceChildren();
+          return;
+        }
+        container.hidden = false;
+        container.closest('[data-wishlist-recommendations-section]')?.removeAttribute('hidden');
+        container.innerHTML = available.map((product) => {
+          const savedItem = items.find((item) => item.handle === product.handle);
+          const savedVariant = product.variants?.find((variant) => Number(variant.id) === Number(savedItem?.variantId));
+          const variant = savedVariant || product.variants?.find((candidate) => candidate.available) || product.variants?.[0];
+          const title = escapeHTML(product.title);
+          const url = escapeHTML(product.url);
+          const image = product.featured_image
+            ? `<img src="${escapeHTML(withWidth(product.featured_image, 360))}" alt="${title}" loading="lazy">`
+            : '<span class="wishlist-recommendation__placeholder" aria-hidden="true"></span>';
+          return `
+            <article class="wishlist-recommendation">
+              <a class="wishlist-recommendation__media" href="${url}">${image}</a>
+              <div class="wishlist-recommendation__details">
+                <a class="wishlist-recommendation__title" href="${url}">${title}</a>
+                <span>${formatMoney(variant?.price ?? product.price)}</span>
+                <button class="button button--secondary" type="button" data-wishlist-add-cart data-variant-id="${variant?.id || ''}" data-handle="${escapeHTML(product.handle)}"${variant?.available === false ? ' disabled' : ''}>${variant?.available === false ? 'Sold out' : 'Add to cart'}</button>
+              </div>
+            </article>`;
+        }).join('');
+      });
     };
 
     root.querySelectorAll?.('[data-wishlist-toggle]').forEach((button) => {
       if (button.dataset.themeInitialized === 'true') return;
       button.dataset.themeInitialized = 'true';
-      const handle = button.dataset.wishlistToggle;
-      const update = () => {
-        const active = !!findItem(getItems(), handle);
-        button.setAttribute('aria-pressed', active);
-        button.classList.toggle('is-active', active);
-      };
       button.addEventListener('click', () => {
-        const items = getItems();
-        const next = !findItem(items, handle);
-        if (next) {
-          upsertItem(items, handle, button.dataset.variantId ? Number(button.dataset.variantId) : null);
-          setItems(items);
-        } else {
-          setItems(items.filter((item) => item.handle !== handle));
-        }
-        update();
-        renderWishlist();
-        showToast(next ? config.strings?.wishlistAdded : config.strings?.wishlistRemoved);
+        const handle = button.dataset.wishlistToggle;
+        const willAdd = !WishlistStore.find(handle);
+        if (willAdd) WishlistStore.add(handle, button.dataset.variantId ? Number(button.dataset.variantId) : null);
+        else WishlistStore.remove(handle);
+        showToast(willAdd ? config.strings?.wishlistAdded : config.strings?.wishlistRemoved);
       });
-      update();
     });
+
     root.querySelectorAll?.('[data-wishlist-add]').forEach((button) => {
       if (button.dataset.themeInitialized === 'true') return;
       button.dataset.themeInitialized = 'true';
-      const form = button.closest('[data-product-form]');
-      if (!form) return;
-      const handle = form.dataset.productHandle;
-      const variantInput = form.querySelector('[data-variant-id]');
-      const updateButton = () => {
-        const items = getItems();
-        const active = !!findItem(items, handle);
-        button.setAttribute('aria-pressed', active);
-        button.classList.toggle('is-active', active);
-        button.textContent = active ? 'Saved to wishlist' : 'Save to wishlist';
-      };
       button.addEventListener('click', () => {
-        const items = getItems();
-        const existing = findItem(items, handle);
-        if (existing) {
-          const nextItems = items.filter((item) => item.handle !== handle);
-          setItems(nextItems);
-          renderWishlist();
-          updateButton();
-          showToast(config.strings?.wishlistRemoved || 'Removed from wishlist.');
-          return;
-        }
-        const variantId = variantInput ? Number(variantInput.value) : null;
-        upsertItem(items, handle, variantId);
-        setItems(items);
-        renderWishlist();
-        updateButton();
-        showToast(config.strings?.wishlistAdded || 'Added to wishlist.');
+        const form = button.closest('[data-product-form]');
+        const section = button.closest('[data-product-handle]');
+        const handle = button.dataset.productHandle || form?.dataset.productHandle || section?.dataset.productHandle;
+        if (!handle) return;
+        const existing = WishlistStore.find(handle);
+        if (existing) WishlistStore.remove(handle);
+        else WishlistStore.add(handle, Number(form?.querySelector('[data-variant-id]')?.value) || null);
+        showToast(existing ? (config.strings?.wishlistRemoved || 'Removed from wishlist.') : (config.strings?.wishlistAdded || 'Added to wishlist.'));
       });
-      updateButton();
     });
-    const container = document.querySelector('[data-wishlist-items]');
-    if (container && container.dataset.themeInitialized !== 'true') {
-      container.dataset.themeInitialized = 'true';
-      container.addEventListener('click', (event) => {
+
+    if (document.documentElement.dataset.wishlistActionsInitialized !== 'true') {
+      document.documentElement.dataset.wishlistActionsInitialized = 'true';
+      document.addEventListener('wishlist:change', (event) => {
+        updateWishlistUI(event.detail?.items || WishlistStore.get());
+        renderWishlist();
+      });
+      window.addEventListener('storage', (event) => {
+        if (event.key !== wishlistStorageKey) return;
+        wishlistMemoryItems = [];
+        const items = WishlistStore.get();
+        updateWishlistUI(items);
+        renderWishlist();
+      });
+      document.addEventListener('click', async (event) => {
         const removeButton = event.target.closest('[data-wishlist-remove]');
         if (removeButton) {
-          const handle = removeButton.dataset.handle;
-          const items = getItems().filter((item) => item.handle !== handle);
-          setItems(items);
-          renderWishlist();
+          WishlistStore.remove(removeButton.dataset.handle);
           showToast(config.strings?.wishlistRemoved || 'Removed from wishlist.');
           return;
         }
-        const moveButton = event.target.closest('[data-wishlist-move]');
-        if (moveButton) {
-          const variantId = Number(moveButton.dataset.variantId);
-          const handle = moveButton.dataset.handle;
-          if (!variantId) return;
-          fetch(shopifyPath('cart/add.js'), {
+        const cartButton = event.target.closest('[data-wishlist-move], [data-wishlist-add-cart]');
+        if (!cartButton) return;
+        const variantId = Number(cartButton.dataset.variantId);
+        if (!variantId) return;
+        cartButton.disabled = true;
+        try {
+          const response = await fetch(shopifyPath('cart/add.js'), {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
             body: JSON.stringify({ id: variantId, quantity: 1 }),
-          })
-            .then((response) => {
-              if (!response.ok) throw new Error('Add to cart failed.');
-              const items = getItems().filter((item) => item.handle !== handle);
-              setItems(items);
-              renderWishlist();
-              showToast(config.strings?.addedToCart || 'Added to cart.');
-            })
-            .catch(() => showToast(config.strings?.cartError || 'Unable to add to cart.'));
+          });
+          if (!response.ok) throw new Error('Add to cart failed.');
+          if (cartButton.matches('[data-wishlist-move]')) {
+            WishlistStore.remove(cartButton.dataset.handle);
+          } else {
+            document.querySelectorAll('[data-wishlist-recommendations]').forEach((container) => {
+              const handles = new Set((container.dataset.cartHandles || '').split(',').filter(Boolean));
+              handles.add(cartButton.dataset.handle);
+              container.dataset.cartHandles = [...handles].join(',');
+            });
+            const recommendation = cartButton.closest('.wishlist-recommendation');
+            const grid = recommendation?.parentElement;
+            recommendation?.remove();
+            if (grid && !grid.querySelector('.wishlist-recommendation')) {
+              grid.closest('[data-wishlist-recommendations-section]')?.setAttribute('hidden', '');
+            }
+          }
+          document.dispatchEvent(new CustomEvent('cart:refresh'));
+          showToast(config.strings?.addedToCart || 'Added to cart.');
+        } catch {
+          cartButton.disabled = false;
+          showToast(config.strings?.cartError || 'Unable to add to cart.');
         }
       });
     }
-    updateCount();
+
+    updateWishlistUI();
     renderWishlist();
   };
 
@@ -664,17 +725,28 @@ const Theme = (() => {
         items[activeIndex].scrollIntoView({ block: 'nearest' });
       };
 
-      const renderGroup = (label, items, groupIndex) => {
+      const renderGroup = (label, items, groupIndex, type = 'link') => {
         if (!Array.isArray(items) || !items.length) return '';
         return `
-          <section class="predictive-search__group" aria-labelledby="PredictiveGroup-${groupIndex}-${results.id}">
+          <section class="predictive-search__group predictive-search__group--${type}" aria-labelledby="PredictiveGroup-${groupIndex}-${results.id}">
             <h2 class="predictive-search__heading" id="PredictiveGroup-${groupIndex}-${results.id}">${escapeHTML(label)}</h2>
             <ul role="listbox">
-              ${items.map((item, itemIndex) => `
-                <li role="presentation">
-                  <a id="PredictiveOption-${groupIndex}-${itemIndex}-${results.id}" role="option" data-predictive-option href="${escapeHTML(item.url)}">${escapeHTML(item.title)}</a>
-                </li>
-              `).join('')}
+              ${items.map((item, itemIndex) => {
+                const rawImage = item.image || item.featured_image;
+                const imageUrl = typeof rawImage === 'string' ? rawImage : rawImage?.url;
+                const image = imageUrl
+                  ? `<img src="${escapeHTML(withWidth(imageUrl, 180))}" alt="${escapeHTML(rawImage?.alt || item.title)}" loading="lazy">`
+                  : '<span class="predictive-search__placeholder" aria-hidden="true"></span>';
+                const rawPrice = item.price_min ?? item.price;
+                const price = typeof rawPrice === 'number' ? formatMoney(rawPrice) : escapeHTML(rawPrice || '');
+                const content = type === 'product'
+                  ? `${image}<span class="predictive-search__product-copy"><strong>${escapeHTML(item.title)}</strong>${price ? `<span>${price}</span>` : ''}</span><span class="predictive-search__arrow" aria-hidden="true">→</span>`
+                  : `<span>${escapeHTML(item.title)}</span><span class="predictive-search__arrow" aria-hidden="true">→</span>`;
+                return `
+                  <li role="presentation">
+                    <a class="predictive-search__result predictive-search__result--${type}" id="PredictiveOption-${groupIndex}-${itemIndex}-${results.id}" role="option" data-predictive-option href="${escapeHTML(item.url)}">${content}</a>
+                  </li>`;
+              }).join('')}
             </ul>
           </section>
         `;
@@ -700,12 +772,14 @@ const Theme = (() => {
           const data = await response.json();
           const found = data.resources?.results || {};
           const markup = [
-            renderGroup('Products', found.products, 0),
-            renderGroup('Collections', found.collections, 1),
-            renderGroup('Pages', found.pages, 2),
-            renderGroup('Articles', found.articles, 3),
+            renderGroup('Products', found.products, 0, 'product'),
+            renderGroup('Collections', found.collections, 1, 'link'),
+            renderGroup('Pages', found.pages, 2, 'link'),
+            renderGroup('Articles', found.articles, 3, 'link'),
           ].join('');
-          results.innerHTML = markup || '<p class="predictive-search__status">No results found.</p>';
+          results.innerHTML = markup
+            ? `${markup}<button class="predictive-search__view-all" type="submit">View all results for “${escapeHTML(query)}” <span aria-hidden="true">→</span></button>`
+            : '<p class="predictive-search__status">No results found. Try a product name, color, or collection.</p>';
           results.hidden = false;
           input.setAttribute('aria-expanded', 'true');
           announce(config.strings?.searchResults || 'Search results updated.');
@@ -1133,25 +1207,83 @@ const Theme = (() => {
       form.dataset.themeInitialized = 'true';
       const results = form.querySelector('[data-shipping-results]');
       if (!results) return;
+      const countryField = form.querySelector('[name="country"]');
+      const defaultCountry = countryField?.dataset.defaultValue?.trim();
+      if (countryField instanceof HTMLSelectElement && defaultCountry) {
+        const matchingOption = Array.from(countryField.options).find((option) =>
+          option.value.toLowerCase() === defaultCountry.toLowerCase()
+          || option.textContent.trim().toLowerCase() === defaultCountry.toLowerCase(),
+        );
+        if (matchingOption) countryField.value = matchingOption.value;
+      }
+
+      const estimate = async () => {
+        const data = new FormData(form);
+        const zip = String(data.get('zip') || '').trim();
+        const country = String(data.get('country') || '').trim();
+        const province = String(data.get('province') || '').trim();
+        if (!zip || !country) return;
+
+        const submit = form.querySelector('[type="submit"]');
+        results.textContent = 'Finding live shipping rates…';
+        results.setAttribute('aria-busy', 'true');
+        if (submit) submit.disabled = true;
+        const params = new URLSearchParams({
+          'shipping_address[zip]': zip,
+          'shipping_address[country]': country,
+        });
+        if (province) params.set('shipping_address[province]', province);
+
+        try {
+          const response = await fetch(`${shopifyPath('cart/shipping_rates.json')}?${params}`, {
+            headers: { Accept: 'application/json' },
+          });
+          const json = await response.json().catch(() => ({}));
+          if (!response.ok) {
+            const error = typeof json.errors === 'string'
+              ? json.errors
+              : Object.values(json.errors || {}).flat().join(' ');
+            throw new Error(error || 'No shipping rates were returned for that address.');
+          }
+          if (!Array.isArray(json.shipping_rates) || !json.shipping_rates.length) {
+            throw new Error('No shipping rates are available for that address.');
+          }
+
+          const rates = json.shipping_rates.map((rate) => {
+            const numericPrice = Number(String(rate.price ?? '0').replace(/[^0-9.-]/g, ''));
+            return { ...rate, cents: Number.isFinite(numericPrice) ? Math.round(numericPrice * 100) : 0 };
+          }).sort((a, b) => a.cents - b.cents);
+          const lowest = rates[0];
+          const subtotal = Number(form.dataset.subtotalCents || 0);
+          const includesCartSubtotal = form.dataset.subtotalCents !== undefined;
+          document.querySelectorAll('[data-cart-estimated-shipping]').forEach((value) => {
+            value.textContent = formatMoney(lowest.cents);
+          });
+          results.innerHTML = `
+            <div class="shipping-estimator__summary">
+              <strong>${includesCartSubtotal ? 'Estimated total' : 'Lowest shipping estimate'}</strong>
+              <strong>${formatMoney((includesCartSubtotal ? subtotal : 0) + lowest.cents)}</strong>
+            </div>
+            <p class="shipping-estimator__caption">Based on ${escapeHTML(lowest.name)}.${includesCartSubtotal ? ' Tax is confirmed at checkout.' : ''}</p>
+            <details class="shipping-estimator__rates">
+              <summary>Compare ${rates.length} available ${rates.length === 1 ? 'rate' : 'rates'}</summary>
+              <ul>${rates.map((rate) => `<li><span>${escapeHTML(rate.name)}</span><strong>${formatMoney(rate.cents)}</strong></li>`).join('')}</ul>
+            </details>`;
+        } catch (error) {
+          results.innerHTML = `<p class="form-message form-message--error">${escapeHTML(error.message || 'Unable to fetch shipping rates.')}</p>`;
+        } finally {
+          results.removeAttribute('aria-busy');
+          if (submit) submit.disabled = false;
+        }
+      };
+
       form.addEventListener('submit', (event) => {
         event.preventDefault();
-        const data = new FormData(form);
-        const zip = data.get('zip');
-        const country = data.get('country');
-        results.textContent = 'Loading...';
-        fetch(shopifyPath(`cart/shipping_rates.json?shipping_address%5Bzip%5D=${encodeURIComponent(zip)}&shipping_address%5Bcountry%5D=${encodeURIComponent(country)}`))
-          .then((response) => response.json())
-          .then((json) => {
-            if (!json.shipping_rates || !json.shipping_rates.length) {
-              results.textContent = 'No rates available.';
-              return;
-            }
-            results.innerHTML = `<ul>${json.shipping_rates.map((rate) => `<li>${escapeHTML(rate.name)}: ${escapeHTML(rate.price)}</li>`).join('')}</ul>`;
-          })
-          .catch(() => {
-            results.textContent = 'Unable to fetch rates.';
-          });
+        estimate();
       });
+      if (form.dataset.autoload === 'true' && form.querySelector('[name="zip"]')?.value.trim()) {
+        window.setTimeout(estimate, 0);
+      }
     });
   };
 
@@ -1339,6 +1471,9 @@ const Theme = (() => {
         badge.textContent = String(count || 0);
         badge.classList.toggle('hidden', !count);
       });
+      document.querySelectorAll('[data-cart-drawer-count]').forEach((value) => {
+        value.textContent = String(count || 0);
+      });
     };
 
     const renderCartDrawer = (cart) => {
@@ -1358,28 +1493,32 @@ const Theme = (() => {
                 ? `<span class="cart-drawer-item__variant">${escapeHTML(item.variant_title)}</span>`
                 : '';
               const img = item.image
-                ? `<img src="${escapeHTML(withWidth(item.image, 120))}" alt="${title}" loading="lazy">`
+                ? `<img src="${escapeHTML(withWidth(item.image, 240))}" alt="${title}" loading="lazy">`
                 : '';
               const linePrice = formatMoney(item.final_line_price ?? item.line_price);
+              const productHandle = item.handle || item.product_handle || String(item.url || '').split('/products/')[1]?.split(/[?#]/)[0] || '';
               const properties = Object.entries(item.properties || {})
                 .filter(([name, value]) => value && !name.startsWith('_'))
                 .map(([name, value]) => `<span>${escapeHTML(name)}: ${escapeHTML(value)}</span>`)
                 .join('');
               return `
                 <div class="cart-drawer-item" data-cart-line-key="${escapeHTML(item.key)}">
-                  <a href="${escapeHTML(item.url)}">${img}</a>
+                  <a class="cart-drawer-item__media" href="${escapeHTML(item.url)}">${img}</a>
                   <div class="cart-drawer-item__details">
                     <a href="${escapeHTML(item.url)}"><strong>${title}</strong></a>
                     ${variantTitle}
                     ${item.selling_plan_allocation?.selling_plan?.name ? `<span>${escapeHTML(item.selling_plan_allocation.selling_plan.name)}</span>` : ''}
                     ${properties ? `<span class="cart-drawer-item__properties">${properties}</span>` : ''}
-                    <div>${linePrice}</div>
+                    <strong class="cart-drawer-item__price">${linePrice}</strong>
                     <div class="quantity-control" aria-label="Quantity for ${title}">
                       <button type="button" data-cart-quantity="${Math.max(0, item.quantity - 1)}" aria-label="Decrease quantity">−</button>
                       <span aria-live="polite">${item.quantity || 0}</span>
                       <button type="button" data-cart-quantity="${item.quantity + 1}" aria-label="Increase quantity">+</button>
                     </div>
-                    <button class="button button--tertiary" type="button" data-cart-remove>Remove</button>
+                    <div class="cart-drawer-item__actions">
+                      ${config.settings?.wishlistEnabled && productHandle ? `<button class="button button--tertiary" type="button" data-cart-save-wishlist data-handle="${escapeHTML(productHandle)}" data-variant-id="${item.variant_id || item.id || ''}">Save for later</button>` : ''}
+                      <button class="button button--tertiary" type="button" data-cart-remove>Remove</button>
+                    </div>
                   </div>
                 </div>
               `;
@@ -1415,7 +1554,7 @@ const Theme = (() => {
         .catch(() => null);
 
     const changeLine = async (key, quantity) => {
-      if (!key) return;
+      if (!key) return false;
       itemsEl?.setAttribute('aria-busy', 'true');
       try {
         const endpoint = `${config.routes?.cartChange || shopifyPath('cart/change')}.js`;
@@ -1427,8 +1566,10 @@ const Theme = (() => {
         if (!response.ok) throw new Error('Cart update failed.');
         renderCartDrawer(await response.json());
         announce('Cart updated.');
+        return true;
       } catch {
         showToast(config.strings?.cartError || 'We could not update your cart.');
+        return false;
       } finally {
         itemsEl?.removeAttribute('aria-busy');
       }
@@ -1442,6 +1583,32 @@ const Theme = (() => {
       if (!quantityButton && !removeButton) return;
       changeLine(line.dataset.cartLineKey, removeButton ? 0 : Number(quantityButton.dataset.cartQuantity));
     });
+
+    if (document.documentElement.dataset.cartSaveInitialized !== 'true') {
+      document.documentElement.dataset.cartSaveInitialized = 'true';
+      document.addEventListener('click', async (event) => {
+        const button = event.target.closest('[data-cart-save-wishlist]');
+        if (!button) return;
+        const line = button.closest('[data-cart-line-key]');
+        const key = button.dataset.cartLineKey || line?.dataset.cartLineKey;
+        const handle = button.dataset.handle;
+        if (!key || !handle) return;
+        button.disabled = true;
+        const changed = await changeLine(key, 0);
+        if (!changed) {
+          button.disabled = false;
+          return;
+        }
+        WishlistStore.add(handle, Number(button.dataset.variantId) || null);
+        showToast('Saved to your wishlist.');
+        if (button.closest('.cart-page')) window.location.reload();
+      });
+      document.addEventListener('cart:refresh', () => {
+        fetchCart().then((cart) => {
+          if (cart) renderCartDrawer(cart);
+        });
+      });
+    }
 
     document.addEventListener('submit', async (event) => {
       const form = event.target.closest('form[data-ajax-cart]');

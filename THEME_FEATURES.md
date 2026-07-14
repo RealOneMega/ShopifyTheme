@@ -19,10 +19,10 @@
 
 ## Discovery and conversion
 
-- Collection hero, native storefront filters, sorting, active filter removal, pagination, responsive product grid, and persisted grid density.
-- Search page with product/content result types and predictive search with abortable requests and keyboard navigation.
-- AJAX cart drawer and full cart page with line properties, selling plans, discounts, quantity changes, remove actions, notes, additional checkout buttons, optional native recommendations, and currency-aware free-shipping progress.
-- Browser-local wishlist drawer and page. It intentionally does not claim cross-device or account synchronization.
+- Collection hero, native storefront filters, dedicated size chips and color swatches, sorting, active filter removal, pagination, responsive product grid, and persisted grid density.
+- Search page with bounded product/content result cards plus image-led predictive search with abortable requests and keyboard navigation.
+- Rebuilt AJAX cart drawer and full cart page with line properties, selling plans, discounts, quantity changes, save-for-later, notes, additional checkout buttons, live address-aware shipping estimates, and currency-aware free-shipping progress.
+- Browser-local wishlist drawer and page with shared persistence, cross-tab refresh, move-to-cart actions, and cart-page recommendations. It intentionally does not claim cross-device or account synchronization.
 - Recently viewed products stored locally in the browser.
 
 ## Content and templates

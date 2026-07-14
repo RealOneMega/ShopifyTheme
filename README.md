@@ -4,7 +4,7 @@ Risky Limits 2.0 is a Shopify Online Store 2.0 theme built for an independent ap
 
 ## Quick start
 
-1. Upload `Risky Limits-2.0.2.zip` in Shopify Admin under **Online Store > Themes**.
+1. Upload `Risky Limits-2.0.3.zip` in Shopify Admin under **Online Store > Themes**.
 2. Keep the uploaded theme unpublished while completing `THEME_SETUP.md`.
 3. Add navigation menus, policies, product media, collections, Markets, shipping rates, and payment methods in Shopify Admin.
 4. Complete the preview-store checklist in `THEME_QA.md` before publishing.
@@ -19,7 +19,7 @@ shopify theme check --path .
 shopify theme package --path .
 ```
 
-The 2.0.2 package includes the expanded layout system and four assignable showcase page templates. See `CHANGELOG.md` and `THEME_QA.md` for its current validation boundary.
+The 2.0.3 package adds persistent wishlist coordination, wishlist-to-cart conversion, live address-aware shipping estimates, rebuilt cart/search drawers, bounded search results, and dedicated size/color filter controls. See `CHANGELOG.md` and `THEME_QA.md` for its current validation boundary.
 
 ## Architecture
 

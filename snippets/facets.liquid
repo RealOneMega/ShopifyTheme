@@ -1,7 +1,16 @@
 <form class="facets" id="Facets-{{ id }}" action="{{ collection.url }}" method="get" data-facet-form>
   {%- if collection.sort_by != blank -%}<input type="hidden" name="sort_by" value="{{ collection.sort_by }}">{%- endif -%}
   {%- for filter in collection.filters -%}
-    <details class="facet" open>
+    {%- liquid
+      assign filter_label = filter.label | downcase
+      assign filter_kind = 'standard'
+      if filter_label contains 'color' or filter_label contains 'colour'
+        assign filter_kind = 'color'
+      elsif filter_label contains 'size'
+        assign filter_kind = 'size'
+      endif
+    -%}
+    <details class="facet facet--{{ filter_kind }}" open>
       <summary>
         <span>{{ filter.label }}</span>
         {%- if filter.active_values.size > 0 -%}<span class="facet__count">{{ filter.active_values.size }}</span>{%- endif -%}
@@ -9,11 +18,12 @@
       <div class="facet__panel">
         {%- case filter.type -%}
           {%- when 'boolean', 'list' -%}
-            <ul class="facet__values" role="list">
+            <ul class="facet__values facet__values--{{ filter_kind }}" role="list">
               {%- for value in filter.values -%}
                 <li>
                   <label class="facet__value{% if value.count == 0 and value.active == false %} is-disabled{% endif %}">
                     <input type="checkbox" name="{{ value.param_name }}" value="{{ value.value }}"{% if value.active %} checked{% endif %}{% if value.count == 0 and value.active == false %} disabled{% endif %}>
+                    {%- if filter_kind == 'color' -%}<span class="facet__swatch" aria-hidden="true" style="--facet-swatch: {{ value.swatch.color | default: value.label | downcase }};{% if value.swatch.image != blank %} --facet-swatch-image: url('{{ value.swatch.image | image_url: width: 80 }}');{% endif %}"></span>{%- endif -%}
                     <span>{{ value.label }}</span>
                     <span aria-hidden="true">{{ value.count }}</span>
                   </label>
@@ -36,4 +46,3 @@
     <a class="button button--tertiary" href="{{ collection.url }}{% if collection.sort_by != blank %}?sort_by={{ collection.sort_by | url_encode }}{% endif %}">Clear all</a>
   </div>
 </form>
-

@@ -2,7 +2,7 @@
 
 ## Recorded static validation
 
-Validation date: 2026-07-13.
+Validation date: 2026-07-14.
 
 | Check | Result |
 | --- | --- |
@@ -10,7 +10,7 @@ Validation date: 2026-07-13.
 | JSON templates/settings parsing | Pass |
 | Section and theme-block schema parsing | Pass |
 | Shopify Theme Check 4.4.0 | Pass: 157 files, 0 offenses |
-| Shopify theme package | Pass: `Risky Limits-2.0.2.zip` |
+| Shopify theme package | Pass: `Risky Limits-2.0.3.zip` |
 | Placeholder/fabricated commerce scan | Pass for active storefront defaults; provider features are app-backed |
 | Live Shopify render | Pre-fix home/product diagnosis run at `dev.riskylimits.com`; post-fix upload and responsive matrix still required |
 | Lighthouse / Core Web Vitals | Not run; deployable URL not supplied |
@@ -21,6 +21,8 @@ Validation date: 2026-07-13.
 The 2.0.1 visual calibration specifically needs a post-upload pass for announcement-bar full width, hero copy bounds, product-page contrast, product buy-column width, footer contrast/type hierarchy, and the home-section transitions. The code package cannot prove those store-rendered results until it is uploaded to a Shopify preview theme.
 
 For 2.0.2, also verify that the homepage slogan forms no more than two lines at desktop widths, the full-width hero reaches both viewport edges, the footer newsletter heading stays proportional to its form, and all four assignable page templates use their intended width at every matrix breakpoint.
+
+For 2.0.3, verify wishlist persistence after reload and across two same-origin tabs; wishlist save/move/remove behavior on product cards, product pages, the drawer, and the cart; signed-in default-address shipping-rate prefill; signed-out manual estimates; cart-drawer contrast and mobile scrolling; predictive-search images and keyboard selection; one-result search sizing; and size/color filters after enabling them in Search & Discovery.
 
 Test at 320, 375, 768, 1024, 1440, and 1920 CSS pixels. Use current Chrome, Safari/WebKit, Firefox, and Edge where available.
 

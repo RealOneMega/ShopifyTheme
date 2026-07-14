@@ -230,23 +230,26 @@
   </div>
 </div>
 
-<div id="search-drawer" class="drawer" role="dialog" aria-modal="true" aria-labelledby="SearchDrawerTitle" aria-hidden="true">
+<div id="search-drawer" class="drawer drawer--wide search-drawer" role="dialog" aria-modal="true" aria-labelledby="SearchDrawerTitle" aria-hidden="true">
   <div class="drawer__header">
-    <strong id="SearchDrawerTitle">{{ 'search.title' | t }}</strong>
+    <div><span class="eyebrow">Find your next fit</span><strong id="SearchDrawerTitle">{{ 'search.title' | t }}</strong></div>
     <button class="header__icon-button" type="button" data-drawer-close aria-label="{{ 'accessibility.close' | t }}">{% render 'icon-close' %}</button>
   </div>
   <div class="drawer__content">
-    <form action="{{ routes.search_url }}" method="get" role="search" data-predictive-search>
-      <label for="SearchInput-{{ section.id }}">{{ 'general.search' | t }}</label>
-      <input class="field" id="SearchInput-{{ section.id }}" type="search" name="q" placeholder="Search products" autocomplete="off" autofocus>
+    <form class="search-drawer__form" action="{{ routes.search_url }}" method="get" role="search" data-predictive-search>
+      <label for="SearchInput-{{ section.id }}">What are you looking for?</label>
+      <div class="search-drawer__field">
+        <input class="field" id="SearchInput-{{ section.id }}" type="search" name="q" placeholder="Try blue hoodie or training shorts" autocomplete="off" autocorrect="off" autofocus>
+        <button class="button button--primary" type="submit" aria-label="Submit search">{% render 'icon-search' %}<span>Search</span></button>
+      </div>
+      <p class="search-drawer__hint">Search by product, collection, color, or style.</p>
       <div class="predictive-search" id="PredictiveResults-{{ section.id }}" data-predictive-results hidden></div>
-      <button class="button button--primary" type="submit">{{ 'general.search' | t }}</button>
     </form>
   </div>
 </div>
 
 {% if settings.enable_wishlist %}
-<div id="wishlist-drawer" class="drawer" role="dialog" aria-modal="true" aria-labelledby="WishlistDrawerTitle" aria-hidden="true">
+<div id="wishlist-drawer" class="drawer wishlist-drawer" role="dialog" aria-modal="true" aria-labelledby="WishlistDrawerTitle" aria-hidden="true">
   <div class="drawer__header">
     <strong id="WishlistDrawerTitle">{{ 'wishlist.title' | t }}</strong>
     <button class="header__icon-button" type="button" data-drawer-close aria-label="{{ 'accessibility.close' | t }}">{% render 'icon-close' %}</button>
@@ -259,9 +262,9 @@
 </div>
 {% endif %}
 
-<div id="cart-drawer" class="drawer" role="dialog" aria-modal="true" aria-labelledby="CartDrawerTitle" aria-hidden="true" data-cart-drawer>
+<div id="cart-drawer" class="drawer cart-drawer" role="dialog" aria-modal="true" aria-labelledby="CartDrawerTitle" aria-hidden="true" data-cart-drawer>
   <div class="drawer__header">
-    <strong id="CartDrawerTitle">{{ 'cart.title' | t }}</strong>
+    <div><span class="eyebrow">Your selection</span><strong id="CartDrawerTitle">{{ 'cart.title' | t }} <span class="cart-drawer__count">(<span data-cart-drawer-count>{{ cart.item_count }}</span>)</span></strong></div>
     <button class="header__icon-button" type="button" data-drawer-close aria-label="{{ 'accessibility.close' | t }}">{% render 'icon-close' %}</button>
   </div>
   <div class="drawer__content" data-cart-drawer-content>
@@ -273,18 +276,21 @@
       <div class="stack" data-cart-drawer-items>
         {% for item in cart.items %}
           <div class="cart-drawer-item" data-cart-line-key="{{ item.key }}">
-            <a href="{{ item.url }}">{{ item.image | image_url: width: 160 | image_tag: loading: 'lazy', alt: item.image.alt | default: item.product.title }}</a>
+            <a class="cart-drawer-item__media" href="{{ item.url }}">{{ item.image | image_url: width: 240 | image_tag: loading: 'lazy', alt: item.image.alt | default: item.product.title }}</a>
             <div class="cart-drawer-item__details">
               <a href="{{ item.url }}"><strong>{{ item.product.title }}</strong></a>
               {% unless item.variant.title == 'Default Title' %}<span class="cart-drawer-item__variant">{{ item.variant.title }}</span>{% endunless %}
               {% if item.selling_plan_allocation != blank %}<span>{{ item.selling_plan_allocation.selling_plan.name }}</span>{% endif %}
-              <div>{{ item.final_line_price | money }}</div>
+              <strong class="cart-drawer-item__price">{{ item.final_line_price | money }}</strong>
               <div class="quantity-control" aria-label="Quantity for {{ item.product.title | escape }}">
                 <button type="button" data-cart-quantity="{{ item.quantity | minus: 1 | at_least: 0 }}" aria-label="Decrease quantity">−</button>
                 <span aria-live="polite">{{ item.quantity }}</span>
                 <button type="button" data-cart-quantity="{{ item.quantity | plus: 1 }}" aria-label="Increase quantity">+</button>
               </div>
-              <button class="button button--tertiary" type="button" data-cart-remove>{{ 'cart.remove' | t: title: item.product.title }}</button>
+              <div class="cart-drawer-item__actions">
+                {% if settings.enable_wishlist %}<button class="button button--tertiary" type="button" data-cart-save-wishlist data-handle="{{ item.product.handle }}" data-variant-id="{{ item.variant.id }}">Save for later</button>{% endif %}
+                <button class="button button--tertiary" type="button" data-cart-remove>{{ 'cart.remove' | t: title: item.product.title }}</button>
+              </div>
             </div>
           </div>
         {% endfor %}
@@ -299,8 +305,9 @@
             <div class="free-shipping-progress__bar" role="progressbar" aria-label="Free-shipping progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{ shipping_percent }}" data-free-shipping-bar style="--progress: {{ shipping_percent }}%;"></div>
           </div>
         {% endif %}
-        <strong>{{ 'cart.subtotal' | t }}: <span data-cart-drawer-total>{{ cart.total_price | money }}</span></strong>
-        <a class="button button--secondary" href="{{ routes.cart_url }}">View cart</a>
+        <div class="cart-drawer-summary__row"><span>{{ 'cart.subtotal' | t }}</span><strong data-cart-drawer-total>{{ cart.total_price | money }}</strong></div>
+        <p class="cart-drawer-summary__notice">Shipping and tax are confirmed at checkout.</p>
+        <a class="button button--secondary" href="{{ routes.cart_url }}">View cart &amp; delivery estimate</a>
         <form action="{{ routes.cart_url }}" method="post">
           <button class="button button--primary" type="submit" name="checkout">{{ 'cart.checkout' | t }}</button>
         </form>

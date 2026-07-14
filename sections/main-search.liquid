@@ -1,22 +1,28 @@
-<section class="section section--background" style="{% render 'section-background-style', section: section %}">
+<section class="section section--background search-page" style="{% render 'section-background-style', section: section %}">
   {% render 'section-background-media', section: section %}
   <div class="container">
-    <header class="section__header">
-      <p class="eyebrow">Discover Risky Limits</p>
-      <h1 class="heading">{{ 'search.title' | t }}</h1>
-      {% if search.performed %}<p>{{ search.results_count }} results for “{{ search.terms | escape }}”</p>{% endif %}
-    </header>
-    <form class="search-page__form" action="{{ routes.search_url }}" method="get" role="search">
-      <label for="SearchPageInput-{{ section.id }}">{{ 'general.search' | t }}</label>
-      <div class="search-page__field">
-        <input class="field" id="SearchPageInput-{{ section.id }}" type="search" name="q" value="{{ search.terms | escape }}" placeholder="Search products, collections, and stories" autocorrect="off" autocomplete="off">
-        <button class="button button--primary" type="submit">{{ 'general.search' | t }}</button>
-      </div>
-    </form>
+    <div class="search-page__hero">
+      <header class="section__header">
+        <p class="eyebrow">Discover Risky Limits</p>
+        <h1 class="heading">Find your next fit</h1>
+        <p>Search the full catalog by product, color, collection, or style.</p>
+      </header>
+      <form class="search-page__form" action="{{ routes.search_url }}" method="get" role="search">
+        <label for="SearchPageInput-{{ section.id }}">{{ 'general.search' | t }}</label>
+        <div class="search-page__field">
+          <input class="field" id="SearchPageInput-{{ section.id }}" type="search" name="q" value="{{ search.terms | escape }}" placeholder="Try blue hoodie or training shorts" autocorrect="off" autocomplete="off">
+          <button class="button button--primary" type="submit">{% render 'icon-search' %}<span>{{ 'general.search' | t }}</span></button>
+        </div>
+      </form>
+    </div>
     {% if search.performed %}
       {% paginate search.results by section.settings.results_per_page %}
         {% if search.results_count > 0 %}
-          <div class="search-results product-grid">
+          <div class="search-results__header">
+            <div><p class="eyebrow">Search results</p><h2 class="h2">“{{ search.terms | escape }}”</h2></div>
+            <span>{{ search.results_count }} {% if search.results_count == 1 %}result{% else %}results{% endif %}</span>
+          </div>
+          <div class="search-results{% if search.results_count == 1 %} search-results--single{% endif %}">
             {% for item in search.results %}
               {% if item.object_type == 'product' %}
                 {% render 'product-card', product: item, style: 'below' %}
@@ -105,7 +111,7 @@
       "type": "color",
       "id": "background_color",
       "label": "Background color",
-      "default": "#08090b"
+      "default": "#ffffff"
     },
     {
       "type": "color_background",

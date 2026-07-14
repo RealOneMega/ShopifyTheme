@@ -1,5 +1,34 @@
 # Changelog
 
+## 2.0.3 — 2026-07-14
+
+### Changed
+
+- Rebuilt the cart page into a denser item panel and sticky checkout column with clearer price, delivery, tax, and checkout hierarchy.
+- Rebuilt the cart drawer as a wider, high-contrast utility surface with larger product media, compact quantity controls, save-for-later actions, and a stronger summary footer.
+- Reworked predictive search into image-led product results with pricing, keyboard focus states, grouped content results, and a direct view-all action.
+- Constrained search result columns so a single result remains card-sized instead of stretching across the page.
+- Added dedicated size-chip and color-swatch presentations for native Shopify storefront filters.
+
+### Added
+
+- Cart-page recommendations sourced from the shopper's browser-local wishlist, excluding products already in the cart.
+- Live Shopify shipping-rate estimates using country, province, and postal code, prefilled from the signed-in customer's default address when available.
+- An estimated cart total using subtotal plus the lowest returned shipping rate, while leaving tax explicitly confirmed at checkout.
+- Save-for-later controls on both full-cart and cart-drawer line items.
+
+### Fixed
+
+- Fixed product-page wishlist saves that previously looked for the product handle on the form instead of the containing product section.
+- Synchronized wishlist state across product controls, every wishlist container, header badges, cart recommendations, and same-origin browser tabs.
+- Removed dark-on-dark and low-contrast form/control combinations from search, cart, wishlist, and mobile filter drawers.
+
+### Validation
+
+- JavaScript syntax: pass.
+- Shopify Theme Check: 157 files, zero offenses.
+- Shopify CLI package: `Risky Limits-2.0.3.zip`.
+
 ## 2.0.2 — 2026-07-13
 
 ### Changed

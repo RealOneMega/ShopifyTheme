@@ -2,7 +2,7 @@
 
 ## 1. Install as an unpublished theme
 
-Upload `Risky Limits-2.0.2.zip` in Shopify Admin. Keep it unpublished while completing this guide and `THEME_QA.md`.
+Upload `Risky Limits-2.0.3.zip` in Shopify Admin. Keep it unpublished while completing this guide and `THEME_QA.md`.
 
 ## 2. Brand and global settings
 
@@ -22,6 +22,7 @@ Upload `Risky Limits-2.0.2.zip` in Shopify Admin. Keep it unpublished while comp
 ## 4. Catalog and homepage
 
 - Create intentional automated/manual collections and replace the default `all` collection assignments.
+- In Shopify's Search & Discovery app, open **Filters** and enable the Size and Color product-option filters. The theme will automatically present enabled Size filters as compact chips and Color filters as swatches.
 - Upload final hero, editorial, product, collection, and social-sharing media with useful alt text and focal points.
 - Review every homepage section; remove unused sections and replace all default copy with approved brand content.
 - Add policy pages, contact information, shipping details, returns details, privacy/terms, and accessibility information.
@@ -56,12 +57,13 @@ Install and configure provider app blocks for reviews, purchase activity, loyalt
 
 Product-card ratings can be enabled globally when the reviews provider writes Shopify's `reviews.rating` and `reviews.rating_count` metafields.
 
-Referral content renders only when its provider URL is configured. The wishlist and recently viewed lists are browser-local and should not be marketed as account-synchronized.
+Referral content renders only when its provider URL is configured. The wishlist and recently viewed lists are browser-local and should not be marketed as account-synchronized. Wishlist items persist in that browser and can be moved to the cart or surfaced beneath the cart, but they do not follow a customer to another device.
 
 ## 7. Accounts, Markets, checkout, and consent
 
 - Choose classic or new customer accounts and test all routes applicable to that choice.
 - Configure Markets, currencies, domains/subfolders, languages, duties/taxes, and market-specific shipping.
+- Test the cart delivery estimate while signed into an account with a default address and while signed out. It uses Shopify's live shipping-rate endpoint; tax remains confirmed by Shopify at checkout.
 - Configure payment methods, accelerated checkout, gift cards, subscriptions, and store credit in Shopify Admin where applicable.
 - Configure a consent-management solution before adding non-essential analytics, advertising, or tracking scripts.
 

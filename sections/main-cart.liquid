@@ -1,7 +1,14 @@
-<section class="section section--background" style="{% render 'section-background-style', section: section %}">
+{%- capture cart_product_handles -%}
+  {%- for item in cart.items -%}{% unless forloop.first %},{% endunless %}{{ item.product.handle }}{%- endfor -%}
+{%- endcapture -%}
+
+<section class="section section--background cart-page" style="{% render 'section-background-style', section: section %}">
   {% render 'section-background-media', section: section %}
   <div class="container">
-    <header class="section__header"><p class="eyebrow">Secure order</p><h1 class="heading">{{ 'cart.title' | t }}</h1></header>
+    <header class="section__header cart-page__header">
+      <div><p class="eyebrow">Secure order</p><h1 class="heading">{{ 'cart.title' | t }}</h1></div>
+      <p>{{ cart.item_count }} {% if cart.item_count == 1 %}item{% else %}items{% endif %} ready for checkout</p>
+    </header>
     {% if cart.errors != blank %}<div class="form-message form-message--error" role="alert">{{ cart.errors }}</div>{% endif %}
     {% if cart.item_count == 0 %}
       <div class="empty-state">
@@ -10,11 +17,15 @@
         <a class="button button--primary" href="{{ routes.all_products_collection_url }}">{{ 'cart.continue_shopping' | t }}</a>
       </div>
     {% else %}
-      <form action="{{ routes.cart_url }}" method="post" id="CartForm">
-        <div class="cart-layout">
+      <div class="cart-layout">
+        <form class="cart-items-panel" action="{{ routes.cart_url }}" method="post" id="CartForm">
+          <div class="cart-items__heading">
+            <h2 class="h3">Your items</h2>
+            <a href="{{ routes.all_products_collection_url }}">Continue shopping</a>
+          </div>
           <div class="cart-items">
             {% for item in cart.items %}
-              <div class="cart-item">
+              <article class="cart-item" data-cart-line-key="{{ item.key }}">
                 <a class="cart-item__media" href="{{ item.url }}">{{ item.image | image_url: width: 320 | image_tag: loading: 'lazy', widths: '120, 180, 240, 320', sizes: '120px', alt: item.image.alt | default: item.product.title }}</a>
                 <div class="cart-item__details">
                   {% if section.settings.show_vendor and item.product.vendor != blank %}<span class="eyebrow">{{ item.product.vendor }}</span>{% endif %}
@@ -32,7 +43,10 @@
                   <div class="cart-item__quantity">
                     <label for="Quantity-{{ item.key }}">Quantity</label>
                     <input class="field" id="Quantity-{{ item.key }}" type="number" name="updates[{{ item.key }}]" value="{{ item.quantity }}" min="0" inputmode="numeric">
-                    <a class="button button--tertiary" href="{{ routes.cart_change_url }}?line={{ forloop.index }}&quantity=0" aria-label="{{ 'cart.remove' | t: title: item.product.title }}">Remove</a>
+                    <div class="cart-item__utilities">
+                      {% if settings.enable_wishlist %}<button class="button button--tertiary" type="button" data-cart-save-wishlist data-cart-line-key="{{ item.key }}" data-handle="{{ item.product.handle }}" data-variant-id="{{ item.variant.id }}">Save for later</button>{% endif %}
+                      <a class="button button--tertiary" href="{{ routes.cart_change_url }}?line={{ forloop.index }}&quantity=0" aria-label="{{ 'cart.remove' | t: title: item.product.title }}">Remove</a>
+                    </div>
                   </div>
                 </div>
                 <div class="cart-item__price">
@@ -40,19 +54,21 @@
                   <strong>{{ item.final_line_price | money }}</strong>
                   {% if item.unit_price_measurement %}<small>{{ item.unit_price | money }} / {% if item.unit_price_measurement.reference_value != 1 %}{{ item.unit_price_measurement.reference_value }}{% endif %}{{ item.unit_price_measurement.reference_unit }}</small>{% endif %}
                 </div>
-              </div>
+              </article>
             {% endfor %}
-            <button class="button button--secondary" type="submit" name="update">{{ 'cart.update' | t }}</button>
+            <button class="button button--secondary cart-items__update" type="submit" name="update">{{ 'cart.update' | t }}</button>
             {% if section.settings.enable_cart_note %}
               <div class="cart-note"><label for="CartNote">Order note</label><textarea class="field" id="CartNote" name="note" rows="4">{{ cart.note }}</textarea></div>
             {% endif %}
           </div>
-          <div class="stack">
+        </form>
+        <aside class="stack cart-checkout-column" aria-label="Order summary">
             <div class="cart-summary">
               <h2 class="h3">Order summary</h2>
               {% if cart.cart_level_discount_applications != blank %}<ul class="discount-list" role="list">{% for discount in cart.cart_level_discount_applications %}<li><span>{{ discount.title }}</span><span>−{{ discount.total_allocated_amount | money }}</span></li>{% endfor %}</ul>{% endif %}
               <div class="cart-summary__row"><span>{{ 'cart.subtotal' | t }}</span><strong>{{ cart.total_price | money }}</strong></div>
-              <p class="cart-summary__notice">{% if cart.taxes_included %}Taxes included. {% endif %}Shipping and discounts are calculated at checkout.</p>
+              <div class="cart-summary__row cart-summary__row--muted"><span>Estimated shipping</span><span data-cart-estimated-shipping>Enter an address</span></div>
+              <div class="cart-summary__row cart-summary__row--muted"><span>Estimated tax</span><span>{% if cart.taxes_included %}Included{% else %}Calculated at checkout{% endif %}</span></div>
 
               {% if settings.free_shipping_threshold > 0 %}
                 {% assign threshold_cents = settings.free_shipping_threshold | times: 100 %}
@@ -64,14 +80,48 @@
                 </div>
               {% endif %}
 
-              <button class="button button--primary" type="submit" name="checkout">{{ 'cart.checkout' | t }}</button>
+              {% if section.settings.enable_shipping_estimator %}
+                <details class="cart-estimate"{% if customer.default_address.zip != blank %} open{% endif %}>
+                  <summary>Estimate delivery total</summary>
+                  <form class="shipping-estimator cart-estimate__form" data-shipping-estimator data-subtotal-cents="{{ cart.total_price }}"{% if customer.default_address.zip != blank %} data-autoload="true"{% endif %}>
+                    <div class="cart-estimate__field cart-estimate__field--country">
+                      <label for="CartCountry-{{ section.id }}">Country / region</label>
+                      <select class="field" id="CartCountry-{{ section.id }}" name="country" data-default-value="{{ customer.default_address.country | escape }}" autocomplete="country" required>{{ all_country_option_tags }}</select>
+                    </div>
+                    <div class="cart-estimate__field">
+                      <label for="CartProvince-{{ section.id }}">State / province</label>
+                      <input class="field" id="CartProvince-{{ section.id }}" type="text" name="province" value="{{ customer.default_address.province | escape }}" autocomplete="address-level1">
+                    </div>
+                    <div class="cart-estimate__field">
+                      <label for="CartZip-{{ section.id }}">Postal code</label>
+                      <input class="field" id="CartZip-{{ section.id }}" type="text" name="zip" value="{{ customer.default_address.zip | escape }}" autocomplete="postal-code" required>
+                    </div>
+                    <button class="button button--secondary" type="submit">Get live rates</button>
+                    <div class="shipping-estimator__results" data-shipping-results role="status" aria-live="polite"></div>
+                  </form>
+                </details>
+              {% endif %}
+
+              <div class="cart-checkout-form">
+                <button class="button button--primary" type="submit" name="checkout" form="CartForm">{{ 'cart.checkout' | t }}</button>
+              </div>
               {% if additional_checkout_buttons %}<div class="additional-checkout-buttons">{{ content_for_additional_checkout_buttons }}</div>{% endif %}
+              <p class="cart-summary__notice">Final shipping, discounts, and any applicable tax are confirmed at checkout.</p>
             </div>
             {% if section.settings.promo_heading != blank or section.settings.promo_text != blank %}<div class="cart-summary"><h2 class="h3">{{ section.settings.promo_heading }}</h2><div class="rte">{{ section.settings.promo_text }}</div></div>{% endif %}
             {% if section.settings.upsell_product != blank and section.settings.upsell_product.available %}<div class="cart-upsell"><h2 class="h3">Complete the limit</h2>{% render 'product-card', product: section.settings.upsell_product, style: 'below' %}</div>{% endif %}
-          </div>
-        </div>
-      </form>
+        </aside>
+      </div>
+    {% endif %}
+
+    {% if section.settings.enable_wishlist_recommendations and settings.enable_wishlist %}
+      <section class="cart-wishlist" data-wishlist-recommendations-section hidden>
+        <header class="cart-wishlist__header">
+          <div><p class="eyebrow">Saved for you</p><h2 class="h2">Still thinking about these?</h2></div>
+          <button class="button button--tertiary" type="button" data-drawer-open="#wishlist-drawer" aria-controls="wishlist-drawer" aria-expanded="false">View wishlist</button>
+        </header>
+        <div class="cart-wishlist__grid" data-wishlist-recommendations data-cart-handles="{{ cart_product_handles | strip | escape }}" data-limit="4"></div>
+      </section>
     {% endif %}
   </div>
 </section>
@@ -80,6 +130,18 @@
 {
   "name": "Main cart",
   "settings": [
+    {
+      "type": "checkbox",
+      "id": "enable_shipping_estimator",
+      "label": "Enable live shipping estimate",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_wishlist_recommendations",
+      "label": "Show wishlist recommendations",
+      "default": true
+    },
     {
       "type": "text",
       "id": "promo_heading",

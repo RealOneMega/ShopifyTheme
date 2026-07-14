@@ -46,6 +46,10 @@
         </div>
       </div>
 
+      {% if collection.filters == blank and request.design_mode %}
+        <div class="collection-filter-guidance" role="note"><strong>Enable size and color filters</strong><span>In Shopify Admin, open Search &amp; Discovery → Filters and add the Size and Color product-option filters. This theme will automatically render them as size chips and color swatches.</span></div>
+      {% endif %}
+
       <div class="collection-active-filters" aria-label="Active filters">
         {% assign has_active_filters = false %}
         {% for filter in collection.filters %}
