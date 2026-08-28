@@ -48,7 +48,7 @@
       </div>
     </div>
     {% if section.settings.show_country_selector or section.settings.show_language_selector %}
-      {% render 'localization-form', id: section.id | append: '-footer', show_country: section.settings.show_country_selector, show_language: section.settings.show_language_selector %}
+      {% render 'localization-form', id: section.id, append: '-footer', show_country: section.settings.show_country_selector, show_language: section.settings.show_language_selector %}
     {% endif %}
     <div class="footer__bottom">
       <span>&copy; {{ 'now' | date: '%Y' }} {{ section.settings.copyright }}</span>
@@ -250,3 +250,17 @@
   "max_blocks": 3
 }
 {% endschema %}
+{% comment %}
+
+This file has been rewritten to preserve the original behavior.
+
+---
+Changes:
+- from: "{% render 'localization-form', id: section.id | append: '-footer', show_country:
+    section.settings.show_country_selector, show_language: section.settings.show_language_selector
+    %}"
+  to: "{% render 'localization-form', id: section.id, append: '-footer', show_country:
+    section.settings.show_country_selector, show_language: section.settings.show_language_selector
+    %}"
+  position: 2909..3086
+{% endcomment %}
